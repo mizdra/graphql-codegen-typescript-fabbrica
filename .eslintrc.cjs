@@ -11,6 +11,9 @@ module.exports = {
     es2022: true,
     node: true,
   },
+  rules: {
+    'no-use-before-define': 'off',
+  },
   overrides: [
     {
       files: ['*.ts', '*.tsx', '*.cts', '*.mts'],
