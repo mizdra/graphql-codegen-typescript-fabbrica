@@ -1,6 +1,6 @@
 {
-  "name": "app_name",
-  "description": "app_description",
+  "name": "graphql-fabbrica",
+  "description": "GraphQL Code Generator Plugin to define mock data factory.",
   "version": "0.0.0",
   "type": "module",
   "sideEffects": false,
