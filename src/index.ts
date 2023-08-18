@@ -1,4 +1,4 @@
-import type { DeepOptional, FieldResolver, ResolvedFields, Merge } from './util.js';
+import type { DeepOptional, FieldResolver, ResolvedFields, Merge, ResolvedField } from './util.js';
 
 export type Book = {
   id: string;
@@ -11,18 +11,27 @@ export type Author = {
   books: Book[];
 };
 
-interface BookFactoryInterfaceWithoutTraits<TOptions extends BookFactoryDefineOptions> {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  build<T extends Partial<DeepOptional<Book>> = {}>(
-    inputFields?: T,
-  ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, T>>;
-}
 interface BookFactoryDefineOptions {
   defaultFields: {
     [Key in keyof Book]: FieldResolver<DeepOptional<Book>[Key]>;
   };
 }
-type BookFactoryInterface<TOptions extends BookFactoryDefineOptions> = BookFactoryInterfaceWithoutTraits<TOptions>;
+interface BookFactoryInterface<TOptions extends BookFactoryDefineOptions> {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  build<const T extends Partial<DeepOptional<Book>> = {}>(
+    inputFields?: T,
+  ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, T>>;
+}
+
+async function resolveField<T extends FieldResolver<unknown>>(fieldResolver: T): Promise<ResolvedField<T>> {
+  if (typeof fieldResolver === 'function') {
+    // eslint-disable-next-line @typescript-eslint/return-await
+    return await fieldResolver();
+  } else {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return fieldResolver as any;
+  }
+}
 
 async function resolveFields<
   TOptions extends BookFactoryDefineOptions,
@@ -35,7 +44,7 @@ async function resolveFields<
   const fields: any = {};
   for (const [key, defaultFieldResolver] of Object.entries(defaultFieldResolvers)) {
     // eslint-disable-next-line no-await-in-loop
-    fields[key] = key in inputFields ? inputFields[key as keyof InputFields] : await defaultFieldResolver();
+    fields[key] = key in inputFields ? inputFields[key as keyof InputFields] : await resolveField(defaultFieldResolver);
   }
   return fields;
 }
