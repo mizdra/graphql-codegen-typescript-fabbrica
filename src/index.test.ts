@@ -23,7 +23,7 @@ describe('defineTypeFactory', () => {
         id: 'Author-1',
         name: '1上小又',
         books: [],
-        },
+      },
     });
     expectType<{
       id: string;
@@ -55,7 +55,7 @@ describe('defineTypeFactory', () => {
         id: 'Author-1',
         name: '1上小又',
         books: undefined,
-        },
+      },
     });
     expectType<{
       id: string;
@@ -65,6 +65,26 @@ describe('defineTypeFactory', () => {
         name: string;
         books: undefined;
       };
+    }>(book);
+  });
+  it('accepts functional field resolvers', async () => {
+    const BookFactory = defineBookFactory({
+      defaultFields: {
+        id: () => 'Book-1',
+        title: async () => Promise.resolve('ゆゆ式'),
+        author: undefined,
+      },
+    });
+    const book = await BookFactory.build();
+    expect(book).toStrictEqual({
+      id: 'Book-1',
+      title: 'ゆゆ式',
+      author: undefined,
+    });
+    expectType<{
+      id: string;
+      title: string;
+      author: undefined;
     }>(book);
   });
 });
