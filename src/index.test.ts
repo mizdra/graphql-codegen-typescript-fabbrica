@@ -16,17 +16,15 @@ describe('defineTypeFactory', () => {
       },
     });
     const book = await BookFactory.build();
-    expect(book).toMatchInlineSnapshot(`
-      {
-        "author": {
-          "books": [],
-          "id": "Author-1",
-          "name": "1上小又",
+    expect(book).toStrictEqual({
+      id: 'Book-1',
+      title: 'ゆゆ式',
+      author: {
+        id: 'Author-1',
+        name: '1上小又',
+        books: [],
         },
-        "id": "Book-1",
-        "title": "ゆゆ式",
-      }
-    `);
+    });
     expectType<{
       id: string;
       title: string;
@@ -50,17 +48,15 @@ describe('defineTypeFactory', () => {
       },
     });
     const book = await BookFactory.build();
-    expect(book).toMatchInlineSnapshot(`
-      {
-        "author": {
-          "books": undefined,
-          "id": "Author-1",
-          "name": "1上小又",
+    expect(book).toStrictEqual({
+      id: 'Book-1',
+      title: undefined,
+      author: {
+        id: 'Author-1',
+        name: '1上小又',
+        books: undefined,
         },
-        "id": "Book-1",
-        "title": undefined,
-      }
-    `);
+    });
     expectType<{
       id: string;
       title: undefined;
