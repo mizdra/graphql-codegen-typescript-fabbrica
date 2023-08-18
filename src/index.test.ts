@@ -6,28 +6,25 @@ describe('defineTypeFactory', () => {
   it('basic', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: async () => Promise.resolve('Book-1'),
-        title: async () => Promise.resolve('ゆゆ式'),
-        author: async () =>
-          Promise.resolve({
-            id: 'Author-1',
-            name: '1上小又',
-            books: [],
-          }),
+        id: 'Book-1',
+        title: 'ゆゆ式',
+        author: {
+          id: 'Author-1',
+          name: '1上小又',
+          books: [],
+        },
       },
     });
     const book = await BookFactory.build();
-    expect(book).toMatchInlineSnapshot(`
-      {
-        "author": {
-          "books": [],
-          "id": "Author-1",
-          "name": "1上小又",
-        },
-        "id": "Book-1",
-        "title": "ゆゆ式",
-      }
-    `);
+    expect(book).toStrictEqual({
+      id: 'Book-1',
+      title: 'ゆゆ式',
+      author: {
+        id: 'Author-1',
+        name: '1上小又',
+        books: [],
+      },
+    });
     expectType<{
       id: string;
       title: string;
@@ -41,28 +38,25 @@ describe('defineTypeFactory', () => {
   it('accepts undefined fields', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: async () => Promise.resolve('Book-1'),
-        title: async () => Promise.resolve(undefined), // shallow field
-        author: async () =>
-          Promise.resolve({
-            id: 'Author-1',
-            name: '1上小又',
-            books: undefined, // deep field
-          }),
+        id: 'Book-1',
+        title: undefined, // shallow field
+        author: {
+          id: 'Author-1',
+          name: '1上小又',
+          books: undefined, // deep field
+        },
       },
     });
     const book = await BookFactory.build();
-    expect(book).toMatchInlineSnapshot(`
-      {
-        "author": {
-          "books": undefined,
-          "id": "Author-1",
-          "name": "1上小又",
-        },
-        "id": "Book-1",
-        "title": undefined,
-      }
-    `);
+    expect(book).toStrictEqual({
+      id: 'Book-1',
+      title: undefined,
+      author: {
+        id: 'Author-1',
+        name: '1上小又',
+        books: undefined,
+      },
+    });
     expectType<{
       id: string;
       title: undefined;
@@ -73,19 +67,38 @@ describe('defineTypeFactory', () => {
       };
     }>(book);
   });
+  it('accepts functional field resolvers', async () => {
+    const BookFactory = defineBookFactory({
+      defaultFields: {
+        id: () => 'Book-1',
+        title: async () => Promise.resolve('ゆゆ式'),
+        author: undefined,
+      },
+    });
+    const book = await BookFactory.build();
+    expect(book).toStrictEqual({
+      id: 'Book-1',
+      title: 'ゆゆ式',
+      author: undefined,
+    });
+    expectType<{
+      id: string;
+      title: string;
+      author: undefined;
+    }>(book);
+  });
 });
 
 describe('TypeFactoryInterface', () => {
   const BookFactory = defineBookFactory({
     defaultFields: {
-      id: async () => Promise.resolve('Book-1'),
-      title: async () => Promise.resolve('ゆゆ式'),
-      author: async () =>
-        Promise.resolve({
-          id: 'Author-1',
-          name: '1上小又',
-          books: [],
-        }),
+      id: 'Book-1',
+      title: 'ゆゆ式',
+      author: {
+        id: 'Author-1',
+        name: '1上小又',
+        books: [],
+      },
     },
   });
   describe('build', () => {

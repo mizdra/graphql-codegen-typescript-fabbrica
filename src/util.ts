@@ -3,11 +3,17 @@ export type DeepOptional<T> = {
   [K in keyof T]: T[K] extends Record<string, unknown> ? DeepOptional<T[K]> | undefined : T[K] | undefined;
 };
 
-export type FieldResolver<Field> = () => Promise<Field>;
+export type FieldResolver<Field> = Field | (() => Field) | (() => Promise<Field>);
 
-/** Convert `{ a: () => number }` into `{ a: number }`. */
-export type ResolvedFields<FieldsResolver> = {
-  [FieldName in keyof FieldsResolver]: FieldsResolver[FieldName] extends FieldResolver<infer Field> ? Field : never;
+export type ResolvedField<T extends FieldResolver<unknown>> = T extends () => Promise<infer Field>
+  ? Field
+  : T extends () => infer Field
+  ? Field
+  : T;
+
+/** Convert `{ a: number, b: () => number, c: () => Promise<number> }` into `{ a: number, b: number, c: number }`. */
+export type ResolvedFields<FieldsResolver extends Record<string, FieldResolver<unknown>>> = {
+  [FieldName in keyof FieldsResolver]: ResolvedField<FieldsResolver[FieldName]>;
 };
 
 /** Convert `{ a: number, b: string }` and `{ b: boolean, c: symbol }` into `{ a: number, b: boolean, c: symbol }`. */

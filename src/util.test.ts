@@ -1,6 +1,6 @@
 import { expectType, type TypeOf } from 'ts-expect';
 import { it } from 'vitest';
-import { type DeepOptional, type FieldResolver, type ResolvedFields, type Merge } from './util.js';
+import { type DeepOptional, type FieldResolver, type ResolvedFields, type Merge, type ResolvedField } from './util.js';
 
 it('DeepOptional', () => {
   type Input = { a: number; b: { c: number }; d: undefined };
@@ -10,9 +10,23 @@ it('DeepOptional', () => {
 });
 
 it('FieldResolver', () => {
-  expectType<TypeOf<FieldResolver<number>, () => Promise<number>>>(true);
-  expectType<TypeOf<FieldResolver<undefined>, () => Promise<undefined>>>(true);
-  expectType<TypeOf<FieldResolver<number | undefined>, () => Promise<number | undefined>>>(true);
+  expectType<TypeOf<FieldResolver<number>, number | (() => number) | (() => Promise<number>)>>(true);
+  expectType<TypeOf<FieldResolver<undefined>, undefined | (() => undefined) | (() => Promise<undefined>)>>(true);
+  expectType<
+    TypeOf<
+      FieldResolver<number | undefined>,
+      (number | undefined) | (() => number | undefined) | (() => Promise<number | undefined>)
+    >
+  >(true);
+});
+
+it('ResolvedField', () => {
+  expectType<
+    TypeOf<
+      ResolvedField<{ a: FieldResolver<number>; b: FieldResolver<string | undefined> }>,
+      { a: number; b: string | undefined }
+    >
+  >(true);
 });
 
 it('ResolvedFields', () => {
