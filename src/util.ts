@@ -35,7 +35,9 @@ export type ResolvedFields<FieldsResolver extends Record<string, FieldResolver<u
 };
 
 /** Convert `{ a: number, b: string }` and `{ b: boolean, c: symbol }` into `{ a: number, b: boolean, c: symbol }`. */
-export type Merge<F, S> = Omit<F, keyof S> & S;
+export type Merge<F, S> = {
+  [K in keyof F | keyof S]: K extends keyof S ? S[K] : K extends keyof F ? F[K] : never;
+};
 
 async function resolveField<T extends FieldResolver<unknown>>(
   seq: number,
