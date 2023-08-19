@@ -1,12 +1,12 @@
-import { getSequenceCounter, resetSequence, resetAllSequence } from './sequence.js';
 import {
   type ResolvedFields,
-  type Merge,
   type DefaultFieldsResolver,
   type InputFieldsResolver,
   resolveFields,
   lazy,
-} from './util.js';
+} from './field-resolver.js';
+import { getSequenceCounter, resetSequence, resetAllSequence } from './sequence.js';
+import { type Merge } from './util.js';
 
 export { resetAllSequence, lazy };
 
