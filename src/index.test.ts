@@ -7,10 +7,10 @@ describe('defineTypeFactory', () => {
   it('basic', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: 'Book-1',
+        id: 'Book-0',
         title: 'ゆゆ式',
         author: {
-          id: 'Author-1',
+          id: 'Author-0',
           name: '三上小又',
           books: [],
         },
@@ -18,10 +18,10 @@ describe('defineTypeFactory', () => {
     });
     const book = await BookFactory.build();
     expect(book).toStrictEqual({
-      id: 'Book-1',
+      id: 'Book-0',
       title: 'ゆゆ式',
       author: {
-        id: 'Author-1',
+        id: 'Author-0',
         name: '三上小又',
         books: [],
       },
@@ -39,10 +39,10 @@ describe('defineTypeFactory', () => {
   it('accepts undefined fields', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: 'Book-1',
+        id: 'Book-0',
         title: undefined, // shallow field
         author: {
-          id: 'Author-1',
+          id: 'Author-0',
           name: '三上小又',
           books: undefined, // deep field
         },
@@ -50,10 +50,10 @@ describe('defineTypeFactory', () => {
     });
     const book = await BookFactory.build();
     expect(book).toStrictEqual({
-      id: 'Book-1',
+      id: 'Book-0',
       title: undefined,
       author: {
-        id: 'Author-1',
+        id: 'Author-0',
         name: '三上小又',
         books: undefined,
       },
@@ -71,14 +71,14 @@ describe('defineTypeFactory', () => {
   it('accepts functional field resolvers', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: () => 'Book-1',
+        id: () => 'Book-0',
         title: async () => Promise.resolve('ゆゆ式'),
         author: undefined,
       },
     });
     const book = await BookFactory.build();
     expect(book).toStrictEqual({
-      id: 'Book-1',
+      id: 'Book-0',
       title: 'ゆゆ式',
       author: undefined,
     });
@@ -93,10 +93,10 @@ describe('defineTypeFactory', () => {
 describe('TypeFactoryInterface', () => {
   const BookFactory = defineBookFactory({
     defaultFields: {
-      id: 'Book-1',
+      id: 'Book-0',
       title: 'ゆゆ式',
       author: {
-        id: 'Author-1',
+        id: 'Author-0',
         name: '三上小又',
         books: [],
       },
@@ -107,10 +107,10 @@ describe('TypeFactoryInterface', () => {
       // input field is optional
       const book1 = await oneOf(BookFactory.build(), BookFactory.build({}));
       expect(book1).toStrictEqual({
-        id: 'Book-1',
+        id: 'Book-0',
         title: 'ゆゆ式',
         author: {
-          id: 'Author-1',
+          id: 'Author-0',
           name: '三上小又',
           books: [],
         },
@@ -129,13 +129,13 @@ describe('TypeFactoryInterface', () => {
       const boo2 = await BookFactory.build({
         // id: ...,
         // author: ...,
-        title: 'ゆゆ式 2巻', // non-undefined field
+        title: 'ゆゆ式 1巻', // non-undefined field
       });
       expect(boo2).toStrictEqual({
-        id: 'Book-1',
-        title: 'ゆゆ式 2巻',
+        id: 'Book-0',
+        title: 'ゆゆ式 1巻',
         author: {
-          id: 'Author-1',
+          id: 'Author-0',
           name: '三上小又',
           books: [],
         },
@@ -154,16 +154,16 @@ describe('TypeFactoryInterface', () => {
       const book = await BookFactory.build({
         title: undefined, // shallow field
         author: {
-          id: 'Author-1',
+          id: 'Author-0',
           name: '三上小又',
           books: undefined, // deep field
         },
       });
       expect(book).toStrictEqual({
-        id: 'Book-1',
+        id: 'Book-0',
         title: undefined,
         author: {
-          id: 'Author-1',
+          id: 'Author-0',
           name: '三上小又',
           books: undefined,
         },
