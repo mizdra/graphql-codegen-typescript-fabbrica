@@ -1,5 +1,4 @@
-import { expectType } from 'ts-expect';
-import { expect, it, describe } from 'vitest';
+import { expect, it, describe, assertType } from 'vitest';
 import { oneOf } from './test/util.js';
 import { defineBookFactory, type Book, resetAllSequence } from './index.js';
 
@@ -26,7 +25,7 @@ describe('defineTypeFactory', () => {
         books: [],
       },
     });
-    expectType<{
+    assertType<{
       id: string;
       title: string;
       author: {
@@ -58,7 +57,7 @@ describe('defineTypeFactory', () => {
         books: undefined,
       },
     });
-    expectType<{
+    assertType<{
       id: string;
       title: undefined;
       author: {
@@ -82,7 +81,7 @@ describe('defineTypeFactory', () => {
       title: 'ゆゆ式',
       author: undefined,
     });
-    expectType<{
+    assertType<{
       id: string;
       title: string;
       author: undefined;
@@ -102,7 +101,7 @@ describe('defineTypeFactory', () => {
       title: 'ゆゆ式 0巻',
       author: undefined,
     });
-    expectType<{
+    assertType<{
       id: string;
       title: string;
       author: undefined;
@@ -151,7 +150,7 @@ describe('TypeFactoryInterface', () => {
           books: [],
         },
       });
-      expectType<{
+      assertType<{
         id: string;
         title: string;
         author: {
@@ -174,7 +173,7 @@ describe('TypeFactoryInterface', () => {
           books: [],
         },
       });
-      expectType<{
+      assertType<{
         id: string;
         title: string;
         author: {
@@ -202,7 +201,7 @@ describe('TypeFactoryInterface', () => {
           books: undefined,
         },
       });
-      expectType<{
+      assertType<{
         id: string;
         title: undefined;
         author: {
@@ -230,7 +229,7 @@ describe('TypeFactoryInterface', () => {
         title: 'ゆゆ式',
         author: undefined,
       });
-      expectType<{
+      assertType<{
         id: string;
         title: string;
         author: undefined;
@@ -253,7 +252,7 @@ describe('TypeFactoryInterface', () => {
         title: 'ゆゆ式 0巻',
         author: undefined,
       });
-      expectType<{
+      assertType<{
         id: string;
         title: string;
         author: undefined;
