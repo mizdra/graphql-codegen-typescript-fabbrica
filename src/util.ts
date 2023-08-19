@@ -3,13 +3,21 @@ export type DeepOptional<T> = {
   [K in keyof T]: T[K] extends Record<string, unknown> ? DeepOptional<T[K]> | undefined : T[K] | undefined;
 };
 
+export class Lazy<T> {
+  constructor(private readonly factory: (options: FieldResolverOptions) => T | Promise<T>) {}
+  async get(options: FieldResolverOptions): Promise<T> {
+    return this.factory(options);
+  }
+}
+/** Wrapper to delay field generation until needed. */
+export function lazy<T>(factory: (options: FieldResolverOptions) => T | Promise<T>): Lazy<T> {
+  return new Lazy(factory);
+}
+
 export type FieldResolverOptions = {
   seq: number;
 };
-export type FieldResolver<Field> =
-  | Field
-  | ((options: FieldResolverOptions) => Field)
-  | ((options: FieldResolverOptions) => Promise<Field>);
+export type FieldResolver<Field> = Field | Lazy<Field>;
 
 /** The type of `inputFields` option of `build` method. */
 export type InputFieldsResolver<Type> = {
@@ -21,13 +29,7 @@ export type DefaultFieldsResolver<Type> = {
   [Key in keyof Type]: FieldResolver<DeepOptional<Type>[Key]>;
 };
 
-export type ResolvedField<T extends FieldResolver<unknown>> = T extends (
-  options: FieldResolverOptions,
-) => Promise<infer Field>
-  ? Field
-  : T extends (options: FieldResolverOptions) => infer Field
-  ? Field
-  : T;
+export type ResolvedField<T extends FieldResolver<unknown>> = T extends FieldResolver<infer R> ? R : never;
 
 /** Convert `{ a: number, b: () => number, c: () => Promise<number> }` into `{ a: number, b: number, c: number }`. */
 export type ResolvedFields<FieldsResolver extends Record<string, FieldResolver<unknown>>> = {
@@ -39,16 +41,11 @@ export type Merge<F, S> = {
   [K in keyof F | keyof S]: K extends keyof S ? S[K] : K extends keyof F ? F[K] : never;
 };
 
-async function resolveField<T extends FieldResolver<unknown>>(
-  seq: number,
-  fieldResolver: T,
-): Promise<ResolvedField<T>> {
-  if (typeof fieldResolver === 'function') {
-    // eslint-disable-next-line @typescript-eslint/return-await
-    return await fieldResolver({ seq });
+async function resolveField<T>(seq: number, fieldResolver: FieldResolver<T>): Promise<T> {
+  if (fieldResolver instanceof Lazy) {
+    return fieldResolver.get({ seq });
   } else {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return fieldResolver as any;
+    return fieldResolver;
   }
 }
 

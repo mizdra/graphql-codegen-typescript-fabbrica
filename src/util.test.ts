@@ -1,11 +1,12 @@
-import { expectTypeOf, it } from 'vitest';
+import { expect, expectTypeOf, it } from 'vitest';
 import {
   type DeepOptional,
   type FieldResolver,
   type ResolvedFields,
   type Merge,
   type ResolvedField,
-  FieldResolverOptions,
+  Lazy,
+  lazy,
 } from './util.js';
 
 it('DeepOptional', () => {
@@ -15,14 +16,31 @@ it('DeepOptional', () => {
   expectTypeOf<Actual>().toEqualTypeOf<Expected>();
 });
 
+it('Lazy', async () => {
+  const lazy1 = new Lazy(({ seq }) => `Book-${seq}`);
+  expect(await lazy1.get({ seq: 0 })).toBe('Book-0');
+
+  const lazy2 = new Lazy(async ({ seq }) => Promise.resolve(`Book-${seq}`));
+  expect(await lazy2.get({ seq: 0 })).toBe('Book-0');
+});
+
+it('lazy', async () => {
+  const l1 = lazy(({ seq }) => `Book-${seq}`);
+  expect(l1).instanceOf(Lazy);
+  expect(await l1.get({ seq: 0 })).toBe('Book-0');
+
+  const l2 = lazy(async ({ seq }) => Promise.resolve(`Book-${seq}`));
+  expect(l2).instanceOf(Lazy);
+  expect(await l2.get({ seq: 0 })).toBe('Book-0');
+});
+
 it('FieldResolver', () => {
-  expectTypeOf<FieldResolver<number>>().toEqualTypeOf<
-    number | ((options: FieldResolverOptions) => number) | ((options: FieldResolverOptions) => Promise<number>)
-  >();
+  expectTypeOf<FieldResolver<number>>().toEqualTypeOf<number | Lazy<number>>();
 });
 
 it('ResolvedField', () => {
-  expectTypeOf<ResolvedField<FieldResolver<number>>>().toEqualTypeOf<number>();
+  expectTypeOf<ResolvedField<number>>().toEqualTypeOf<number>();
+  expectTypeOf<ResolvedField<Lazy<number>>>().toEqualTypeOf<number>();
 });
 
 it('ResolvedFields', () => {
