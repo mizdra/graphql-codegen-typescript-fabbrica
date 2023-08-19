@@ -24,6 +24,7 @@ interface BookFactoryDefineOptions {
   defaultFields: DefaultFieldsResolver<Book>;
 }
 interface BookFactoryInterface<TOptions extends BookFactoryDefineOptions> {
+  build(): Promise<ResolvedFields<TOptions['defaultFields']>>;
   build<const T extends InputFieldsResolver<Book>>(
     inputFieldResolvers: T,
     // eslint-disable-next-line @typescript-eslint/ban-types
@@ -37,10 +38,11 @@ function defineBookFactoryInternal<const TOptions extends BookFactoryDefineOptio
   const seqKey = {};
   const getSeq = () => getSequenceCounter(seqKey);
   return {
-    async build(inputFieldResolvers) {
+    async build<const T extends InputFieldsResolver<Book>>(
+      inputFieldResolvers?: T,
+    ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>> {
       const seq = getSeq();
-      const fields = await resolveFields(seq, defaultFieldResolvers, inputFieldResolvers);
-      return fields;
+      return resolveFields(seq, defaultFieldResolvers, inputFieldResolvers ?? ({} as T));
     },
     resetSequence() {
       resetSequence(seqKey);
