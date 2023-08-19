@@ -53,6 +53,7 @@
   "keywords": [],
   "files": [
     "src",
+    "!src/test",
     "!src/**/*.test.ts",
     "!src/**/__snapshots__",
     "dist"

@@ -1,5 +1,6 @@
 import { expectType } from 'ts-expect';
 import { expect, it, describe } from 'vitest';
+import { oneOf } from './test/util.js';
 import { defineBookFactory, type Book } from './index.js';
 
 describe('defineTypeFactory', () => {
@@ -103,13 +104,34 @@ describe('TypeFactoryInterface', () => {
   });
   describe('build', () => {
     it('overrides defaultFields', async () => {
-      const book = await BookFactory.build({
-        // input field is optional
+      // input field is optional
+      const book1 = await oneOf(BookFactory.build(), BookFactory.build({}));
+      expect(book1).toStrictEqual({
+        id: 'Book-1',
+        title: 'ゆゆ式',
+        author: {
+          id: 'Author-1',
+          name: '三上小又',
+          books: [],
+        },
+      });
+      expectType<{
+        id: string;
+        title: string;
+        author: {
+          id: string;
+          name: string;
+          books: Book[];
+        };
+      }>(book1);
+
+      // partial input field
+      const boo2 = await BookFactory.build({
         // id: ...,
         // author: ...,
         title: 'ゆゆ式 2巻', // non-undefined field
       });
-      expect(book).toStrictEqual({
+      expect(boo2).toStrictEqual({
         id: 'Book-1',
         title: 'ゆゆ式 2巻',
         author: {
@@ -126,7 +148,7 @@ describe('TypeFactoryInterface', () => {
           name: string;
           books: Book[];
         };
-      }>(book);
+      }>(boo2);
     });
     it('accepts undefined fields', async () => {
       const book = await BookFactory.build({
