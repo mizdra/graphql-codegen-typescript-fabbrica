@@ -5,9 +5,10 @@ import {
   type DefaultFieldsResolver,
   type InputFieldsResolver,
   resolveFields,
+  lazy,
 } from './util.js';
 
-export { resetAllSequence };
+export { resetAllSequence, lazy };
 
 export type Book = {
   id: string;

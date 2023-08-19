@@ -1,6 +1,6 @@
 import { expect, it, describe, assertType, expectTypeOf } from 'vitest';
 import { oneOf } from './test/util.js';
-import { defineBookFactory, type Book, resetAllSequence } from './index.js';
+import { defineBookFactory, type Book, resetAllSequence, lazy } from './index.js';
 
 describe('defineTypeFactory', () => {
   it('basic', async () => {
@@ -72,8 +72,8 @@ describe('defineTypeFactory', () => {
   it('accepts functional field resolvers', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: () => 'Book-0',
-        title: async () => Promise.resolve('ゆゆ式'),
+        id: lazy(() => 'Book-0'),
+        title: lazy(async () => Promise.resolve('ゆゆ式')),
         author: undefined,
       },
     });
@@ -93,8 +93,8 @@ describe('defineTypeFactory', () => {
   it('creates fields with sequential id', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: ({ seq }) => `Book-${seq}`,
-        title: async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`),
+        id: lazy(({ seq }) => `Book-${seq}`),
+        title: lazy(async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`)),
         author: undefined,
       },
     });
@@ -115,7 +115,7 @@ describe('defineTypeFactory', () => {
     it('resets all sequence', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
-          id: ({ seq }) => `Book-${seq}`,
+          id: lazy(({ seq }) => `Book-${seq}`),
           title: 'ゆゆ式',
           author: undefined,
         },
@@ -227,8 +227,8 @@ describe('TypeFactoryInterface', () => {
         },
       });
       const book = await BookFactory.build({
-        id: () => 'Book-0',
-        title: async () => Promise.resolve('ゆゆ式'),
+        id: lazy(() => 'Book-0'),
+        title: lazy(async () => Promise.resolve('ゆゆ式')),
         author: undefined,
       });
       expect(book).toStrictEqual({
@@ -252,8 +252,8 @@ describe('TypeFactoryInterface', () => {
         },
       });
       const book = await BookFactory.build({
-        id: ({ seq }) => `Book-${seq}`,
-        title: async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`),
+        id: lazy(({ seq }) => `Book-${seq}`),
+        title: lazy(async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`)),
       });
       expect(book).toStrictEqual({
         id: 'Book-0',
@@ -272,7 +272,7 @@ describe('TypeFactoryInterface', () => {
     it('resets sequence', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
-          id: ({ seq }) => `Book-${seq}`,
+          id: lazy(({ seq }) => `Book-${seq}`),
           title: 'ゆゆ式',
           author: undefined,
         },
