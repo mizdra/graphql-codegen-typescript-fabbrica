@@ -11,6 +11,16 @@ export type FieldResolver<Field> =
   | ((options: FieldResolverOptions) => Field)
   | ((options: FieldResolverOptions) => Promise<Field>);
 
+/** The type of `inputFields` option of `build` method. */
+export type InputFieldsResolver<Type> = {
+  [Key in keyof Type]?: FieldResolver<DeepOptional<Type>[Key]>;
+};
+
+/** The type of `defaultFields` option of `defineFactory` function. */
+export type DefaultFieldsResolver<Type> = {
+  [Key in keyof Type]: FieldResolver<DeepOptional<Type>[Key]>;
+};
+
 export type ResolvedField<T extends FieldResolver<unknown>> = T extends () => Promise<infer Field>
   ? Field
   : T extends () => infer Field

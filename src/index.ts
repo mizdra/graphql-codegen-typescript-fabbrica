@@ -1,5 +1,13 @@
 import { getSequenceCounter, resetSequence, resetAllSequence } from './sequence.js';
-import type { DeepOptional, FieldResolver, ResolvedFields, Merge, ResolvedField } from './util.js';
+import type {
+  DeepOptional,
+  FieldResolver,
+  ResolvedFields,
+  Merge,
+  ResolvedField,
+  DefaultFieldsResolver,
+  InputFieldsResolver,
+} from './util.js';
 
 export { resetAllSequence };
 
@@ -14,14 +22,8 @@ export type Author = {
   books: Book[];
 };
 
-type InputFieldsResolver<Type> = {
-  [Key in keyof Type]?: FieldResolver<DeepOptional<Type>[Key]>;
-};
-
 interface BookFactoryDefineOptions {
-  defaultFields: {
-    [Key in keyof Book]: FieldResolver<DeepOptional<Book>[Key]>;
-  };
+  defaultFields: DefaultFieldsResolver<Book>;
 }
 interface BookFactoryInterface<TOptions extends BookFactoryDefineOptions> {
   // eslint-disable-next-line @typescript-eslint/ban-types
