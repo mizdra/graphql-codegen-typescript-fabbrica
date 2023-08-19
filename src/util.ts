@@ -21,9 +21,11 @@ export type DefaultFieldsResolver<Type> = {
   [Key in keyof Type]: FieldResolver<DeepOptional<Type>[Key]>;
 };
 
-export type ResolvedField<T extends FieldResolver<unknown>> = T extends () => Promise<infer Field>
+export type ResolvedField<T extends FieldResolver<unknown>> = T extends (
+  options: FieldResolverOptions,
+) => Promise<infer Field>
   ? Field
-  : T extends () => infer Field
+  : T extends (options: FieldResolverOptions) => infer Field
   ? Field
   : T;
 
