@@ -10,7 +10,7 @@ describe('defineTypeFactory', () => {
         title: 'ゆゆ式',
         author: {
           id: 'Author-1',
-          name: '1上小又',
+          name: '三上小又',
           books: [],
         },
       },
@@ -21,7 +21,7 @@ describe('defineTypeFactory', () => {
       title: 'ゆゆ式',
       author: {
         id: 'Author-1',
-        name: '1上小又',
+        name: '三上小又',
         books: [],
       },
     });
@@ -42,7 +42,7 @@ describe('defineTypeFactory', () => {
         title: undefined, // shallow field
         author: {
           id: 'Author-1',
-          name: '1上小又',
+          name: '三上小又',
           books: undefined, // deep field
         },
       },
@@ -53,7 +53,7 @@ describe('defineTypeFactory', () => {
       title: undefined,
       author: {
         id: 'Author-1',
-        name: '1上小又',
+        name: '三上小又',
         books: undefined,
       },
     });
@@ -96,7 +96,7 @@ describe('TypeFactoryInterface', () => {
       title: 'ゆゆ式',
       author: {
         id: 'Author-1',
-        name: '1上小又',
+        name: '三上小又',
         books: [],
       },
     },
@@ -114,7 +114,7 @@ describe('TypeFactoryInterface', () => {
         title: 'ゆゆ式 2巻',
         author: {
           id: 'Author-1',
-          name: '1上小又',
+          name: '三上小又',
           books: [],
         },
       });
@@ -133,7 +133,7 @@ describe('TypeFactoryInterface', () => {
         title: undefined, // shallow field
         author: {
           id: 'Author-1',
-          name: '1上小又',
+          name: '三上小又',
           books: undefined, // deep field
         },
       });
@@ -142,7 +142,7 @@ describe('TypeFactoryInterface', () => {
         title: undefined,
         author: {
           id: 'Author-1',
-          name: '1上小又',
+          name: '三上小又',
           books: undefined,
         },
       });
