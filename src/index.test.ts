@@ -140,7 +140,7 @@ describe('TypeFactoryInterface', () => {
   describe('build', () => {
     it('overrides defaultFields', async () => {
       // input field is optional
-      const book1 = await oneOf(BookFactory.build(), BookFactory.build());
+      const book1 = await oneOf([BookFactory.build(), BookFactory.build({})]);
       expect(book1).toStrictEqual({
         id: 'Book-0',
         title: 'ゆゆ式',
