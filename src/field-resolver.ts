@@ -1,5 +1,9 @@
 import { DeepOptional, Merge } from './util.js';
 
+export type FieldResolverOptions = {
+  seq: number;
+};
+
 export class Lazy<T> {
   constructor(private readonly factory: (options: FieldResolverOptions) => T | Promise<T>) {}
   async get(options: FieldResolverOptions): Promise<T> {
@@ -11,16 +15,11 @@ export function lazy<T>(factory: (options: FieldResolverOptions) => T | Promise<
   return new Lazy(factory);
 }
 
-export type FieldResolverOptions = {
-  seq: number;
-};
 export type FieldResolver<Field> = Field | Lazy<Field>;
-
 /** The type of `inputFields` option of `build` method. */
 export type InputFieldsResolver<Type> = {
   [Key in keyof Type]?: FieldResolver<DeepOptional<Type>[Key]>;
 };
-
 /** The type of `defaultFields` option of `defineFactory` function. */
 export type DefaultFieldsResolver<Type> = {
   [Key in keyof Type]: FieldResolver<DeepOptional<Type>[Key]>;
