@@ -207,7 +207,24 @@ describe('TypeFactoryInterface', () => {
         };
       }>(book);
     });
-    it.todo('creates fields with sequential id');
+    it('creates fields with sequential id', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: 'Book-0',
+          title: 'ゆゆ式',
+          author: undefined,
+        },
+      });
+      const book = await BookFactory.build({
+        id: ({ seq }) => `Book-${seq}`,
+        title: async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`),
+      });
+      expect(book).toStrictEqual({
+        id: 'Book-0',
+        title: 'ゆゆ式 0巻',
+        author: undefined,
+      });
+    });
   });
   describe('resetSequence', () => {
     it('resets sequence', async () => {
