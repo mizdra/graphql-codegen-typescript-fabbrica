@@ -102,6 +102,11 @@ describe('defineTypeFactory', () => {
       title: 'ゆゆ式 0巻',
       author: undefined,
     });
+    expectType<{
+      id: string;
+      title: string;
+      author: undefined;
+    }>(book);
   });
   describe('resetAllSequence', () => {
     it('resets all sequence', async () => {
@@ -207,6 +212,30 @@ describe('TypeFactoryInterface', () => {
         };
       }>(book);
     });
+    it('accepts functional field resolvers', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: 'Book-0',
+          title: 'ゆゆ式',
+          author: undefined,
+        },
+      });
+      const book = await BookFactory.build({
+        id: () => 'Book-0',
+        title: async () => Promise.resolve('ゆゆ式'),
+        author: undefined,
+      });
+      expect(book).toStrictEqual({
+        id: 'Book-0',
+        title: 'ゆゆ式',
+        author: undefined,
+      });
+      expectType<{
+        id: string;
+        title: string;
+        author: undefined;
+      }>(book);
+    });
     it('creates fields with sequential id', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
@@ -224,6 +253,11 @@ describe('TypeFactoryInterface', () => {
         title: 'ゆゆ式 0巻',
         author: undefined,
       });
+      expectType<{
+        id: string;
+        title: string;
+        author: undefined;
+      }>(book);
     });
   });
   describe('resetSequence', () => {
