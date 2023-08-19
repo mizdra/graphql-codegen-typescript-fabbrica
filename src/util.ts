@@ -3,7 +3,13 @@ export type DeepOptional<T> = {
   [K in keyof T]: T[K] extends Record<string, unknown> ? DeepOptional<T[K]> | undefined : T[K] | undefined;
 };
 
-export type FieldResolver<Field> = Field | (() => Field) | (() => Promise<Field>);
+export type FieldResolverOptions = {
+  seq: number;
+};
+export type FieldResolver<Field> =
+  | Field
+  | ((options: FieldResolverOptions) => Field)
+  | ((options: FieldResolverOptions) => Promise<Field>);
 
 export type ResolvedField<T extends FieldResolver<unknown>> = T extends () => Promise<infer Field>
   ? Field

@@ -1,27 +1,28 @@
 import { expectType } from 'ts-expect';
 import { expect, it, describe } from 'vitest';
-import { defineBookFactory, type Book } from './index.js';
+import { oneOf } from './test/util.js';
+import { defineBookFactory, type Book, resetAllSequence } from './index.js';
 
 describe('defineTypeFactory', () => {
   it('basic', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: 'Book-1',
+        id: 'Book-0',
         title: 'ゆゆ式',
         author: {
-          id: 'Author-1',
-          name: '1上小又',
+          id: 'Author-0',
+          name: '三上小又',
           books: [],
         },
       },
     });
     const book = await BookFactory.build();
     expect(book).toStrictEqual({
-      id: 'Book-1',
+      id: 'Book-0',
       title: 'ゆゆ式',
       author: {
-        id: 'Author-1',
-        name: '1上小又',
+        id: 'Author-0',
+        name: '三上小又',
         books: [],
       },
     });
@@ -38,22 +39,22 @@ describe('defineTypeFactory', () => {
   it('accepts undefined fields', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: 'Book-1',
+        id: 'Book-0',
         title: undefined, // shallow field
         author: {
-          id: 'Author-1',
-          name: '1上小又',
+          id: 'Author-0',
+          name: '三上小又',
           books: undefined, // deep field
         },
       },
     });
     const book = await BookFactory.build();
     expect(book).toStrictEqual({
-      id: 'Book-1',
+      id: 'Book-0',
       title: undefined,
       author: {
-        id: 'Author-1',
-        name: '1上小又',
+        id: 'Author-0',
+        name: '三上小又',
         books: undefined,
       },
     });
@@ -70,14 +71,14 @@ describe('defineTypeFactory', () => {
   it('accepts functional field resolvers', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: () => 'Book-1',
+        id: () => 'Book-0',
         title: async () => Promise.resolve('ゆゆ式'),
         author: undefined,
       },
     });
     const book = await BookFactory.build();
     expect(book).toStrictEqual({
-      id: 'Book-1',
+      id: 'Book-0',
       title: 'ゆゆ式',
       author: undefined,
     });
@@ -87,34 +88,61 @@ describe('defineTypeFactory', () => {
       author: undefined;
     }>(book);
   });
+  it('creates fields with sequential id', async () => {
+    const BookFactory = defineBookFactory({
+      defaultFields: {
+        id: ({ seq }) => `Book-${seq}`,
+        title: async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`),
+        author: undefined,
+      },
+    });
+    const book = await BookFactory.build();
+    expect(book).toStrictEqual({
+      id: 'Book-0',
+      title: 'ゆゆ式 0巻',
+      author: undefined,
+    });
+  });
+  describe('resetAllSequence', () => {
+    it('resets all sequence', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: ({ seq }) => `Book-${seq}`,
+          title: 'ゆゆ式',
+          author: undefined,
+        },
+      });
+      expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
+      expect(await BookFactory.build()).toMatchObject({ id: 'Book-1' });
+      resetAllSequence();
+      expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
+      // TODO: Test other factories
+    });
+  });
 });
 
 describe('TypeFactoryInterface', () => {
   const BookFactory = defineBookFactory({
     defaultFields: {
-      id: 'Book-1',
+      id: 'Book-0',
       title: 'ゆゆ式',
       author: {
-        id: 'Author-1',
-        name: '1上小又',
+        id: 'Author-0',
+        name: '三上小又',
         books: [],
       },
     },
   });
   describe('build', () => {
     it('overrides defaultFields', async () => {
-      const book = await BookFactory.build({
-        // input field is optional
-        // id: ...,
-        // author: ...,
-        title: 'ゆゆ式 2巻', // non-undefined field
-      });
-      expect(book).toStrictEqual({
-        id: 'Book-1',
-        title: 'ゆゆ式 2巻',
+      // input field is optional
+      const book1 = await oneOf(BookFactory.build(), BookFactory.build({}));
+      expect(book1).toStrictEqual({
+        id: 'Book-0',
+        title: 'ゆゆ式',
         author: {
-          id: 'Author-1',
-          name: '1上小又',
+          id: 'Author-0',
+          name: '三上小又',
           books: [],
         },
       });
@@ -126,23 +154,46 @@ describe('TypeFactoryInterface', () => {
           name: string;
           books: Book[];
         };
-      }>(book);
+      }>(book1);
+
+      // Passing input fields allows overriding the default field.
+      const boo2 = await BookFactory.build({
+        title: 'ゆゆ式 100巻',
+      });
+      expect(boo2).toStrictEqual({
+        id: 'Book-0',
+        title: 'ゆゆ式 100巻',
+        author: {
+          id: 'Author-0',
+          name: '三上小又',
+          books: [],
+        },
+      });
+      expectType<{
+        id: string;
+        title: string;
+        author: {
+          id: string;
+          name: string;
+          books: Book[];
+        };
+      }>(boo2);
     });
     it('accepts undefined fields', async () => {
       const book = await BookFactory.build({
         title: undefined, // shallow field
         author: {
-          id: 'Author-1',
-          name: '1上小又',
+          id: 'Author-0',
+          name: '三上小又',
           books: undefined, // deep field
         },
       });
       expect(book).toStrictEqual({
-        id: 'Book-1',
+        id: 'Book-0',
         title: undefined,
         author: {
-          id: 'Author-1',
-          name: '1上小又',
+          id: 'Author-0',
+          name: '三上小又',
           books: undefined,
         },
       });
@@ -155,6 +206,23 @@ describe('TypeFactoryInterface', () => {
           books: undefined;
         };
       }>(book);
+    });
+    it.todo('creates fields with sequential id');
+  });
+  describe('resetSequence', () => {
+    it('resets sequence', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: ({ seq }) => `Book-${seq}`,
+          title: 'ゆゆ式',
+          author: undefined,
+        },
+      });
+      expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
+      expect(await BookFactory.build()).toMatchObject({ id: 'Book-1' });
+      BookFactory.resetSequence();
+      expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
+      // TODO: Test other factories
     });
   });
 });
