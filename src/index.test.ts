@@ -1,4 +1,4 @@
-import { expect, it, describe, assertType } from 'vitest';
+import { expect, it, describe, assertType, expectTypeOf } from 'vitest';
 import { oneOf } from './test/util.js';
 import { defineBookFactory, type Book, resetAllSequence } from './index.js';
 
@@ -34,6 +34,7 @@ describe('defineTypeFactory', () => {
         books: Book[];
       };
     }>(book);
+    expectTypeOf(book).not.toBeNever();
   });
   it('accepts undefined fields', async () => {
     const BookFactory = defineBookFactory({
@@ -66,6 +67,7 @@ describe('defineTypeFactory', () => {
         books: undefined;
       };
     }>(book);
+    expectTypeOf(book).not.toBeNever();
   });
   it('accepts functional field resolvers', async () => {
     const BookFactory = defineBookFactory({
@@ -86,6 +88,7 @@ describe('defineTypeFactory', () => {
       title: string;
       author: undefined;
     }>(book);
+    expectTypeOf(book).not.toBeNever();
   });
   it('creates fields with sequential id', async () => {
     const BookFactory = defineBookFactory({
@@ -106,6 +109,7 @@ describe('defineTypeFactory', () => {
       title: string;
       author: undefined;
     }>(book);
+    expectTypeOf(book).not.toBeNever();
   });
   describe('resetAllSequence', () => {
     it('resets all sequence', async () => {
@@ -159,12 +163,13 @@ describe('TypeFactoryInterface', () => {
           books: Book[];
         };
       }>(book1);
+      expectTypeOf(book1).not.toBeNever();
 
       // Passing input fields allows overriding the default field.
-      const boo2 = await BookFactory.build({
+      const book2 = await BookFactory.build({
         title: 'ゆゆ式 100巻',
       });
-      expect(boo2).toStrictEqual({
+      expect(book2).toStrictEqual({
         id: 'Book-0',
         title: 'ゆゆ式 100巻',
         author: {
@@ -181,7 +186,8 @@ describe('TypeFactoryInterface', () => {
           name: string;
           books: Book[];
         };
-      }>(boo2);
+      }>(book2);
+      expectTypeOf(book2).not.toBeNever();
     });
     it('accepts undefined fields', async () => {
       const book = await BookFactory.build({
@@ -210,6 +216,7 @@ describe('TypeFactoryInterface', () => {
           books: undefined;
         };
       }>(book);
+      expectTypeOf(book).not.toBeNever();
     });
     it('accepts functional field resolvers', async () => {
       const BookFactory = defineBookFactory({
@@ -234,6 +241,7 @@ describe('TypeFactoryInterface', () => {
         title: string;
         author: undefined;
       }>(book);
+      expectTypeOf(book).not.toBeNever();
     });
     it('creates fields with sequential id', async () => {
       const BookFactory = defineBookFactory({
@@ -257,6 +265,7 @@ describe('TypeFactoryInterface', () => {
         title: string;
         author: undefined;
       }>(book);
+      expectTypeOf(book).not.toBeNever();
     });
   });
   describe('resetSequence', () => {
