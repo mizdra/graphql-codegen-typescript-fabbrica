@@ -16,7 +16,7 @@ describe('defineTypeFactory', () => {
         },
       },
     });
-    const book = await BookFactory.build();
+    const book = await BookFactory.build({});
     expect(book).toStrictEqual({
       id: 'Book-0',
       title: 'ゆゆ式',
@@ -48,7 +48,7 @@ describe('defineTypeFactory', () => {
         },
       },
     });
-    const book = await BookFactory.build();
+    const book = await BookFactory.build({});
     expect(book).toStrictEqual({
       id: 'Book-0',
       title: undefined,
@@ -76,7 +76,7 @@ describe('defineTypeFactory', () => {
         author: undefined,
       },
     });
-    const book = await BookFactory.build();
+    const book = await BookFactory.build({});
     expect(book).toStrictEqual({
       id: 'Book-0',
       title: 'ゆゆ式',
@@ -96,12 +96,17 @@ describe('defineTypeFactory', () => {
         author: undefined,
       },
     });
-    const book = await BookFactory.build();
+    const book = await BookFactory.build({});
     expect(book).toStrictEqual({
       id: 'Book-0',
       title: 'ゆゆ式 0巻',
       author: undefined,
     });
+    expectType<{
+      id: string;
+      title: string;
+      author: undefined;
+    }>(book);
   });
   describe('resetAllSequence', () => {
     it('resets all sequence', async () => {
@@ -112,10 +117,10 @@ describe('defineTypeFactory', () => {
           author: undefined,
         },
       });
-      expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
-      expect(await BookFactory.build()).toMatchObject({ id: 'Book-1' });
+      expect(await BookFactory.build({})).toMatchObject({ id: 'Book-0' });
+      expect(await BookFactory.build({})).toMatchObject({ id: 'Book-1' });
       resetAllSequence();
-      expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
+      expect(await BookFactory.build({})).toMatchObject({ id: 'Book-0' });
       // TODO: Test other factories
     });
   });
@@ -136,7 +141,7 @@ describe('TypeFactoryInterface', () => {
   describe('build', () => {
     it('overrides defaultFields', async () => {
       // input field is optional
-      const book1 = await oneOf(BookFactory.build(), BookFactory.build({}));
+      const book1 = await oneOf(BookFactory.build({}), BookFactory.build({}));
       expect(book1).toStrictEqual({
         id: 'Book-0',
         title: 'ゆゆ式',
@@ -207,7 +212,53 @@ describe('TypeFactoryInterface', () => {
         };
       }>(book);
     });
-    it.todo('creates fields with sequential id');
+    it('accepts functional field resolvers', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: 'Book-0',
+          title: 'ゆゆ式',
+          author: undefined,
+        },
+      });
+      const book = await BookFactory.build({
+        id: () => 'Book-0',
+        title: async () => Promise.resolve('ゆゆ式'),
+        author: undefined,
+      });
+      expect(book).toStrictEqual({
+        id: 'Book-0',
+        title: 'ゆゆ式',
+        author: undefined,
+      });
+      expectType<{
+        id: string;
+        title: string;
+        author: undefined;
+      }>(book);
+    });
+    it('creates fields with sequential id', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: 'Book-0',
+          title: 'ゆゆ式',
+          author: undefined,
+        },
+      });
+      const book = await BookFactory.build({
+        id: ({ seq }) => `Book-${seq}`,
+        title: async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`),
+      });
+      expect(book).toStrictEqual({
+        id: 'Book-0',
+        title: 'ゆゆ式 0巻',
+        author: undefined,
+      });
+      expectType<{
+        id: string;
+        title: string;
+        author: undefined;
+      }>(book);
+    });
   });
   describe('resetSequence', () => {
     it('resets sequence', async () => {
@@ -218,10 +269,10 @@ describe('TypeFactoryInterface', () => {
           author: undefined,
         },
       });
-      expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
-      expect(await BookFactory.build()).toMatchObject({ id: 'Book-1' });
+      expect(await BookFactory.build({})).toMatchObject({ id: 'Book-0' });
+      expect(await BookFactory.build({})).toMatchObject({ id: 'Book-1' });
       BookFactory.resetSequence();
-      expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
+      expect(await BookFactory.build({})).toMatchObject({ id: 'Book-0' });
       // TODO: Test other factories
     });
   });
