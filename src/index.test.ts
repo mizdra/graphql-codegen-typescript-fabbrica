@@ -108,7 +108,7 @@ describe('defineTypeFactory', () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
           id: ({ seq }) => `Book-${seq}`,
-          title: ({ seq }) => `ゆゆ式 ${seq}巻`,
+          title: 'ゆゆ式',
           author: undefined,
         },
       });
@@ -156,15 +156,13 @@ describe('TypeFactoryInterface', () => {
         };
       }>(book1);
 
-      // partial input field
+      // Passing input fields allows overriding the default field.
       const boo2 = await BookFactory.build({
-        // id: ...,
-        // author: ...,
-        title: 'ゆゆ式 1巻', // non-undefined field
+        title: 'ゆゆ式 100巻',
       });
       expect(boo2).toStrictEqual({
         id: 'Book-0',
-        title: 'ゆゆ式 1巻',
+        title: 'ゆゆ式 100巻',
         author: {
           id: 'Author-0',
           name: '三上小又',
@@ -216,7 +214,7 @@ describe('TypeFactoryInterface', () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
           id: ({ seq }) => `Book-${seq}`,
-          title: ({ seq }) => `ゆゆ式 ${seq}巻`,
+          title: 'ゆゆ式',
           author: undefined,
         },
       });
@@ -224,7 +222,7 @@ describe('TypeFactoryInterface', () => {
       expect(await BookFactory.build()).toMatchObject({ id: 'Book-1' });
       BookFactory.resetSequence();
       expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
+      // TODO: Test other factories
     });
-    it.todo('does not affect other factories');
   });
 });
