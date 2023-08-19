@@ -14,6 +14,10 @@ export type Author = {
   books: Book[];
 };
 
+type InputFieldsResolver<Type> = {
+  [Key in keyof Type]?: FieldResolver<DeepOptional<Type>[Key]>;
+};
+
 interface BookFactoryDefineOptions {
   defaultFields: {
     [Key in keyof Book]: FieldResolver<DeepOptional<Book>[Key]>;
@@ -21,9 +25,9 @@ interface BookFactoryDefineOptions {
 }
 interface BookFactoryInterface<TOptions extends BookFactoryDefineOptions> {
   // eslint-disable-next-line @typescript-eslint/ban-types
-  build<const T extends Partial<DeepOptional<Book>> = {}>(
-    inputFields?: T,
-  ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, T>>;
+  build<const T extends InputFieldsResolver<Book> = {}>(
+    inputFieldResolvers?: T,
+  ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>>;
   resetSequence(): void;
 }
 
@@ -42,17 +46,18 @@ async function resolveField<T extends FieldResolver<unknown>>(
 
 async function resolveFields<
   TOptions extends BookFactoryDefineOptions,
-  InputFields extends Partial<DeepOptional<Book>>,
+  InputFieldResolvers extends Partial<FieldResolver<DeepOptional<Book>>>,
 >(
   seq: number,
   defaultFieldResolvers: TOptions['defaultFields'],
-  inputFields: InputFields,
-): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, InputFields>> {
+  inputFieldResolvers: InputFieldResolvers,
+): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<InputFieldResolvers>>> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fields: any = {};
   for (const [key, defaultFieldResolver] of Object.entries(defaultFieldResolvers)) {
-    if (key in inputFields) {
-      fields[key] = inputFields[key as keyof InputFields];
+    if (key in inputFieldResolvers) {
+      // eslint-disable-next-line no-await-in-loop
+      fields[key] = await resolveField(seq, inputFieldResolvers[key as keyof InputFieldResolvers]);
     } else {
       // eslint-disable-next-line no-await-in-loop
       fields[key] = await resolveField(seq, defaultFieldResolver);
@@ -67,12 +72,12 @@ function defineBookFactoryInternal<const TOptions extends BookFactoryDefineOptio
   const seqKey = {};
   const getSeq = () => getSequenceCounter(seqKey);
   return {
-    async build(inputFields) {
+    async build(inputFieldResolvers) {
       const seq = getSeq();
       const fields = await resolveFields(
         seq,
         defaultFieldResolvers,
-        inputFields ?? ({} as Exclude<typeof inputFields, undefined>),
+        inputFieldResolvers ?? ({} as Exclude<typeof inputFieldResolvers, undefined>),
       );
       return fields;
     },
