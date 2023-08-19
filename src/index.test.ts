@@ -1,6 +1,6 @@
-import { expect, it, describe, assertType, expectTypeOf } from 'vitest';
+import { expect, it, describe, assertType, expectTypeOf, vi } from 'vitest';
 import { oneOf } from './test/util.js';
-import { defineBookFactory, type Book, resetAllSequence, lazy } from './index.js';
+import { defineBookFactory, type Book, resetAllSequence, lazy, defineUserFactory } from './index.js';
 
 describe('defineTypeFactory', () => {
   describe('defaultFields', () => {
@@ -111,6 +111,36 @@ describe('defineTypeFactory', () => {
         author: undefined;
       }>(book);
       expectTypeOf(book).not.toBeNever();
+    });
+    it('creates fields based on the values of other fields', async () => {
+      const firstNameResolver = vi.fn(() => 'Komata');
+      const lastNameResolver = vi.fn(() => 'Mikami');
+      const UserFactory = defineUserFactory({
+        defaultFields: {
+          id: lazy(({ seq }) => `User-${seq}`),
+          firstName: lazy(firstNameResolver),
+          lastName: lazy(lastNameResolver),
+          fullName: lazy(async ({ get }) => `${await get('firstName')} ${await get('lastName')}`),
+        },
+      });
+      const User = await UserFactory.build();
+      expect(User).toStrictEqual({
+        id: 'User-0',
+        firstName: 'Komata',
+        lastName: 'Mikami',
+        fullName: 'Komata Mikami',
+      });
+      assertType<{
+        id: string;
+        firstName: string;
+        lastName: string;
+        fullName: string;
+      }>(User);
+      expectTypeOf(User).not.toBeNever();
+
+      // The result of the field resolver is cached, so the resolver is called only once.
+      expect(firstNameResolver).toHaveBeenCalledTimes(1);
+      expect(lastNameResolver).toHaveBeenCalledTimes(1);
     });
   });
   describe('resetAllSequence', () => {
@@ -245,6 +275,31 @@ describe('TypeFactoryInterface', () => {
       }>(book);
       expectTypeOf(book).not.toBeNever();
     });
+    it('does not call the overridden resolvers', async () => {
+      const defaultTitleResolver = vi.fn(() => 'ゆゆ式');
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: 'Book-0',
+          title: lazy(defaultTitleResolver),
+          author: undefined,
+        },
+      });
+      const book = await BookFactory.build({
+        title: 'ゆゆ式 100巻',
+      });
+      expect(book).toStrictEqual({
+        id: 'Book-0',
+        title: 'ゆゆ式 100巻',
+        author: undefined,
+      });
+      assertType<{
+        id: string;
+        title: string;
+        author: undefined;
+      }>(book);
+      expectTypeOf(book).not.toBeNever();
+      expect(defaultTitleResolver).not.toHaveBeenCalled();
+    });
     it('creates fields with sequential id', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
@@ -268,6 +323,40 @@ describe('TypeFactoryInterface', () => {
         author: undefined;
       }>(book);
       expectTypeOf(book).not.toBeNever();
+    });
+    it('creates fields based on the values of other fields', async () => {
+      const firstNameResolver = vi.fn(() => 'Komata');
+      const lastNameResolver = vi.fn(() => 'Mikami');
+      const UserFactory = defineUserFactory({
+        defaultFields: {
+          id: lazy(({ seq }) => `User-${seq}`),
+          firstName: '',
+          lastName: '',
+          fullName: '',
+        },
+      });
+      const User = await UserFactory.build({
+        firstName: lazy(firstNameResolver),
+        lastName: lazy(lastNameResolver),
+        fullName: lazy(async ({ get }) => `${await get('firstName')} ${await get('lastName')}`),
+      });
+      expect(User).toStrictEqual({
+        id: 'User-0',
+        firstName: 'Komata',
+        lastName: 'Mikami',
+        fullName: 'Komata Mikami',
+      });
+      assertType<{
+        id: string;
+        firstName: string;
+        lastName: string;
+        fullName: string;
+      }>(User);
+      expectTypeOf(User).not.toBeNever();
+
+      // The result of the field resolver is cached, so the resolver is called only once.
+      expect(firstNameResolver).toHaveBeenCalledTimes(1);
+      expect(lastNameResolver).toHaveBeenCalledTimes(1);
     });
   });
   describe('resetSequence', () => {
