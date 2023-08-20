@@ -63,14 +63,14 @@ export async function resolveFields<
   async function resolveFieldAndUpdateCache<FieldName extends keyof Type>(
     fieldName: FieldName,
   ): Promise<Type[FieldName]> {
-    if (!(fieldName in fields)) {
-      if (fieldName in inputFieldsResolver) {
-        // eslint-disable-next-line require-atomic-updates, no-await-in-loop -- The fields are resolved sequentially, so there is no possibility of a race condition.
-        fields[fieldName] = await resolveField(options, inputFieldsResolver[fieldName]);
-      } else {
-        // eslint-disable-next-line require-atomic-updates, no-await-in-loop -- The fields are resolved sequentially, so there is no possibility of a race condition.
-        fields[fieldName] = await resolveField(options, defaultFieldsResolver[fieldName]);
-      }
+    if (fieldName in fields) return fields[fieldName];
+
+    if (fieldName in inputFieldsResolver) {
+      // eslint-disable-next-line require-atomic-updates, no-await-in-loop -- The fields are resolved sequentially, so there is no possibility of a race condition.
+      fields[fieldName] = await resolveField(options, inputFieldsResolver[fieldName]);
+    } else {
+      // eslint-disable-next-line require-atomic-updates, no-await-in-loop -- The fields are resolved sequentially, so there is no possibility of a race condition.
+      fields[fieldName] = await resolveField(options, defaultFieldsResolver[fieldName]);
     }
     return fields[fieldName];
   }
