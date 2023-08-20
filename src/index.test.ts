@@ -3,9 +3,21 @@ import { oneOf } from './test/util.js';
 import { defineBookFactory, type Book, resetAllSequence, lazy } from './index.js';
 
 describe('defineTypeFactory', () => {
-  it('basic', async () => {
-    const BookFactory = defineBookFactory({
-      defaultFields: {
+  describe('defaultFields', () => {
+    it('basic', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: 'Book-0',
+          title: 'ゆゆ式',
+          author: {
+            id: 'Author-0',
+            name: '三上小又',
+            books: [],
+          },
+        },
+      });
+      const book = await BookFactory.build();
+      expect(book).toStrictEqual({
         id: 'Book-0',
         title: 'ゆゆ式',
         author: {
@@ -13,103 +25,93 @@ describe('defineTypeFactory', () => {
           name: '三上小又',
           books: [],
         },
-      },
-    });
-    const book = await BookFactory.build();
-    expect(book).toStrictEqual({
-      id: 'Book-0',
-      title: 'ゆゆ式',
-      author: {
-        id: 'Author-0',
-        name: '三上小又',
-        books: [],
-      },
-    });
-    assertType<{
-      id: string;
-      title: string;
-      author: {
+      });
+      assertType<{
         id: string;
-        name: string;
-        books: Book[];
-      };
-    }>(book);
-    expectTypeOf(book).not.toBeNever();
-  });
-  it('accepts undefined fields', async () => {
-    const BookFactory = defineBookFactory({
-      defaultFields: {
+        title: string;
+        author: {
+          id: string;
+          name: string;
+          books: Book[];
+        };
+      }>(book);
+      expectTypeOf(book).not.toBeNever();
+    });
+    it('accepts undefined fields', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: 'Book-0',
+          title: undefined, // shallow field
+          author: {
+            id: 'Author-0',
+            name: '三上小又',
+            books: undefined, // deep field
+          },
+        },
+      });
+      const book = await BookFactory.build();
+      expect(book).toStrictEqual({
         id: 'Book-0',
-        title: undefined, // shallow field
+        title: undefined,
         author: {
           id: 'Author-0',
           name: '三上小又',
-          books: undefined, // deep field
+          books: undefined,
         },
-      },
-    });
-    const book = await BookFactory.build();
-    expect(book).toStrictEqual({
-      id: 'Book-0',
-      title: undefined,
-      author: {
-        id: 'Author-0',
-        name: '三上小又',
-        books: undefined,
-      },
-    });
-    assertType<{
-      id: string;
-      title: undefined;
-      author: {
+      });
+      assertType<{
         id: string;
-        name: string;
-        books: undefined;
-      };
-    }>(book);
-    expectTypeOf(book).not.toBeNever();
-  });
-  it('accepts functional field resolvers', async () => {
-    const BookFactory = defineBookFactory({
-      defaultFields: {
-        id: lazy(() => 'Book-0'),
-        title: lazy(async () => Promise.resolve('ゆゆ式')),
+        title: undefined;
+        author: {
+          id: string;
+          name: string;
+          books: undefined;
+        };
+      }>(book);
+      expectTypeOf(book).not.toBeNever();
+    });
+    it('accepts functional field resolvers', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: lazy(() => 'Book-0'),
+          title: lazy(async () => Promise.resolve('ゆゆ式')),
+          author: undefined,
+        },
+      });
+      const book = await BookFactory.build();
+      expect(book).toStrictEqual({
+        id: 'Book-0',
+        title: 'ゆゆ式',
         author: undefined,
-      },
+      });
+      assertType<{
+        id: string;
+        title: string;
+        author: undefined;
+      }>(book);
+      expectTypeOf(book).not.toBeNever();
     });
-    const book = await BookFactory.build();
-    expect(book).toStrictEqual({
-      id: 'Book-0',
-      title: 'ゆゆ式',
-      author: undefined,
-    });
-    assertType<{
-      id: string;
-      title: string;
-      author: undefined;
-    }>(book);
-    expectTypeOf(book).not.toBeNever();
-  });
-  it('creates fields with sequential id', async () => {
-    const BookFactory = defineBookFactory({
-      defaultFields: {
-        id: lazy(({ seq }) => `Book-${seq}`),
-        title: lazy(async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`)),
+    it('creates fields with sequential id', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: lazy(({ seq }) => `Book-${seq}`),
+          title: lazy(async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`)),
+          author: undefined,
+        },
+      });
+      const book = await BookFactory.build();
+      expect(book).toStrictEqual({
+        id: 'Book-0',
+        title: 'ゆゆ式 0巻',
         author: undefined,
-      },
+      });
+      assertType<{
+        id: string;
+        title: string;
+        author: undefined;
+      }>(book);
+      expectTypeOf(book).not.toBeNever();
     });
-    const book = await BookFactory.build();
-    expect(book).toStrictEqual({
-      id: 'Book-0',
-      title: 'ゆゆ式 0巻',
-      author: undefined,
-    });
-    assertType<{
-      id: string;
-      title: string;
-      author: undefined;
-    }>(book);
-    expectTypeOf(book).not.toBeNever();
   });
   describe('resetAllSequence', () => {
     it('resets all sequence', async () => {
