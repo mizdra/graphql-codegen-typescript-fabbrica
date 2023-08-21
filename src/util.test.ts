@@ -7,6 +7,7 @@ it('DeepOptional', () => {
     b: { c: number };
     d: undefined;
     e: { f: number }[];
+    g: ({ h: number } | undefined)[];
   };
   type Actual = DeepOptional<Input>;
   type Expected = {
@@ -14,6 +15,7 @@ it('DeepOptional', () => {
     b: { c: number | undefined } | undefined;
     d: undefined;
     e: { f: number | undefined }[] | undefined;
+    g: ({ h: number | undefined } | undefined)[] | undefined;
   };
   expectTypeOf<Actual>().toEqualTypeOf<Expected>();
 });
