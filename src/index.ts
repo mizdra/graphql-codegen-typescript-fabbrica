@@ -72,6 +72,50 @@ export function defineBookFactory<TOptions extends BookFactoryDefineOptions>(
   return defineBookFactoryInternal(options);
 }
 
+// ---------- Author ----------
+
+interface AuthorFactoryDefineOptions {
+  defaultFields: DefaultFieldsResolver<Author>;
+}
+interface AuthorFactoryInterface<TOptions extends AuthorFactoryDefineOptions> {
+  build(): Promise<ResolvedFields<TOptions['defaultFields']>>;
+  build<const T extends InputFieldsResolver<Author>>(
+    inputFieldResolvers: T,
+    // eslint-disable-next-line @typescript-eslint/ban-types
+  ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>>;
+  resetSequence(): void;
+}
+
+function defineAuthorFactoryInternal<const TOptions extends AuthorFactoryDefineOptions>({
+  defaultFields: defaultFieldResolvers,
+}: TOptions): AuthorFactoryInterface<TOptions> {
+  const seqKey = {};
+  const getSeq = () => getSequenceCounter(seqKey);
+  return {
+    async build<const T extends InputFieldsResolver<Author>>(
+      inputFieldResolvers?: T,
+    ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>> {
+      const seq = getSeq();
+      return resolveFields(seq, defaultFieldResolvers, inputFieldResolvers ?? ({} as T));
+    },
+    resetSequence() {
+      resetSequence(seqKey);
+    },
+  };
+}
+
+/**
+ * Define factory for {@link Author} model.
+ *
+ * @param options
+ * @returns factory {@link AuthorFactoryInterface}
+ */
+export function defineAuthorFactory<TOptions extends AuthorFactoryDefineOptions>(
+  options: TOptions,
+): AuthorFactoryInterface<TOptions> {
+  return defineAuthorFactoryInternal(options);
+}
+
 // ---------- User ----------
 
 interface UserFactoryDefineOptions {

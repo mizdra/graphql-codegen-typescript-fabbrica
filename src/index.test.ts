@@ -1,6 +1,32 @@
 import { expect, it, describe, assertType, expectTypeOf, vi } from 'vitest';
 import { oneOf } from './test/util.js';
-import { defineBookFactory, type Book, resetAllSequence, lazy, defineUserFactory } from './index.js';
+import {
+  defineBookFactory,
+  type Book,
+  resetAllSequence,
+  lazy,
+  defineUserFactory,
+  defineAuthorFactory,
+} from './index.js';
+
+describe('integration test', () => {
+  it('circular referencing type', () => {
+    const BookFactory = defineBookFactory({
+      defaultFields: {
+        id: lazy(({ seq }) => `Book-${seq}`),
+        title: lazy(({ seq }) => `ゆゆ式 ${seq}巻`),
+        author: lazy(async () => await AuthorFactory.build()),
+      },
+    });
+    const AuthorFactory = defineAuthorFactory({
+      defaultFields: {
+        id: lazy(({ seq }) => `Author-${seq}`),
+        name: lazy(({ seq }) => `${seq}上小又`),
+        books: lazy(async () => [await BookFactory.build()]),
+      },
+    });
+  });
+});
 
 describe('defineTypeFactory', () => {
   describe('defaultFields', () => {
