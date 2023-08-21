@@ -1,6 +1,58 @@
 import { expect, it, describe, assertType, expectTypeOf, vi } from 'vitest';
 import { oneOf } from './test/util.js';
-import { defineBookFactory, type Book, resetAllSequence, lazy, defineUserFactory } from './index.js';
+import {
+  defineBookFactory,
+  type Book,
+  resetAllSequence,
+  lazy,
+  defineUserFactory,
+  defineAuthorFactory,
+} from './index.js';
+
+describe('integration test', () => {
+  it('circular dependent type', async () => {
+    const BookFactory = defineBookFactory({
+      defaultFields: {
+        id: lazy(({ seq }) => `Book-${seq}`),
+        title: lazy(({ seq }) => `ゆゆ式 ${seq}巻`),
+        // NOTE: `lazy(({ seq }) => AuthorFactory.build())` causes a circular dependency between `BookFactory` and `AuthorFactory`.
+        // As a result, the types of each other become undecidable and a compile error occurs.
+        // So that the type is not undecidable, pass `undefined`.
+        author: undefined,
+      },
+    });
+
+    const AuthorFactory = defineAuthorFactory({
+      defaultFields: {
+        id: lazy(({ seq }) => `Author-${seq}`),
+        name: lazy(({ seq }) => `${seq}上小又`),
+        // NOTE: The type is not undecidable, pass `undefined`.
+        books: undefined,
+      },
+    });
+    const book = await BookFactory.build({
+      author: await AuthorFactory.build(),
+    });
+    expect(book).toStrictEqual({
+      id: 'Book-0',
+      title: 'ゆゆ式 0巻',
+      author: {
+        id: 'Author-0',
+        name: '0上小又',
+        books: undefined,
+      },
+    });
+    assertType<{
+      id: string;
+      title: string;
+      author: {
+        id: string;
+        name: string;
+        books: undefined;
+      };
+    }>(book);
+  });
+});
 
 describe('defineTypeFactory', () => {
   describe('defaultFields', () => {
