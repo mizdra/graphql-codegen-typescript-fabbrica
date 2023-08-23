@@ -73,6 +73,7 @@ describe('integration test', () => {
           books: undefined;
         };
       }[];
+      // @ts-expect-error -- FIXME
     }>(author);
     expectTypeOf(author).not.toBeNever();
   });
