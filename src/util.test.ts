@@ -1,5 +1,5 @@
 import { expectTypeOf, it } from 'vitest';
-import { type DeepOptional, type Merge } from './util.js';
+import { DeepReadonly, type DeepOptional, type Merge } from './util.js';
 
 it('DeepOptional', () => {
   type Input = {
@@ -16,6 +16,23 @@ it('DeepOptional', () => {
     d: undefined;
     e: { f: number | undefined }[] | undefined;
     g: ({ h: number | undefined } | undefined)[] | undefined;
+  };
+  expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+});
+
+it('DeepReadonly', () => {
+  type Input = {
+    a: number;
+    b: { a: number };
+    c: number[];
+    d: { a: number }[];
+  };
+  type Actual = DeepReadonly<Input>;
+  type Expected = {
+    readonly a: number;
+    readonly b: { readonly a: number };
+    readonly c: readonly number[];
+    readonly d: readonly { readonly a: number }[];
   };
   expectTypeOf<Actual>().toEqualTypeOf<Expected>();
 });
