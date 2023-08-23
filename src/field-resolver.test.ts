@@ -1,5 +1,12 @@
 import { expect, expectTypeOf, it } from 'vitest';
-import { type FieldResolver, type ResolvedFields, type ResolvedField, Lazy, lazy } from './field-resolver.js';
+import {
+  type FieldResolver,
+  type ResolvedFields,
+  type ResolvedField,
+  Lazy,
+  lazy,
+  InputFieldsResolver,
+} from './field-resolver.js';
 
 it('Lazy', async () => {
   const lazy1 = new Lazy(({ seq }) => `Book-${seq}`);
@@ -22,6 +29,18 @@ it('lazy', async () => {
 it('FieldResolver', () => {
   type Type = { a: number };
   expectTypeOf<FieldResolver<Type, Type['a']>>().toEqualTypeOf<number | Lazy<{ a: number }, number>>();
+});
+
+it('InputFieldsResolver', () => {
+  type Type1 = { a: number; b: Type2[] };
+  type Type2 = { c: number };
+  expectTypeOf<InputFieldsResolver<Type1>>().toEqualTypeOf<{
+    a?: number | undefined | Lazy<Type1, number | undefined>;
+    b?: { c: number | undefined }[] | undefined | Lazy<Type1, { c: number | undefined }[] | undefined>;
+  }>();
+  expectTypeOf<InputFieldsResolver<Type2>>().toEqualTypeOf<{
+    c?: number | undefined | Lazy<Type2, number | undefined>;
+  }>();
 });
 
 it('ResolvedField', () => {

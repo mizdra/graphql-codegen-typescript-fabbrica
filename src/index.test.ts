@@ -21,7 +21,6 @@ describe('integration test', () => {
         author: undefined,
       },
     });
-
     const AuthorFactory = defineAuthorFactory({
       defaultFields: {
         id: lazy(({ seq }) => `Author-${seq}`),
@@ -33,6 +32,7 @@ describe('integration test', () => {
     const book = await BookFactory.build({
       author: await AuthorFactory.build(),
     });
+
     expect(book).toStrictEqual({
       id: 'Book-0',
       title: 'ゆゆ式 0巻',
@@ -51,6 +51,31 @@ describe('integration test', () => {
         books: undefined;
       };
     }>(book);
+    expectTypeOf(book).not.toBeNever();
+
+    const author = await AuthorFactory.build({
+      books: [book],
+    });
+    expect(author).toStrictEqual({
+      id: 'Author-1',
+      name: '1上小又',
+      books: [book],
+    });
+    assertType<{
+      id: string;
+      name: string;
+      books: {
+        id: string;
+        title: string;
+        author: {
+          id: string;
+          name: string;
+          books: undefined;
+        };
+      }[];
+      // @ts-expect-error -- FIXME
+    }>(author);
+    expectTypeOf(author).not.toBeNever();
   });
 });
 
