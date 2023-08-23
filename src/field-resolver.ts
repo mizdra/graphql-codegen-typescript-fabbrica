@@ -19,13 +19,13 @@ export function lazy<Type, Field>(
 }
 
 export type FieldResolver<Type, Field> = Field | Lazy<Type, Field>;
-/** The type of `inputFields` option of `build` method. */
-export type InputFieldsResolver<Type> = {
-  [FieldName in keyof Type]?: FieldResolver<Type, DeepReadonly<DeepOptional<Type>[FieldName]>>;
-};
 /** The type of `defaultFields` option of `defineFactory` function. */
 export type DefaultFieldsResolver<Type> = {
   [FieldName in keyof Type]: FieldResolver<Type, DeepReadonly<DeepOptional<Type>[FieldName]>>;
+};
+/** The type of `inputFields` option of `build` method. */
+export type InputFieldsResolver<Type> = {
+  [FieldName in keyof Type]?: FieldResolver<Type, DeepReadonly<DeepOptional<Type>[FieldName]>>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

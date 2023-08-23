@@ -32,24 +32,24 @@ it('FieldResolver', () => {
   expectTypeOf<FieldResolver<Type, Type['a']>>().toEqualTypeOf<number | Lazy<{ a: number }, number>>();
 });
 
-it('InputFieldsResolver', () => {
-  type Type1 = { a: number; b: Type2[] };
-  type Type2 = { c: number };
-  expectTypeOf<InputFieldsResolver<Type1>>().toEqualTypeOf<{
-    a?: number | undefined | Lazy<Type1, number | undefined>;
-    b?:
-      | readonly { readonly c: number | undefined }[]
-      | undefined
-      | Lazy<Type1, readonly { readonly c: number | undefined }[] | undefined>;
-  }>();
-});
-
 it('DefaultFieldsResolver', () => {
   type Type1 = { a: number; b: Type2[] };
   type Type2 = { c: number };
   expectTypeOf<DefaultFieldsResolver<Type1>>().toEqualTypeOf<{
     a: number | undefined | Lazy<Type1, number | undefined>;
     b:
+      | readonly { readonly c: number | undefined }[]
+      | undefined
+      | Lazy<Type1, readonly { readonly c: number | undefined }[] | undefined>;
+  }>();
+});
+
+it('InputFieldsResolver', () => {
+  type Type1 = { a: number; b: Type2[] };
+  type Type2 = { c: number };
+  expectTypeOf<InputFieldsResolver<Type1>>().toEqualTypeOf<{
+    a?: number | undefined | Lazy<Type1, number | undefined>;
+    b?:
       | readonly { readonly c: number | undefined }[]
       | undefined
       | Lazy<Type1, readonly { readonly c: number | undefined }[] | undefined>;
