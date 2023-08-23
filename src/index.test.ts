@@ -378,6 +378,41 @@ describe('TypeFactoryInterface', () => {
       }>(author);
       expectTypeOf(author).not.toBeNever();
     });
+    it('returns the object with mutable fields', async () => {
+      const AuthorFactory = defineAuthorFactory({
+        defaultFields: {
+          id: 'Author-0',
+          name: '0上小又',
+          books: [{ id: 'Book-0', title: 'ゆゆ式 0巻', author: undefined }],
+        },
+      });
+
+      // field is mutable
+      const author1 = await AuthorFactory.build();
+      author1.id = 'Author-1';
+      author1.name = '1上小又';
+      author1.books = [{ id: 'Book-1', title: 'ゆゆ式 1巻', author: undefined }];
+      assertType<{
+        id: string;
+        name: string;
+        books: { id: string; title: string; author: undefined }[];
+      }>(author1);
+      expectTypeOf(author1).not.toBeNever();
+
+      // The readonly modifier of the input value is kept.
+      const books = [{ id: 'Book-1', title: 'ゆゆ式 1巻', author: undefined }] as const;
+      const author2 = await AuthorFactory.build({ books });
+      author2.id = 'Author-1';
+      author2.name = '1上小又';
+      // @ts-expect-error -- ignore readonly error
+      author2.books = [{ id: 'Book-2', title: 'ゆゆ式 2巻', author: undefined }];
+      assertType<{
+        id: string;
+        name: string;
+        books: readonly [{ id: 'Book-1'; title: 'ゆゆ式 1巻'; author: undefined }];
+      }>(author2);
+      expectTypeOf(author2).not.toBeNever();
+    });
     it('does not call the overridden resolvers', async () => {
       const defaultTitleResolver = vi.fn(() => 'ゆゆ式');
       const BookFactory = defineBookFactory({
