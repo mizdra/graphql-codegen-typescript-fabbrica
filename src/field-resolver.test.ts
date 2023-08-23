@@ -6,6 +6,7 @@ import {
   Lazy,
   lazy,
   InputFieldsResolver,
+  DefaultFieldsResolver,
 } from './field-resolver.js';
 
 it('Lazy', async () => {
@@ -36,10 +37,22 @@ it('InputFieldsResolver', () => {
   type Type2 = { c: number };
   expectTypeOf<InputFieldsResolver<Type1>>().toEqualTypeOf<{
     a?: number | undefined | Lazy<Type1, number | undefined>;
-    b?: { c: number | undefined }[] | undefined | Lazy<Type1, { c: number | undefined }[] | undefined>;
+    b?:
+      | readonly { readonly c: number | undefined }[]
+      | undefined
+      | Lazy<Type1, readonly { readonly c: number | undefined }[] | undefined>;
   }>();
-  expectTypeOf<InputFieldsResolver<Type2>>().toEqualTypeOf<{
-    c?: number | undefined | Lazy<Type2, number | undefined>;
+});
+
+it('DefaultFieldsResolver', () => {
+  type Type1 = { a: number; b: Type2[] };
+  type Type2 = { c: number };
+  expectTypeOf<DefaultFieldsResolver<Type1>>().toEqualTypeOf<{
+    a: number | undefined | Lazy<Type1, number | undefined>;
+    b:
+      | readonly { readonly c: number | undefined }[]
+      | undefined
+      | Lazy<Type1, readonly { readonly c: number | undefined }[] | undefined>;
   }>();
 });
 
