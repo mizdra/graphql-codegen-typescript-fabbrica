@@ -42,7 +42,7 @@ interface BookFactoryInterface<TOptions extends BookFactoryDefineOptions> {
   resetSequence(): void;
 }
 
-function defineBookFactoryInternal<const TOptions extends BookFactoryDefineOptions>({
+function defineBookFactoryInternal<TOptions extends BookFactoryDefineOptions>({
   defaultFields: defaultFieldResolvers,
 }: TOptions): BookFactoryInterface<TOptions> {
   const seqKey = {};
@@ -86,7 +86,7 @@ interface AuthorFactoryInterface<TOptions extends AuthorFactoryDefineOptions> {
   resetSequence(): void;
 }
 
-function defineAuthorFactoryInternal<const TOptions extends AuthorFactoryDefineOptions>({
+function defineAuthorFactoryInternal<TOptions extends AuthorFactoryDefineOptions>({
   defaultFields: defaultFieldResolvers,
 }: TOptions): AuthorFactoryInterface<TOptions> {
   const seqKey = {};
@@ -130,7 +130,7 @@ interface UserFactoryInterface<TOptions extends UserFactoryDefineOptions> {
   resetSequence(): void;
 }
 
-function defineUserFactoryInternal<const TOptions extends UserFactoryDefineOptions>({
+function defineUserFactoryInternal<TOptions extends UserFactoryDefineOptions>({
   defaultFields: defaultFieldResolvers,
 }: TOptions): UserFactoryInterface<TOptions> {
   const seqKey = {};
