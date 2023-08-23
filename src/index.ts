@@ -36,23 +36,23 @@ interface BookFactoryDefineOptions {
 interface BookFactoryInterface<TOptions extends BookFactoryDefineOptions> {
   build(): Promise<ResolvedFields<TOptions['defaultFields']>>;
   build<const T extends InputFieldsResolver<Book>>(
-    inputFieldResolvers: T,
+    inputFieldsResolver: T,
     // eslint-disable-next-line @typescript-eslint/ban-types
   ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>>;
   resetSequence(): void;
 }
 
 function defineBookFactoryInternal<TOptions extends BookFactoryDefineOptions>({
-  defaultFields: defaultFieldResolvers,
+  defaultFields: defaultFieldsResolver,
 }: TOptions): BookFactoryInterface<TOptions> {
   const seqKey = {};
   const getSeq = () => getSequenceCounter(seqKey);
   return {
     async build<const T extends InputFieldsResolver<Book>>(
-      inputFieldResolvers?: T,
+      inputFieldsResolver?: T,
     ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>> {
       const seq = getSeq();
-      return resolveFields(seq, defaultFieldResolvers, inputFieldResolvers ?? ({} as T));
+      return resolveFields(seq, defaultFieldsResolver, inputFieldsResolver ?? ({} as T));
     },
     resetSequence() {
       resetSequence(seqKey);
@@ -80,23 +80,23 @@ interface AuthorFactoryDefineOptions {
 interface AuthorFactoryInterface<TOptions extends AuthorFactoryDefineOptions> {
   build(): Promise<ResolvedFields<TOptions['defaultFields']>>;
   build<const T extends InputFieldsResolver<Author>>(
-    inputFieldResolvers: T,
+    inputFieldsResolver: T,
     // eslint-disable-next-line @typescript-eslint/ban-types
   ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>>;
   resetSequence(): void;
 }
 
 function defineAuthorFactoryInternal<TOptions extends AuthorFactoryDefineOptions>({
-  defaultFields: defaultFieldResolvers,
+  defaultFields: defaultFieldsResolver,
 }: TOptions): AuthorFactoryInterface<TOptions> {
   const seqKey = {};
   const getSeq = () => getSequenceCounter(seqKey);
   return {
     async build<const T extends InputFieldsResolver<Author>>(
-      inputFieldResolvers?: T,
+      inputFieldsResolver?: T,
     ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>> {
       const seq = getSeq();
-      return resolveFields(seq, defaultFieldResolvers, inputFieldResolvers ?? ({} as T));
+      return resolveFields(seq, defaultFieldsResolver, inputFieldsResolver ?? ({} as T));
     },
     resetSequence() {
       resetSequence(seqKey);
@@ -124,23 +124,23 @@ interface UserFactoryDefineOptions {
 interface UserFactoryInterface<TOptions extends UserFactoryDefineOptions> {
   build(): Promise<ResolvedFields<TOptions['defaultFields']>>;
   build<const T extends InputFieldsResolver<User>>(
-    inputFieldResolvers: T,
+    inputFieldsResolver: T,
     // eslint-disable-next-line @typescript-eslint/ban-types
   ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>>;
   resetSequence(): void;
 }
 
 function defineUserFactoryInternal<TOptions extends UserFactoryDefineOptions>({
-  defaultFields: defaultFieldResolvers,
+  defaultFields: defaultFieldsResolver,
 }: TOptions): UserFactoryInterface<TOptions> {
   const seqKey = {};
   const getSeq = () => getSequenceCounter(seqKey);
   return {
     async build<const T extends InputFieldsResolver<User>>(
-      inputFieldResolvers?: T,
+      inputFieldsResolver?: T,
     ): Promise<Merge<ResolvedFields<TOptions['defaultFields']>, ResolvedFields<T>>> {
       const seq = getSeq();
-      return resolveFields(seq, defaultFieldResolvers, inputFieldResolvers ?? ({} as T));
+      return resolveFields(seq, defaultFieldsResolver, inputFieldsResolver ?? ({} as T));
     },
     resetSequence() {
       resetSequence(seqKey);
