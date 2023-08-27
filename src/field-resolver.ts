@@ -24,17 +24,17 @@ export function lazy<TypeWithTransientFields, Field>(
 
 export type FieldResolver<TypeWithTransientFields, Field> = Field | Lazy<TypeWithTransientFields, Field>;
 /** The type of `defaultFields` option of `defineFactory` function. */
-export type DefaultFieldsResolver<Type, TransientFields> = {
-  [FieldName in keyof (Type & TransientFields)]: FieldResolver<
-    Type & TransientFields,
-    DeepReadonly<DeepOptional<Type & TransientFields>[FieldName]>
+export type DefaultFieldsResolver<TypeWithTransientFields> = {
+  [FieldName in keyof TypeWithTransientFields]: FieldResolver<
+    TypeWithTransientFields,
+    DeepReadonly<DeepOptional<TypeWithTransientFields>[FieldName]>
   >;
 };
 /** The type of `inputFields` option of `build` method. */
-export type InputFieldsResolver<Type, TransientFields> = {
-  [FieldName in keyof (Type & TransientFields)]?: FieldResolver<
-    Type & TransientFields,
-    DeepReadonly<DeepOptional<Type & TransientFields>[FieldName]>
+export type InputFieldsResolver<TypeWithTransientFields> = {
+  [FieldName in keyof TypeWithTransientFields]?: FieldResolver<
+    TypeWithTransientFields,
+    DeepReadonly<DeepOptional<TypeWithTransientFields>[FieldName]>
   >;
 };
 
@@ -50,8 +50,8 @@ export type ResolvedFields<FieldsResolver extends Record<string, FieldResolver<u
 export async function resolveFields<
   Type extends Record<string, unknown>,
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<Type, TransientFields>,
-  _InputFieldsResolver extends InputFieldsResolver<Type, TransientFields>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Type & TransientFields>,
+  _InputFieldsResolver extends InputFieldsResolver<Type & TransientFields>,
 >(
   fieldNames: readonly (keyof Type)[],
   seq: number,
