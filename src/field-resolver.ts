@@ -82,22 +82,16 @@ export async function resolveFields<
   ): Promise<(Type & TransientFields)[FieldName]> {
     if (fieldName in fields) return fields[fieldName];
 
-    if (fieldName in inputFieldsResolver) {
-      // eslint-disable-next-line require-atomic-updates -- The fields are resolved sequentially, so there is no possibility of a race condition.
-      fields[fieldName] = await resolveField(options, inputFieldsResolver[fieldName as keyof _InputFieldsResolver]);
-      return fields[fieldName];
-    } else if (fieldName in transientFieldsResolver) {
-      // eslint-disable-next-line require-atomic-updates -- The fields are resolved sequentially, so there is no possibility of a race condition.
-      fields[fieldName] = await resolveField(
-        options,
-        transientFieldsResolver[fieldName as keyof _TransientFieldsResolver],
-      );
-      return fields[fieldName];
-    } else {
-      // eslint-disable-next-line require-atomic-updates -- The fields are resolved sequentially, so there is no possibility of a race condition.
-      fields[fieldName] = await resolveField(options, defaultFieldsResolver[fieldName as keyof _DefaultFieldsResolver]);
-      return fields[fieldName];
-    }
+    const fieldResolver =
+      fieldName in inputFieldsResolver
+        ? inputFieldsResolver[fieldName as keyof _InputFieldsResolver]
+        : fieldName in transientFieldsResolver
+        ? transientFieldsResolver[fieldName as keyof _TransientFieldsResolver]
+        : defaultFieldsResolver[fieldName as keyof _DefaultFieldsResolver];
+
+    // eslint-disable-next-line require-atomic-updates -- The fields are resolved sequentially, so there is no possibility of a race condition.
+    fields[fieldName] = await resolveField(options, fieldResolver);
+    return fields[fieldName];
   }
 
   const options: FieldResolverOptions<Type & TransientFields> = {
