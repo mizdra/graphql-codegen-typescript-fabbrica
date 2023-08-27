@@ -1,6 +1,13 @@
 import { expect, it, describe, assertType, expectTypeOf, vi } from 'vitest';
 import { oneOf } from './test/util.js';
-import { defineBookFactory, resetAllSequence, lazy, defineUserFactory, defineAuthorFactory } from './index.js';
+import {
+  defineBookFactory,
+  resetAllSequence,
+  lazy,
+  defineUserFactory,
+  defineAuthorFactory,
+  defineAuthorFactoryWithTransientFields,
+} from './index.js';
 
 describe('integration test', () => {
   it('circular dependent type', async () => {
@@ -209,8 +216,8 @@ describe('defineTypeFactory', () => {
           fullName: lazy(async ({ get }) => `${await get('firstName')} ${await get('lastName')}`),
         },
       });
-      const User = await UserFactory.build();
-      expect(User).toStrictEqual({
+      const user = await UserFactory.build();
+      expect(user).toStrictEqual({
         id: 'User-0',
         firstName: 'Komata',
         lastName: 'Mikami',
@@ -221,12 +228,71 @@ describe('defineTypeFactory', () => {
         firstName: string;
         lastName: string;
         fullName: string;
-      }>(User);
-      expectTypeOf(User).not.toBeNever();
+      }>(user);
+      expectTypeOf(user).not.toBeNever();
 
       // The result of the field resolver is cached, so the resolver is called only once.
       expect(firstNameResolver).toHaveBeenCalledTimes(1);
       expect(lastNameResolver).toHaveBeenCalledTimes(1);
+    });
+  });
+  describe('transientFields', () => {
+    it('basic', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: lazy(({ seq }) => `Book-${seq}`),
+          title: lazy(({ seq }) => `ゆゆ式 ${seq}巻`),
+          author: undefined,
+        },
+      });
+      const AuthorFactory = defineAuthorFactoryWithTransientFields(
+        {
+          bookCount: 0,
+        },
+        {
+          defaultFields: {
+            id: lazy(({ seq }) => `Author-${seq}`),
+            name: '三上小又',
+            books: lazy(async ({ get }) => {
+              const bookCount = await get('bookCount');
+              // eslint-disable-next-line max-nested-callbacks
+              return Promise.all(Array.from({ length: bookCount }, async () => BookFactory.build()));
+            }),
+          },
+        },
+      );
+      const author1 = await AuthorFactory.build();
+      expect(author1).toStrictEqual({
+        id: 'Author-0',
+        name: '三上小又',
+        books: [],
+      });
+      assertType<{
+        id: string;
+        name: string;
+        books: { id: string; title: string; author: undefined }[];
+      }>(author1);
+      expectTypeOf(author1).not.toBeNever();
+
+      const author2 = await AuthorFactory.build({ bookCount: 3 });
+      expect(author2).toStrictEqual({
+        id: 'Author-1',
+        name: '三上小又',
+        books: [
+          { id: 'Book-0', title: 'ゆゆ式 0巻', author: undefined },
+          { id: 'Book-1', title: 'ゆゆ式 1巻', author: undefined },
+          { id: 'Book-2', title: 'ゆゆ式 2巻', author: undefined },
+        ],
+      });
+      assertType<{
+        id: string;
+        name: string;
+        books: {
+          id: string;
+          title: string;
+          author: undefined;
+        }[];
+      }>(author2);
     });
   });
   describe('resetAllSequence', () => {

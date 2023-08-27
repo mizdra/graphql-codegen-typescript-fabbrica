@@ -28,31 +28,36 @@ it('lazy', async () => {
 });
 
 it('FieldResolver', () => {
-  type Type = { a: number };
-  expectTypeOf<FieldResolver<Type, Type['a']>>().toEqualTypeOf<number | Lazy<{ a: number }, number>>();
+  type TypeWithTransientFields = { a: number };
+  expectTypeOf<FieldResolver<TypeWithTransientFields, TypeWithTransientFields['a']>>().toEqualTypeOf<
+    number | Lazy<{ a: number }, number>
+  >();
 });
 
 it('DefaultFieldsResolver', () => {
-  type Type1 = { a: number; b: Type2[] };
-  type Type2 = { c: number };
-  expectTypeOf<DefaultFieldsResolver<Type1>>().toEqualTypeOf<{
-    a: number | undefined | Lazy<Type1, number | undefined>;
+  type Type = { a: number; b: SubType[] };
+  type SubType = { c: number };
+  type TransientFields = { _a: number };
+  expectTypeOf<DefaultFieldsResolver<Type, TransientFields>>().toEqualTypeOf<{
+    a: number | undefined | Lazy<Type & TransientFields, number | undefined>;
     b:
       | readonly { readonly c: number | undefined }[]
       | undefined
-      | Lazy<Type1, readonly { readonly c: number | undefined }[] | undefined>;
+      | Lazy<Type & TransientFields, readonly { readonly c: number | undefined }[] | undefined>;
   }>();
 });
 
 it('InputFieldsResolver', () => {
-  type Type1 = { a: number; b: Type2[] };
-  type Type2 = { c: number };
-  expectTypeOf<InputFieldsResolver<Type1>>().toEqualTypeOf<{
-    a?: number | undefined | Lazy<Type1, number | undefined>;
+  type Type = { a: number; b: SubType[] };
+  type SubType = { c: number };
+  type TransientFields = { _a: number };
+  expectTypeOf<InputFieldsResolver<Type, TransientFields>>().toEqualTypeOf<{
+    a?: number | undefined | Lazy<Type & TransientFields, number | undefined>;
     b?:
       | readonly { readonly c: number | undefined }[]
       | undefined
-      | Lazy<Type1, readonly { readonly c: number | undefined }[] | undefined>;
+      | Lazy<Type & TransientFields, readonly { readonly c: number | undefined }[] | undefined>;
+    _a?: number | undefined | Lazy<Type & TransientFields, number | undefined>;
   }>();
 });
 

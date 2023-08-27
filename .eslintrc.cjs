@@ -7,6 +7,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2022,
   },
+  reportUnusedDisableDirectives: true,
   env: {
     es2022: true,
     node: true,
@@ -18,6 +19,16 @@ module.exports = {
     {
       files: ['*.ts', '*.tsx', '*.cts', '*.mts'],
       extends: ['@mizdra/mizdra/+typescript', '@mizdra/mizdra/+prettier'],
+      rules: {
+        '@typescript-eslint/ban-types': [
+          'error',
+          {
+            types: {
+              '{}': false,
+            },
+          },
+        ],
+      },
     },
   ],
 };
