@@ -39,7 +39,7 @@ export interface BookFactoryInterface<
   TransientFields extends Record<string, unknown>,
   Options extends BookFactoryDefineOptions<TransientFields>,
 > {
-  build(): Promise<ResolvedFields<Options['defaultFields']>>;
+  build(): Promise<Pick<Merge<ResolvedFields<Options['defaultFields']>, ResolvedFields<{}>>, keyof Book>>;
   build<const T extends InputFieldsResolver<Book & TransientFields>>(
     inputFieldsResolver: T,
   ): Promise<Pick<Merge<ResolvedFields<Options['defaultFields']>, ResolvedFields<T>>, keyof Book>>;
@@ -55,9 +55,14 @@ function defineBookFactoryInternal<
   return {
     async build<const T extends InputFieldsResolver<Book & TransientFields>>(
       inputFieldsResolver?: T,
-    ): Promise<Merge<ResolvedFields<Options['defaultFields']>, Pick<ResolvedFields<T>, keyof Book>>> {
+    ): Promise<Pick<Merge<ResolvedFields<Options['defaultFields']>, ResolvedFields<T>>, keyof Book>> {
       const seq = getSeq();
-      return resolveFields(BookFieldNames, seq, defaultFieldsResolver, inputFieldsResolver ?? ({} as T));
+      return resolveFields<Book, TransientFields, Options['defaultFields'], T>(
+        BookFieldNames,
+        seq,
+        defaultFieldsResolver,
+        inputFieldsResolver ?? ({} as T),
+      );
     },
     resetSequence() {
       resetSequence(seqKey);
@@ -86,7 +91,7 @@ export interface AuthorFactoryInterface<
   TransientFields extends Record<string, unknown>,
   Options extends AuthorFactoryDefineOptions<TransientFields>,
 > {
-  build(): Promise<ResolvedFields<Options['defaultFields']>>;
+  build(): Promise<Pick<Merge<ResolvedFields<Options['defaultFields']>, ResolvedFields<{}>>, keyof Author>>;
   build<const T extends InputFieldsResolver<Author & TransientFields>>(
     inputFieldsResolver: T,
   ): Promise<Pick<Merge<ResolvedFields<Options['defaultFields']>, ResolvedFields<T>>, keyof Author>>;
@@ -102,9 +107,14 @@ function defineAuthorFactoryInternal<
   return {
     async build<const T extends InputFieldsResolver<Author & TransientFields>>(
       inputFieldsResolver?: T,
-    ): Promise<Merge<ResolvedFields<Options['defaultFields']>, Pick<ResolvedFields<T>, keyof Author>>> {
+    ): Promise<Pick<Merge<ResolvedFields<Options['defaultFields']>, ResolvedFields<T>>, keyof Author>> {
       const seq = getSeq();
-      return resolveFields(AuthorFieldNames, seq, defaultFieldsResolver, inputFieldsResolver ?? ({} as T));
+      return resolveFields<Author, TransientFields, Options['defaultFields'], T>(
+        AuthorFieldNames,
+        seq,
+        defaultFieldsResolver,
+        inputFieldsResolver ?? ({} as T),
+      );
     },
     resetSequence() {
       resetSequence(seqKey);
@@ -133,7 +143,7 @@ export interface UserFactoryInterface<
   TransientFields extends Record<string, unknown>,
   Options extends UserFactoryDefineOptions<TransientFields>,
 > {
-  build(): Promise<ResolvedFields<Options['defaultFields']>>;
+  build(): Promise<Pick<Merge<ResolvedFields<Options['defaultFields']>, ResolvedFields<{}>>, keyof User>>;
   build<const T extends InputFieldsResolver<User & TransientFields>>(
     inputFieldsResolver: T,
   ): Promise<Pick<Merge<ResolvedFields<Options['defaultFields']>, ResolvedFields<T>>, keyof User>>;
@@ -149,9 +159,14 @@ function defineUserFactoryInternal<
   return {
     async build<const T extends InputFieldsResolver<User & TransientFields>>(
       inputFieldsResolver?: T,
-    ): Promise<Merge<ResolvedFields<Options['defaultFields']>, Pick<ResolvedFields<T>, keyof User>>> {
+    ): Promise<Pick<Merge<ResolvedFields<Options['defaultFields']>, ResolvedFields<T>>, keyof User>> {
       const seq = getSeq();
-      return resolveFields(UserFieldNames, seq, defaultFieldsResolver, inputFieldsResolver ?? ({} as T));
+      return resolveFields<User, TransientFields, Options['defaultFields'], T>(
+        UserFieldNames,
+        seq,
+        defaultFieldsResolver,
+        inputFieldsResolver ?? ({} as T),
+      );
     },
     resetSequence() {
       resetSequence(seqKey);

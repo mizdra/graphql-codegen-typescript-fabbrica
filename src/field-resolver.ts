@@ -57,7 +57,7 @@ export async function resolveFields<
   seq: number,
   defaultFieldsResolver: _DefaultFieldsResolver,
   inputFieldsResolver: _InputFieldsResolver,
-): Promise<Merge<ResolvedFields<_DefaultFieldsResolver>, Pick<ResolvedFields<_InputFieldsResolver>, keyof Type>>> {
+): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<_InputFieldsResolver>>, keyof Type>> {
   type TypeWithTransientFields = Type & TransientFields;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Use any type as it is impossible to match types.
