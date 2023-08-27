@@ -6,7 +6,8 @@ import {
   lazy,
   defineUserFactory,
   defineAuthorFactory,
-  defineAuthorFactoryWithTransientFields,
+  AuthorFactoryDefineOptions,
+  AuthorFactoryInterface,
 } from './index.js';
 
 describe('integration test', () => {
@@ -240,6 +241,16 @@ describe('defineTypeFactory', () => {
   });
   describe('transientFields', () => {
     it('basic', async () => {
+      // Define factory with transient fields
+      type AuthorTransientFields = {
+        bookCount: number;
+      };
+      function defineAuthorFactoryWithTransientFields<
+        Options extends AuthorFactoryDefineOptions<AuthorTransientFields>,
+      >(options: Options): AuthorFactoryInterface<AuthorTransientFields, Options> {
+        return defineAuthorFactory(options);
+      }
+
       const BookFactory = defineBookFactory({
         defaultFields: {
           id: lazy(({ seq }) => `Book-${seq}`),
@@ -247,22 +258,18 @@ describe('defineTypeFactory', () => {
           author: undefined,
         },
       });
-      const AuthorFactory = defineAuthorFactoryWithTransientFields(
-        {
+      const AuthorFactory = defineAuthorFactoryWithTransientFields({
+        defaultFields: {
+          id: lazy(({ seq }) => `Author-${seq}`),
+          name: '三上小又',
+          books: lazy(async ({ get }) => {
+            const bookCount = (await get('bookCount')) ?? 0;
+            // eslint-disable-next-line max-nested-callbacks
+            return Promise.all(Array.from({ length: bookCount }, async () => BookFactory.build()));
+          }),
           bookCount: 0,
         },
-        {
-          defaultFields: {
-            id: lazy(({ seq }) => `Author-${seq}`),
-            name: '三上小又',
-            books: lazy(async ({ get }) => {
-              const bookCount = (await get('bookCount')) ?? 0;
-              // eslint-disable-next-line max-nested-callbacks
-              return Promise.all(Array.from({ length: bookCount }, async () => BookFactory.build()));
-            }),
-          },
-        },
-      );
+      });
       const author1 = await AuthorFactory.build();
       expect(author1).toStrictEqual({
         id: 'Author-0',

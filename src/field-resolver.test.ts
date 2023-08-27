@@ -54,29 +54,26 @@ it('FieldResolver', () => {
 });
 
 it('DefaultFieldsResolver', () => {
-  type Type = { a: number; b: SubType[] };
+  type TypeWithTransientFields = { a: number; b: SubType[] };
   type SubType = { c: number };
-  type TransientFields = { _a: number };
-  expectTypeOf<DefaultFieldsResolver<Type, TransientFields>>().toEqualTypeOf<{
-    a: number | undefined | Lazy<Type & TransientFields, number | undefined>;
+  expectTypeOf<DefaultFieldsResolver<TypeWithTransientFields>>().toEqualTypeOf<{
+    a: number | undefined | Lazy<TypeWithTransientFields, number | undefined>;
     b:
       | readonly { readonly c: number | undefined }[]
       | undefined
-      | Lazy<Type & TransientFields, readonly { readonly c: number | undefined }[] | undefined>;
+      | Lazy<TypeWithTransientFields, readonly { readonly c: number | undefined }[] | undefined>;
   }>();
 });
 
 it('InputFieldsResolver', () => {
-  type Type = { a: number; b: SubType[] };
+  type TypeWithTransientFields = { a: number; b: SubType[] };
   type SubType = { c: number };
-  type TransientFields = { _a: number };
-  expectTypeOf<InputFieldsResolver<Type, TransientFields>>().toEqualTypeOf<{
-    a?: number | undefined | Lazy<Type & TransientFields, number | undefined>;
+  expectTypeOf<InputFieldsResolver<TypeWithTransientFields>>().toEqualTypeOf<{
+    a?: number | undefined | Lazy<TypeWithTransientFields, number | undefined>;
     b?:
       | readonly { readonly c: number | undefined }[]
       | undefined
-      | Lazy<Type & TransientFields, readonly { readonly c: number | undefined }[] | undefined>;
-    _a?: number | undefined | Lazy<Type & TransientFields, number | undefined>;
+      | Lazy<TypeWithTransientFields, readonly { readonly c: number | undefined }[] | undefined>;
   }>();
 });
 

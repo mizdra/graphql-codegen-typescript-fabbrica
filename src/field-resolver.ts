@@ -24,21 +24,17 @@ export function lazy<TypeWithTransientFields, Field>(
 
 export type FieldResolver<TypeWithTransientFields, Field> = Field | Lazy<TypeWithTransientFields, Field>;
 /** The type of `defaultFields` option of `defineFactory` function. */
-export type DefaultFieldsResolver<Type, TransientFields> = {
-  [FieldName in keyof Type]: FieldResolver<Type & TransientFields, DeepReadonly<DeepOptional<Type>[FieldName]>>;
-};
-/** The type of `transientFields` option of `defineFactory` function. */
-export type TransientFieldsResolver<Type, TransientFields> = {
-  [FieldName in keyof TransientFields]: FieldResolver<
-    Type & TransientFields,
-    DeepReadonly<DeepOptional<TransientFields>[FieldName]>
+export type DefaultFieldsResolver<TypeWithTransientFields> = {
+  [FieldName in keyof TypeWithTransientFields]: FieldResolver<
+    TypeWithTransientFields,
+    DeepReadonly<DeepOptional<TypeWithTransientFields>[FieldName]>
   >;
 };
 /** The type of `inputFields` option of `build` method. */
-export type InputFieldsResolver<Type, TransientFields> = {
-  [FieldName in keyof (Type & TransientFields)]?: FieldResolver<
-    Type & TransientFields,
-    DeepReadonly<DeepOptional<Type & TransientFields>[FieldName]>
+export type InputFieldsResolver<TypeWithTransientFields> = {
+  [FieldName in keyof TypeWithTransientFields]?: FieldResolver<
+    TypeWithTransientFields,
+    DeepReadonly<DeepOptional<TypeWithTransientFields>[FieldName]>
   >;
 };
 
@@ -54,15 +50,14 @@ export type ResolvedFields<FieldsResolver extends Record<string, FieldResolver<u
 export async function resolveFields<
   Type extends Record<string, unknown>,
   TransientFields extends Record<string, unknown>,
-  _TransientFieldsResolver extends TransientFieldsResolver<Type, TransientFields>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<Type, TransientFields>,
-  _InputFieldsResolver extends InputFieldsResolver<Type, TransientFields>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Type & TransientFields>,
+  _InputFieldsResolver extends InputFieldsResolver<Type & TransientFields>,
 >(
+  fieldNames: readonly (keyof Type)[],
   seq: number,
   defaultFieldsResolver: _DefaultFieldsResolver,
-  transientFieldsResolver: _TransientFieldsResolver,
   inputFieldsResolver: _InputFieldsResolver,
-): Promise<Merge<ResolvedFields<_DefaultFieldsResolver>, Pick<ResolvedFields<_InputFieldsResolver>, keyof Type>>> {
+): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<_InputFieldsResolver>>, keyof Type>> {
   type TypeWithTransientFields = Type & TransientFields;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Use any type as it is impossible to match types.
@@ -87,8 +82,6 @@ export async function resolveFields<
     const fieldResolver =
       fieldName in inputFieldsResolver
         ? inputFieldsResolver[fieldName as keyof _InputFieldsResolver]
-        : fieldName in transientFieldsResolver
-        ? transientFieldsResolver[fieldName as keyof _TransientFieldsResolver]
         : defaultFieldsResolver[fieldName as keyof _DefaultFieldsResolver];
 
     // eslint-disable-next-line require-atomic-updates
@@ -107,5 +100,5 @@ export async function resolveFields<
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Use any type as it is impossible to match types.
-  return Object.fromEntries(Object.entries(fields).filter(([key]) => key in defaultFieldsResolver)) as any;
+  return Object.fromEntries(Object.entries(fields).filter(([key]) => fieldNames.includes(key))) as any;
 }
