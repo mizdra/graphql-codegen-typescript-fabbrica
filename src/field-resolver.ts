@@ -4,7 +4,7 @@ export type FieldResolverOptions<TypeWithTransientFields> = {
   seq: number;
   get: <FieldName extends keyof TypeWithTransientFields>(
     fieldName: FieldName,
-  ) => Promise<TypeWithTransientFields[FieldName]>;
+  ) => Promise<TypeWithTransientFields[FieldName]>; // FIXME: return type is wrong
 };
 
 export class Lazy<TypeWithTransientFields, Field> {
@@ -64,23 +64,24 @@ export async function resolveFields<
   inputFieldsResolver: _InputFieldsResolver,
 ): Promise<Merge<ResolvedFields<_DefaultFieldsResolver>, Pick<ResolvedFields<_InputFieldsResolver>, keyof Type>>> {
   type TypeWithTransientFields = Type & TransientFields;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Use any type as it is impossible to match types.
-  const fields: any = {};
 
-  async function resolveField<Field>(
-    options: FieldResolverOptions<TypeWithTransientFields>,
-    fieldResolver: FieldResolver<TypeWithTransientFields, Field>,
-  ): Promise<Field> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Use any type as it is impossible to match types.
+  const fields = {} as any;
+
+  async function resolveField<
+    _FieldResolverOptions extends FieldResolverOptions<TypeWithTransientFields>,
+    _FieldResolver extends FieldResolver<TypeWithTransientFields, unknown>,
+  >(options: _FieldResolverOptions, fieldResolver: _FieldResolver): Promise<ResolvedField<_FieldResolver>> {
     if (fieldResolver instanceof Lazy) {
       return fieldResolver.get(options);
     } else {
-      return fieldResolver;
+      return fieldResolver as ResolvedField<_FieldResolver>;
     }
   }
 
   async function resolveFieldAndUpdateCache<FieldName extends keyof TypeWithTransientFields>(
     fieldName: FieldName,
-  ): Promise<TypeWithTransientFields[FieldName]> {
+  ): Promise<(ResolvedFields<_DefaultFieldsResolver> & ResolvedFields<_InputFieldsResolver>)[FieldName]> {
     if (fieldName in fields) return fields[fieldName];
 
     const fieldResolver =
@@ -90,13 +91,14 @@ export async function resolveFields<
         ? transientFieldsResolver[fieldName as keyof _TransientFieldsResolver]
         : defaultFieldsResolver[fieldName as keyof _DefaultFieldsResolver];
 
-    // eslint-disable-next-line require-atomic-updates -- The fields are resolved sequentially, so there is no possibility of a race condition.
+    // eslint-disable-next-line require-atomic-updates
     fields[fieldName] = await resolveField(options, fieldResolver);
     return fields[fieldName];
   }
 
   const options: FieldResolverOptions<TypeWithTransientFields> = {
     seq,
+    // @ts-expect-error -- FIXME: return type is wrong
     get: resolveFieldAndUpdateCache,
   };
 
