@@ -31,12 +31,7 @@ export type DefaultFieldsResolver<TypeWithTransientFields> = {
   >;
 };
 /** The type of `inputFields` option of `build` method. */
-export type InputFieldsResolver<TypeWithTransientFields> = {
-  [FieldName in keyof TypeWithTransientFields]?: FieldResolver<
-    TypeWithTransientFields,
-    DeepReadonly<DeepOptional<TypeWithTransientFields>[FieldName]>
-  >;
-};
+export type InputFieldsResolver<TypeWithTransientFields> = Partial<DefaultFieldsResolver<TypeWithTransientFields>>;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type ResolvedField<T extends FieldResolver<unknown, unknown>> = T extends FieldResolver<infer _, infer R>
