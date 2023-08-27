@@ -9,6 +9,9 @@ import {
   AuthorFactoryDefineOptions,
   AuthorFactoryInterface,
   defineImageFactory,
+  DefaultFieldsResolver,
+  Traits,
+  Author,
 } from './index.js';
 
 describe('integration test', () => {
@@ -272,6 +275,7 @@ describe('defineTypeFactory', () => {
         width: number;
         height: number;
       }>(image);
+      expectTypeOf(image).not.toBeNever();
     });
     it('overrides fields multiple times by chaining the use methods', async () => {
       const ImageFactory = defineImageFactory({
@@ -308,6 +312,7 @@ describe('defineTypeFactory', () => {
         width: number;
         height: number;
       }>(image);
+      expectTypeOf(image).not.toBeNever();
     });
   });
   describe('transientFields', () => {
@@ -317,8 +322,11 @@ describe('defineTypeFactory', () => {
         bookCount: number;
       };
       function defineAuthorFactoryWithTransientFields<
-        Options extends AuthorFactoryDefineOptions<AuthorTransientFields>,
-      >(options: Options): AuthorFactoryInterface<AuthorTransientFields, Options> {
+        _DefaultFieldsResolver extends DefaultFieldsResolver<Author & AuthorTransientFields>,
+        _Traits extends Traits<Author, AuthorTransientFields>,
+      >(
+        options: AuthorFactoryDefineOptions<AuthorTransientFields, _DefaultFieldsResolver, _Traits>,
+      ): AuthorFactoryInterface<AuthorTransientFields, _DefaultFieldsResolver, _Traits> {
         return defineAuthorFactory(options);
       }
 

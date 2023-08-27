@@ -38,9 +38,10 @@ it('DeepReadonly', () => {
 });
 
 it('Merge', () => {
-  expectTypeOf<Merge<{ a: number; b: string }, { b: boolean; c: symbol }>>().toEqualTypeOf<{
+  expectTypeOf<Merge<{ a: number; b: number; c: number }, { b: string; c?: string; d: string }>>().toEqualTypeOf<{
     a: number;
-    b: boolean;
-    c: symbol;
+    b: string;
+    c: number | string;
+    d: string;
   }>();
 });

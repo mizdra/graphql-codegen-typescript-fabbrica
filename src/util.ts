@@ -15,5 +15,13 @@ export type DeepReadonly<T> = T extends Record<string, unknown> | unknown[] | re
 
 /** Convert `{ a: number, b: string }` and `{ b: boolean, c: symbol }` into `{ a: number, b: boolean, c: symbol }`. */
 export type Merge<F, S> = {
-  [K in keyof F | keyof S]: K extends keyof S ? S[K] : K extends keyof F ? F[K] : never;
+  [K in keyof F | keyof S]: K extends keyof S
+    ? S[K] extends Required<S>[K]
+      ? S[K]
+      : K extends keyof F
+      ? Required<S>[K] | F[K]
+      : S[K]
+    : K extends keyof F
+    ? F[K]
+    : never;
 };

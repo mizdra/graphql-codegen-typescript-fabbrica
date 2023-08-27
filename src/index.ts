@@ -1,8 +1,8 @@
-import { TypeFactoryDefineOptions, TypeFactoryInterface, defineTypeFactoryInternal } from './factory.js';
-import { lazy } from './field-resolver.js';
+import { Traits, TypeFactoryDefineOptions, TypeFactoryInterface, defineTypeFactoryInternal } from './factory.js';
+import { DefaultFieldsResolver, lazy } from './field-resolver.js';
 import { resetAllSequence } from './sequence.js';
 
-export { resetAllSequence, lazy };
+export { resetAllSequence, lazy, DefaultFieldsResolver, Traits };
 
 export type Book = {
   id: string;
@@ -33,14 +33,26 @@ const ImageFieldNames = ['id', 'url', 'width', 'height'] as const;
 
 // ---------- Book ----------
 
-export type BookFactoryDefineOptions<TransientFields extends Record<string, unknown>> = TypeFactoryDefineOptions<
-  Book,
-  TransientFields
->;
+export type BookFactoryDefineOptions<
+  TransientFields extends Record<string, unknown>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Book & TransientFields>,
+  _Traits extends Traits<Book, TransientFields>,
+> = TypeFactoryDefineOptions<Book, TransientFields, _DefaultFieldsResolver, _Traits>;
 export type BookFactoryInterface<
   TransientFields extends Record<string, unknown>,
-  Options extends BookFactoryDefineOptions<TransientFields>,
-> = TypeFactoryInterface<Book, TransientFields, Options>;
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Book & TransientFields>,
+  _Traits extends Traits<Book, TransientFields>,
+> = TypeFactoryInterface<Book, TransientFields, _DefaultFieldsResolver, _Traits>;
+
+export function defineBookFactoryInternal<
+  TransientFields extends Record<string, unknown>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Book & TransientFields>,
+  _Traits extends Traits<Book, TransientFields>,
+>(
+  options: BookFactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
+): BookFactoryInterface<TransientFields, _DefaultFieldsResolver, _Traits> {
+  return defineTypeFactoryInternal(BookFieldNames, options);
+}
 
 /**
  * Define factory for {@link Book} model.
@@ -48,22 +60,37 @@ export type BookFactoryInterface<
  * @param options
  * @returns factory {@link BookFactoryInterface}
  */
-export function defineBookFactory<Options extends BookFactoryDefineOptions<{}>>(
-  options: Options,
-): BookFactoryInterface<{}, Options> {
-  return defineTypeFactoryInternal<Book, {}, Options>(BookFieldNames, options);
+export function defineBookFactory<
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Book>,
+  _Traits extends Traits<Book, {}>,
+>(
+  options: BookFactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
+): BookFactoryInterface<{}, _DefaultFieldsResolver, _Traits> {
+  return defineBookFactoryInternal(options);
 }
 
 // ---------- Author ----------
 
-export type AuthorFactoryDefineOptions<TransientFields extends Record<string, unknown>> = TypeFactoryDefineOptions<
-  Author,
-  TransientFields
->;
+export type AuthorFactoryDefineOptions<
+  TransientFields extends Record<string, unknown>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Author & TransientFields>,
+  _Traits extends Traits<Author, TransientFields>,
+> = TypeFactoryDefineOptions<Author, TransientFields, _DefaultFieldsResolver, _Traits>;
 export type AuthorFactoryInterface<
   TransientFields extends Record<string, unknown>,
-  Options extends AuthorFactoryDefineOptions<TransientFields>,
-> = TypeFactoryInterface<Author, TransientFields, Options>;
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Author & TransientFields>,
+  _Traits extends Traits<Author, TransientFields>,
+> = TypeFactoryInterface<Author, TransientFields, _DefaultFieldsResolver, _Traits>;
+
+export function defineAuthorFactoryInternal<
+  TransientFields extends Record<string, unknown>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Author & TransientFields>,
+  _Traits extends Traits<Author, TransientFields>,
+>(
+  options: AuthorFactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
+): AuthorFactoryInterface<TransientFields, _DefaultFieldsResolver, _Traits> {
+  return defineTypeFactoryInternal(AuthorFieldNames, options);
+}
 
 /**
  * Define factory for {@link Author} model.
@@ -71,22 +98,37 @@ export type AuthorFactoryInterface<
  * @param options
  * @returns factory {@link AuthorFactoryInterface}
  */
-export function defineAuthorFactory<Options extends AuthorFactoryDefineOptions<{}>>(
-  options: Options,
-): AuthorFactoryInterface<{}, Options> {
-  return defineTypeFactoryInternal<Author, {}, Options>(AuthorFieldNames, options);
+export function defineAuthorFactory<
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Author>,
+  _Traits extends Traits<Author, {}>,
+>(
+  options: AuthorFactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
+): AuthorFactoryInterface<{}, _DefaultFieldsResolver, _Traits> {
+  return defineAuthorFactoryInternal(options);
 }
 
 // ---------- User ----------
 
-export type UserFactoryDefineOptions<TransientFields extends Record<string, unknown>> = TypeFactoryDefineOptions<
-  User,
-  TransientFields
->;
+export type UserFactoryDefineOptions<
+  TransientFields extends Record<string, unknown>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<User & TransientFields>,
+  _Traits extends Traits<User, TransientFields>,
+> = TypeFactoryDefineOptions<User, TransientFields, _DefaultFieldsResolver, _Traits>;
 export type UserFactoryInterface<
   TransientFields extends Record<string, unknown>,
-  Options extends UserFactoryDefineOptions<TransientFields>,
-> = TypeFactoryInterface<User, TransientFields, Options>;
+  _DefaultFieldsResolver extends DefaultFieldsResolver<User & TransientFields>,
+  _Traits extends Traits<User, TransientFields>,
+> = TypeFactoryInterface<User, TransientFields, _DefaultFieldsResolver, _Traits>;
+
+export function defineUserFactoryInternal<
+  TransientFields extends Record<string, unknown>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<User & TransientFields>,
+  _Traits extends Traits<User, TransientFields>,
+>(
+  options: UserFactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
+): UserFactoryInterface<TransientFields, _DefaultFieldsResolver, _Traits> {
+  return defineTypeFactoryInternal(UserFieldNames, options);
+}
 
 /**
  * Define factory for {@link User} model.
@@ -94,22 +136,37 @@ export type UserFactoryInterface<
  * @param options
  * @returns factory {@link UserFactoryInterface}
  */
-export function defineUserFactory<Options extends UserFactoryDefineOptions<{}>>(
-  options: Options,
-): UserFactoryInterface<{}, Options> {
-  return defineTypeFactoryInternal<User, {}, Options>(UserFieldNames, options);
+export function defineUserFactory<
+  _DefaultFieldsResolver extends DefaultFieldsResolver<User>,
+  _Traits extends Traits<User, {}>,
+>(
+  options: UserFactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
+): UserFactoryInterface<{}, _DefaultFieldsResolver, _Traits> {
+  return defineUserFactoryInternal(options);
 }
 
 // ---------- Image ----------
 
-export type ImageFactoryDefineOptions<TransientFields extends Record<string, unknown>> = TypeFactoryDefineOptions<
-  Image,
-  TransientFields
->;
+export type ImageFactoryDefineOptions<
+  TransientFields extends Record<string, unknown>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Image & TransientFields>,
+  _Traits extends Traits<Image, TransientFields>,
+> = TypeFactoryDefineOptions<Image, TransientFields, _DefaultFieldsResolver, _Traits>;
 export type ImageFactoryInterface<
   TransientFields extends Record<string, unknown>,
-  Options extends ImageFactoryDefineOptions<TransientFields>,
-> = TypeFactoryInterface<Image, TransientFields, Options>;
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Image & TransientFields>,
+  _Traits extends Traits<Image, TransientFields>,
+> = TypeFactoryInterface<Image, TransientFields, _DefaultFieldsResolver, _Traits>;
+
+export function defineImageFactoryInternal<
+  TransientFields extends Record<string, unknown>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Image & TransientFields>,
+  _Traits extends Traits<Image, TransientFields>,
+>(
+  options: ImageFactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
+): ImageFactoryInterface<TransientFields, _DefaultFieldsResolver, _Traits> {
+  return defineTypeFactoryInternal(ImageFieldNames, options);
+}
 
 /**
  * Define factory for {@link Image} model.
@@ -117,8 +174,11 @@ export type ImageFactoryInterface<
  * @param options
  * @returns factory {@link ImageFactoryInterface}
  */
-export function defineImageFactory<Options extends ImageFactoryDefineOptions<{}>>(
-  options: Options,
-): ImageFactoryInterface<{}, Options> {
-  return defineTypeFactoryInternal<Image, {}, Options>(ImageFieldNames, options);
+export function defineImageFactory<
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Image>,
+  _Traits extends Traits<Image, {}>,
+>(
+  options: ImageFactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
+): ImageFactoryInterface<{}, _DefaultFieldsResolver, _Traits> {
+  return defineImageFactoryInternal(options);
 }
