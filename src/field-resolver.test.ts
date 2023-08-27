@@ -63,6 +63,7 @@ it('DefaultFieldsResolver', () => {
       | readonly { readonly c: number | undefined }[]
       | undefined
       | Lazy<Type & TransientFields, readonly { readonly c: number | undefined }[] | undefined>;
+    _a: number | undefined | Lazy<Type & TransientFields, number | undefined>;
   }>();
 });
 
