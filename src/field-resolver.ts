@@ -54,15 +54,9 @@ export type ResolvedFields<FieldsResolver extends Record<string, FieldResolver<u
 export async function resolveFields<
   Type extends Record<string, unknown>,
   TransientFields extends Record<string, unknown>,
-  _TransientFieldsResolver extends TransientFieldsResolver<Type, TransientFields> = TransientFieldsResolver<
-    Type,
-    TransientFields
-  >,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<Type, TransientFields> = DefaultFieldsResolver<
-    Type,
-    TransientFields
-  >,
-  _InputFieldsResolver extends InputFieldsResolver<Type, TransientFields> = InputFieldsResolver<Type, TransientFields>,
+  _TransientFieldsResolver extends TransientFieldsResolver<Type, TransientFields>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Type, TransientFields>,
+  _InputFieldsResolver extends InputFieldsResolver<Type, TransientFields>,
 >(
   seq: number,
   defaultFieldsResolver: _DefaultFieldsResolver,
