@@ -4,7 +4,7 @@ export type FieldResolverOptions<TypeWithTransientFields> = {
   seq: number;
   get: <FieldName extends keyof TypeWithTransientFields>(
     fieldName: FieldName,
-  ) => Promise<TypeWithTransientFields[FieldName]>; // FIXME: return type is wrong
+  ) => Promise<DeepReadonly<DeepOptional<TypeWithTransientFields>[FieldName]>>;
 };
 
 export class Lazy<TypeWithTransientFields, Field> {
@@ -81,7 +81,7 @@ export async function resolveFields<
 
   async function resolveFieldAndUpdateCache<FieldName extends keyof TypeWithTransientFields>(
     fieldName: FieldName,
-  ): Promise<(ResolvedFields<_DefaultFieldsResolver> & ResolvedFields<_InputFieldsResolver>)[FieldName]> {
+  ): Promise<DeepReadonly<DeepOptional<TypeWithTransientFields>[FieldName]>> {
     if (fieldName in fields) return fields[fieldName];
 
     const fieldResolver =
@@ -98,7 +98,6 @@ export async function resolveFields<
 
   const options: FieldResolverOptions<TypeWithTransientFields> = {
     seq,
-    // @ts-expect-error -- FIXME: return type is wrong
     get: resolveFieldAndUpdateCache,
   };
 
