@@ -213,7 +213,9 @@ describe('defineTypeFactory', () => {
           id: lazy(({ seq }) => `User-${seq}`),
           firstName: lazy(firstNameResolver),
           lastName: lazy(lastNameResolver),
-          fullName: lazy(async ({ get }) => `${await get('firstName')} ${await get('lastName')}`),
+          fullName: lazy(
+            async ({ get }) => `${(await get('firstName')) ?? 'firstName'} ${(await get('lastName')) ?? 'lastName'}`,
+          ),
         },
       });
       const user = await UserFactory.build();
@@ -254,7 +256,7 @@ describe('defineTypeFactory', () => {
             id: lazy(({ seq }) => `Author-${seq}`),
             name: '三上小又',
             books: lazy(async ({ get }) => {
-              const bookCount = await get('bookCount');
+              const bookCount = (await get('bookCount')) ?? 0;
               // eslint-disable-next-line max-nested-callbacks
               return Promise.all(Array.from({ length: bookCount }, async () => BookFactory.build()));
             }),
@@ -542,7 +544,9 @@ describe('TypeFactoryInterface', () => {
       const User = await UserFactory.build({
         firstName: lazy(firstNameResolver),
         lastName: lazy(lastNameResolver),
-        fullName: lazy(async ({ get }) => `${await get('firstName')} ${await get('lastName')}`),
+        fullName: lazy(
+          async ({ get }) => `${(await get('firstName')) ?? 'firstName'} ${(await get('lastName')) ?? 'lastName'}`,
+        ),
       });
       expect(User).toStrictEqual({
         id: 'User-0',

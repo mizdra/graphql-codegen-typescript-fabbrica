@@ -8,23 +8,42 @@ import {
   InputFieldsResolver,
   DefaultFieldsResolver,
 } from './field-resolver.js';
+import { DeepOptional, DeepReadonly } from './util.js';
 
 it('Lazy', async () => {
-  const lazy1 = new Lazy(({ seq }) => `Book-${seq}`);
-  expect(await lazy1.get({ seq: 0, get: async () => Promise.resolve() })).toBe('Book-0');
+  type TypeWithTransientFields = { id: string; a: number };
+  type Field = string;
+  const readonlyOptionalType: DeepReadonly<DeepOptional<TypeWithTransientFields>> = {
+    id: '',
+    a: 1,
+  };
+  const get = async <FieldName extends keyof TypeWithTransientFields>(fieldName: FieldName) =>
+    Promise.resolve(readonlyOptionalType[fieldName]);
+
+  const lazy1 = new Lazy<TypeWithTransientFields, Field>(({ seq }) => `Book-${seq}`);
+  expect(await lazy1.get({ seq: 0, get })).toBe('Book-0');
 
   const lazy2 = new Lazy(async ({ seq }) => Promise.resolve(`Book-${seq}`));
-  expect(await lazy2.get({ seq: 0, get: async () => Promise.resolve() })).toBe('Book-0');
+  expect(await lazy2.get({ seq: 0, get })).toBe('Book-0');
 });
 
 it('lazy', async () => {
-  const l1 = lazy(({ seq }) => `Book-${seq}`);
-  expect(l1).instanceOf(Lazy);
-  expect(await l1.get({ seq: 0, get: async () => Promise.resolve() })).toBe('Book-0');
+  type TypeWithTransientFields = { id: string; a: number };
+  type Field = string;
+  const readonlyOptionalType: DeepReadonly<DeepOptional<TypeWithTransientFields>> = {
+    id: '',
+    a: 1,
+  };
+  const get = async <FieldName extends keyof TypeWithTransientFields>(fieldName: FieldName) =>
+    Promise.resolve(readonlyOptionalType[fieldName]);
 
-  const l2 = lazy(async ({ seq }) => Promise.resolve(`Book-${seq}`));
+  const l1 = lazy<TypeWithTransientFields, Field>(({ seq }) => `Book-${seq}`);
+  expect(l1).instanceOf(Lazy);
+  expect(await l1.get({ seq: 0, get })).toBe('Book-0');
+
+  const l2 = lazy<TypeWithTransientFields, Field>(async ({ seq }) => Promise.resolve(`Book-${seq}`));
   expect(l2).instanceOf(Lazy);
-  expect(await l2.get({ seq: 0, get: async () => Promise.resolve() })).toBe('Book-0');
+  expect(await l2.get({ seq: 0, get })).toBe('Book-0');
 });
 
 it('FieldResolver', () => {
