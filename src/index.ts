@@ -20,9 +20,16 @@ export type User = {
   lastName: string;
   fullName: string;
 };
+export type Image = {
+  id: string;
+  url: string;
+  width: number | null;
+  height: number | null;
+};
 const BookFieldNames = ['id', 'title', 'author'] as const;
 const AuthorFieldNames = ['id', 'name', 'books'] as const;
 const UserFieldNames = ['id', 'firstName', 'lastName', 'fullName'] as const;
+const ImageFieldNames = ['id', 'url', 'width', 'height'] as const;
 
 // ---------- Book ----------
 
@@ -91,4 +98,27 @@ export function defineUserFactory<Options extends UserFactoryDefineOptions<{}>>(
   options: Options,
 ): UserFactoryInterface<{}, Options> {
   return defineTypeFactoryInternal<User, {}, Options>(UserFieldNames, options);
+}
+
+// ---------- Image ----------
+
+export type ImageFactoryDefineOptions<TransientFields extends Record<string, unknown>> = TypeFactoryDefineOptions<
+  Image,
+  TransientFields
+>;
+export type ImageFactoryInterface<
+  TransientFields extends Record<string, unknown>,
+  Options extends ImageFactoryDefineOptions<TransientFields>,
+> = TypeFactoryInterface<Image, TransientFields, Options>;
+
+/**
+ * Define factory for {@link Image} model.
+ *
+ * @param options
+ * @returns factory {@link ImageFactoryInterface}
+ */
+export function defineImageFactory<Options extends ImageFactoryDefineOptions<{}>>(
+  options: Options,
+): ImageFactoryInterface<{}, Options> {
+  return defineTypeFactoryInternal<Image, {}, Options>(ImageFieldNames, options);
 }

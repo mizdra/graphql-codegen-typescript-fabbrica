@@ -8,6 +8,7 @@ import {
   defineAuthorFactory,
   AuthorFactoryDefineOptions,
   AuthorFactoryInterface,
+  defineImageFactory,
 } from './index.js';
 
 describe('integration test', () => {
@@ -237,6 +238,76 @@ describe('defineTypeFactory', () => {
       // The result of the field resolver is cached, so the resolver is called only once.
       expect(firstNameResolver).toHaveBeenCalledTimes(1);
       expect(lastNameResolver).toHaveBeenCalledTimes(1);
+    });
+  });
+  describe('traits', () => {
+    it('overrides defaultFields', async () => {
+      const ImageFactory = defineImageFactory({
+        defaultFields: {
+          id: lazy(({ seq }) => `Image-${seq}`),
+          url: '#',
+          width: null,
+          height: null,
+        },
+        traits: {
+          avatar: {
+            defaultFields: {
+              url: 'https://example.com/avatar.png',
+              width: 48,
+              height: 48,
+            },
+          },
+        },
+      });
+      const image = await ImageFactory.use('avatar').build();
+      expect(image).toStrictEqual({
+        id: 'Image-0',
+        url: 'https://example.com/avatar.png',
+        width: 48,
+        height: 48,
+      });
+      assertType<{
+        id: string;
+        url: string;
+        width: number;
+        height: number;
+      }>(image);
+    });
+    it('overrides fields multiple times by chaining the use methods', async () => {
+      const ImageFactory = defineImageFactory({
+        defaultFields: {
+          id: lazy(({ seq }) => `Image-${seq}`),
+          url: '#',
+          width: null,
+          height: null,
+        },
+        traits: {
+          large: {
+            defaultFields: {
+              width: 256,
+              height: 256,
+            },
+          },
+          avatar: {
+            defaultFields: {
+              url: 'https://example.com/avatar.png',
+            },
+          },
+        },
+      });
+      const image = await ImageFactory.use('large').use('avatar').build();
+      expect(image).toStrictEqual({
+        id: 'Image-0',
+        url: 'https://example.com/avatar.png',
+        width: 256,
+        height: 256,
+      });
+      assertType<{
+        id: string;
+        url: string;
+        width: number;
+        height: number;
+      }>(image);
     });
   });
   describe('transientFields', () => {
