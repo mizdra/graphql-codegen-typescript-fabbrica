@@ -63,12 +63,13 @@ export async function resolveFields<
   transientFieldsResolver: _TransientFieldsResolver,
   inputFieldsResolver: _InputFieldsResolver,
 ): Promise<Merge<ResolvedFields<_DefaultFieldsResolver>, Pick<ResolvedFields<_InputFieldsResolver>, keyof Type>>> {
+  type TypeWithTransientFields = Type & TransientFields;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Use any type as it is impossible to match types.
   const fields: any = {};
 
   async function resolveField<Field>(
-    options: FieldResolverOptions<Type & TransientFields>,
-    fieldResolver: FieldResolver<Type & TransientFields, Field>,
+    options: FieldResolverOptions<TypeWithTransientFields>,
+    fieldResolver: FieldResolver<TypeWithTransientFields, Field>,
   ): Promise<Field> {
     if (fieldResolver instanceof Lazy) {
       return fieldResolver.get(options);
@@ -77,9 +78,9 @@ export async function resolveFields<
     }
   }
 
-  async function resolveFieldAndUpdateCache<FieldName extends keyof (Type & TransientFields)>(
+  async function resolveFieldAndUpdateCache<FieldName extends keyof TypeWithTransientFields>(
     fieldName: FieldName,
-  ): Promise<(Type & TransientFields)[FieldName]> {
+  ): Promise<TypeWithTransientFields[FieldName]> {
     if (fieldName in fields) return fields[fieldName];
 
     const fieldResolver =
@@ -94,7 +95,7 @@ export async function resolveFields<
     return fields[fieldName];
   }
 
-  const options: FieldResolverOptions<Type & TransientFields> = {
+  const options: FieldResolverOptions<TypeWithTransientFields> = {
     seq,
     get: resolveFieldAndUpdateCache,
   };
