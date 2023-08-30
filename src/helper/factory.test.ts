@@ -1,4 +1,5 @@
 import { expect, it, describe, assertType, expectTypeOf, vi } from 'vitest';
+import { oneOf } from '../test/util.js';
 import {
   DefaultFieldsResolver,
   Traits,
@@ -8,7 +9,6 @@ import {
   lazy,
   resetAllSequence,
 } from './factory.js';
-import { oneOf } from './test/util.js';
 
 export type Book = {
   id: string;
