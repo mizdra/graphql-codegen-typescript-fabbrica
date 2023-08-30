@@ -8,6 +8,10 @@ import {
   defineAuthorFactory,
   AuthorFactoryDefineOptions,
   AuthorFactoryInterface,
+  defineImageFactory,
+  DefaultFieldsResolver,
+  Traits,
+  Author,
 } from './index.js';
 
 describe('integration test', () => {
@@ -239,6 +243,78 @@ describe('defineTypeFactory', () => {
       expect(lastNameResolver).toHaveBeenCalledTimes(1);
     });
   });
+  describe('traits', () => {
+    it('overrides defaultFields', async () => {
+      const ImageFactory = defineImageFactory({
+        defaultFields: {
+          id: lazy(({ seq }) => `Image-${seq}`),
+          url: '#',
+          width: null,
+          height: null,
+        },
+        traits: {
+          avatar: {
+            defaultFields: {
+              url: 'https://example.com/avatar.png',
+              width: 48,
+              height: 48,
+            },
+          },
+        },
+      });
+      const image = await ImageFactory.use('avatar').build();
+      expect(image).toStrictEqual({
+        id: 'Image-0',
+        url: 'https://example.com/avatar.png',
+        width: 48,
+        height: 48,
+      });
+      assertType<{
+        id: string;
+        url: string;
+        width: number;
+        height: number;
+      }>(image);
+      expectTypeOf(image).not.toBeNever();
+    });
+    it('overrides fields multiple times by chaining the use methods', async () => {
+      const ImageFactory = defineImageFactory({
+        defaultFields: {
+          id: lazy(({ seq }) => `Image-${seq}`),
+          url: '#',
+          width: null,
+          height: null,
+        },
+        traits: {
+          large: {
+            defaultFields: {
+              width: 256,
+              height: 256,
+            },
+          },
+          avatar: {
+            defaultFields: {
+              url: 'https://example.com/avatar.png',
+            },
+          },
+        },
+      });
+      const image = await ImageFactory.use('large').use('avatar').build();
+      expect(image).toStrictEqual({
+        id: 'Image-0',
+        url: 'https://example.com/avatar.png',
+        width: 256,
+        height: 256,
+      });
+      assertType<{
+        id: string;
+        url: string;
+        width: number;
+        height: number;
+      }>(image);
+      expectTypeOf(image).not.toBeNever();
+    });
+  });
   describe('transientFields', () => {
     it('basic', async () => {
       // Define factory with transient fields
@@ -246,8 +322,11 @@ describe('defineTypeFactory', () => {
         bookCount: number;
       };
       function defineAuthorFactoryWithTransientFields<
-        Options extends AuthorFactoryDefineOptions<AuthorTransientFields>,
-      >(options: Options): AuthorFactoryInterface<AuthorTransientFields, Options> {
+        _DefaultFieldsResolver extends DefaultFieldsResolver<Author & AuthorTransientFields>,
+        _Traits extends Traits<Author, AuthorTransientFields>,
+      >(
+        options: AuthorFactoryDefineOptions<AuthorTransientFields, _DefaultFieldsResolver, _Traits>,
+      ): AuthorFactoryInterface<AuthorTransientFields, _DefaultFieldsResolver, _Traits> {
         return defineAuthorFactory(options);
       }
 
