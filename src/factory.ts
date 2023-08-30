@@ -4,9 +4,12 @@ import {
   InputFieldsResolver,
   resolveFields,
   FieldResolver,
+  lazy,
 } from './field-resolver.js';
-import { getSequenceCounter, resetSequence } from './sequence.js';
+import { getSequenceCounter, resetAllSequence, resetSequence } from './sequence.js';
 import { Merge } from './util.js';
+
+export { DefaultFieldsResolver, InputFieldsResolver, lazy, resetAllSequence };
 
 export type Traits<Type extends Record<string, unknown>, TransientFields extends Record<string, unknown>> = {
   [traitName: string]: {
