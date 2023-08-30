@@ -8,7 +8,7 @@ import {
   defineTypeFactoryInternal,
   lazy,
   resetAllSequence,
-} from './factory.js';
+} from './index.js';
 
 export type Book = {
   id: string;
