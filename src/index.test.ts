@@ -653,6 +653,66 @@ describe('TypeFactoryInterface', () => {
       expect(lastNameResolver).toHaveBeenCalledTimes(1);
     });
   });
+  describe('buildList', () => {
+    it('overrides defaultFields', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: lazy(({ seq }) => `Book-${seq}`),
+          title: 'ゆゆ式',
+          author: undefined,
+        },
+      });
+      // input field is optional
+      const books1 = await BookFactory.buildList(2);
+      expect(books1).toStrictEqual([
+        {
+          id: 'Book-0',
+          title: 'ゆゆ式',
+          author: undefined,
+        },
+        {
+          id: 'Book-1',
+          title: 'ゆゆ式',
+          author: undefined,
+        },
+      ]);
+      assertType<
+        {
+          id: string;
+          title: string;
+          author: undefined;
+        }[]
+      >(books1);
+      expectTypeOf(books1).not.toBeNever();
+
+      BookFactory.resetSequence();
+
+      // Passing input fields allows overriding the default field.
+      const book2 = await BookFactory.buildList(2, {
+        title: 'ゆゆ式 100巻',
+      });
+      expect(book2).toStrictEqual([
+        {
+          id: 'Book-0',
+          title: 'ゆゆ式 100巻',
+          author: undefined,
+        },
+        {
+          id: 'Book-1',
+          title: 'ゆゆ式 100巻',
+          author: undefined,
+        },
+      ]);
+      assertType<
+        {
+          id: string;
+          title: string;
+          author: undefined;
+        }[]
+      >(book2);
+      expectTypeOf(book2).not.toBeNever();
+    });
+  });
   describe('resetSequence', () => {
     it('resets sequence', async () => {
       const BookFactory = defineBookFactory({

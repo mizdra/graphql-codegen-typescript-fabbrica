@@ -35,6 +35,13 @@ export interface TypeFactoryInterface<
   build<const T extends InputFieldsResolver<Type & TransientFields>>(
     inputFieldsResolver: T,
   ): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof Type>>;
+  buildList(
+    count: number,
+  ): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof Type>[]>;
+  buildList<const T extends InputFieldsResolver<Type & TransientFields>>(
+    count: number,
+    inputFieldsResolver: T,
+  ): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof Type>[]>;
   use<T extends keyof _Traits>(
     traitName: T,
   ): TypeFactoryInterface<Type, TransientFields, Merge<_DefaultFieldsResolver, _Traits[T]['defaultFields']>, _Traits>;
@@ -66,6 +73,22 @@ export function defineTypeFactoryInternal<
         defaultFieldsResolver,
         inputFieldsResolver ?? ({} as T),
       );
+    },
+    async buildList<const T extends InputFieldsResolver<Type & TransientFields>>(
+      count: number,
+      inputFieldsResolver?: T,
+    ): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof Type>[]> {
+      const array: Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof Type>[] = [];
+      for (let i = 0; i < count; i++) {
+        if (inputFieldsResolver) {
+          // eslint-disable-next-line no-await-in-loop, @typescript-eslint/no-explicit-any
+          array.push((await this.build(inputFieldsResolver)) as any);
+        } else {
+          // eslint-disable-next-line no-await-in-loop, @typescript-eslint/no-explicit-any
+          array.push((await this.build()) as any);
+        }
+      }
+      return array;
     },
     use<T extends keyof _Traits>(
       traitName: T,
