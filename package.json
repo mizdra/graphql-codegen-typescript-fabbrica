@@ -2,7 +2,7 @@
   "name": "graphql-fabbrica",
   "description": "GraphQL Code Generator Plugin to define mock data factory.",
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "sideEffects": false,
   "repository": "https://github.com/mizdra/app_name.git",
   "author": "mizdra <pp.mizdra@gmail.com>",
