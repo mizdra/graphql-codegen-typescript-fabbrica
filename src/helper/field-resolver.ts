@@ -7,7 +7,7 @@ export type FieldResolverOptions<TypeWithTransientFields> = {
   ) => Promise<DeepReadonly<DeepOptional<TypeWithTransientFields>[FieldName]>>;
 };
 
-export class Lazy<TypeWithTransientFields, Field> {
+export class Dynamic<TypeWithTransientFields, Field> {
   constructor(
     private readonly factory: (options: FieldResolverOptions<TypeWithTransientFields>) => Field | Promise<Field>,
   ) {}
@@ -16,13 +16,13 @@ export class Lazy<TypeWithTransientFields, Field> {
   }
 }
 /** Wrapper to delay field generation until needed. */
-export function lazy<TypeWithTransientFields, Field>(
+export function dynamic<TypeWithTransientFields, Field>(
   factory: (options: FieldResolverOptions<TypeWithTransientFields>) => Field | Promise<Field>,
-): Lazy<TypeWithTransientFields, Field> {
-  return new Lazy(factory);
+): Dynamic<TypeWithTransientFields, Field> {
+  return new Dynamic(factory);
 }
 
-export type FieldResolver<TypeWithTransientFields, Field> = Field | Lazy<TypeWithTransientFields, Field>;
+export type FieldResolver<TypeWithTransientFields, Field> = Field | Dynamic<TypeWithTransientFields, Field>;
 /** The type of `defaultFields` option of `defineFactory` function. */
 export type DefaultFieldsResolver<TypeWithTransientFields> = {
   [FieldName in keyof TypeWithTransientFields]: FieldResolver<
@@ -62,7 +62,7 @@ export async function resolveFields<
     _FieldResolverOptions extends FieldResolverOptions<TypeWithTransientFields>,
     _FieldResolver extends FieldResolver<TypeWithTransientFields, unknown>,
   >(options: _FieldResolverOptions, fieldResolver: _FieldResolver): Promise<ResolvedField<_FieldResolver>> {
-    if (fieldResolver instanceof Lazy) {
+    if (fieldResolver instanceof Dynamic) {
       return fieldResolver.get(options);
     } else {
       return fieldResolver as ResolvedField<_FieldResolver>;
