@@ -134,3 +134,4 @@ dist
 
 # User
 /dist
+/e2e/__generated__

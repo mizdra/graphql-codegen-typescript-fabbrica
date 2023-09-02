@@ -1,0 +1,17 @@
+{
+  "name": "e2e",
+  "scripts": {
+    "start": "run-s gen lint test",
+    "gen": "graphql-codegen",
+    "lint": "run-s -c lint:*",
+    "lint:tsc": "tsc",
+    "lint:eslint": "eslint --ignore-path .eslintignore .",
+    "test": "vitest"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "@mizdra/graphql-fabbrica": ".."
+  }
+}

@@ -1,6 +1,6 @@
 {
   "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node18/tsconfig.json"],
-  "exclude": ["node_modules", "dist", "bin"],
+  "exclude": ["node_modules", "dist", "e2e"],
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "node16",

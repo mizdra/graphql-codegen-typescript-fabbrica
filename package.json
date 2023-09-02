@@ -1,5 +1,5 @@
 {
-  "name": "graphql-fabbrica",
+  "name": "@mizdra/graphql-fabbrica",
   "description": "GraphQL Code Generator Plugin to define mock data factory.",
   "version": "0.0.0",
   "type": "commonjs",
@@ -10,22 +10,31 @@
   "private": true,
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./helper": {
+      "types": "./dist/helper/index.d.ts",
+      "default": "./dist/helper/index.js"
     }
   },
+  "workspaces": [
+    "e2e"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "lint": "run-s -c lint:*",
     "lint:tsc": "tsc",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier --check .",
-    "test": "vitest"
+    "test": "vitest",
+    "e2e": "npm -w e2e run start"
   },
   "prettier": "@mizdra/prettier-config-mizdra",
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/plugin-helpers": "^5.0.1",
+    "@graphql-codegen/typescript": "^4.0.1",
     "@mizdra/eslint-config-mizdra": "^2.0.0",
     "@mizdra/prettier-config-mizdra": "^1.0.0",
     "@tsconfig/node18": "^18.2.0",
@@ -56,5 +65,8 @@
     "!src/**/*.test.ts",
     "!src/**/__snapshots__",
     "dist"
-  ]
+  ],
+  "peerDependencies": {
+    "graphql": "^16.0.0"
+  }
 }
