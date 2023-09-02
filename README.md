@@ -92,7 +92,7 @@ const book0 = await BookFactory.build();
 expect(book0).toStrictEqual({
   __typename: 'Book',
   id: 'Book-0',
-  title: 'apple',
+  title: expect.any(String),
   author: undefined,
 });
 assertType<{
@@ -109,11 +109,11 @@ const book1 = await BookFactory.build({
 expect(book1).toStrictEqual({
   __typename: 'Book',
   id: 'Book-1',
-  title: 'orange',
+  title: expect.any(String),
   author: {
     __typename: 'Author',
     id: 'Author-0',
-    name: 'Tom',
+    name: expect.any(String),
     books: undefined,
   },
 });
@@ -133,6 +133,24 @@ assertType<{
 ## Notable features
 
 The library has several notable features. And many of them are inspired by [FactoryBot](https://thoughtbot.github.io/factory_bot/).
+
+### Dynamic Fields
+
+The `dynamic` function allows you to define fields with a dynamic value.
+
+```ts
+import { dynamic } from '../__generated__/fabbrica';
+const BookFactory = defineBookFactory({
+  defaultFields: {
+    id: dynamic(() => faker.datatype.uuid()),
+    title: 'Yuyushiki',
+  },
+});
+expect(await BookFactory.build()).toStrictEqual({
+  id: expect.any(String), // Randomly generated UUID
+  title: 'Yuyushiki',
+});
+```
 
 ### Sequences
 
