@@ -5,7 +5,6 @@
     "gen": "graphql-codegen",
     "lint": "run-s -c lint:*",
     "lint:tsc": "tsc",
-    "lint:eslint": "eslint --ignore-path .eslintignore .",
     "test": "vitest"
   },
   "engines": {
