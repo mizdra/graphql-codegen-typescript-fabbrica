@@ -5,6 +5,7 @@ import {
   DefaultFieldsResolver,
   Traits,
   defineAuthorFactory,
+  defineAuthorFactoryInternal,
   defineBookFactory,
   defineImageFactory,
   defineUserFactory,
@@ -327,7 +328,7 @@ describe('defineTypeFactory', () => {
       >(
         options: AuthorFactoryDefineOptions<AuthorTransientFields, _DefaultFieldsResolver, _Traits>,
       ): AuthorFactoryInterface<AuthorTransientFields, _DefaultFieldsResolver, _Traits> {
-        return defineAuthorFactory(options);
+        return defineAuthorFactoryInternal(options);
       }
 
       const BookFactory = defineBookFactory({
