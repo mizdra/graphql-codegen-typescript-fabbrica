@@ -3,9 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { Config } from './config.js';
 import { getTypeInfos } from './schema-scanner.js';
 
+function buildSchemaFromString(schemaString: string) {
+  const ast = parse(schemaString);
+  return buildASTSchema(ast);
+}
+
 describe('getTypeInfos', () => {
   it('returns typename and field names', () => {
-    const ast = parse(`
+    const schema = buildSchemaFromString(`
       interface Node {
         id: ID!
       }
@@ -29,7 +34,6 @@ describe('getTypeInfos', () => {
         addBook(title: String!, authorId: ID!): Book!
       }
     `);
-    const schema = buildASTSchema(ast);
     const config: Config = { typesFile: './types', skipTypename: true };
     expect(getTypeInfos(config, schema)).toStrictEqual([
       { name: 'Book', fieldNames: ['id', 'title', 'author'] },
@@ -40,13 +44,12 @@ describe('getTypeInfos', () => {
     ]);
   });
   it('includes __typename if skipTypename is false', () => {
-    const ast = parse(`
+    const schema = buildSchemaFromString(`
       type Book {
         id: ID!
         title: String!
       }
     `);
-    const schema = buildASTSchema(ast);
     const config: Config = { typesFile: './types', skipTypename: false };
     expect(getTypeInfos(config, schema)).toStrictEqual([{ name: 'Book', fieldNames: ['__typename', 'id', 'title'] }]);
   });
