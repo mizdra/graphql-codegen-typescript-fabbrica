@@ -2,14 +2,15 @@
 
 import type { CodegenPlugin } from '@graphql-codegen/plugin-helpers';
 import { generateCode } from './code-generator.js';
-import { validateOptions } from './option.js';
+import { normalizeConfig, validateConfig } from './config.js';
 import { getTypeInfos } from './schema-scanner.js';
 
 const plugin: CodegenPlugin = {
   plugin(schema, _documents, config, _info) {
-    validateOptions(config);
-    const typeInfos = getTypeInfos(schema);
-    const code = generateCode(config, typeInfos);
+    validateConfig(config);
+    const normalizedConfig = normalizeConfig(config);
+    const typeInfos = getTypeInfos(normalizedConfig, schema);
+    const code = generateCode(normalizedConfig, typeInfos);
     return code;
   },
 };

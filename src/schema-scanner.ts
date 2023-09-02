@@ -1,8 +1,16 @@
 import { GraphQLObjectType, GraphQLSchema } from 'graphql';
+import { Config } from './config.js';
 
 export type TypeInfo = { name: string; fieldNames: string[] };
 
-export function getTypeInfos(schema: GraphQLSchema): TypeInfo[] {
+function getAdditionalFieldNames(config: Config): string[] {
+  // TODO: support __is<AbstractType> (__is<InterfaceType>, __is<UnionType>)
+  const result = [];
+  if (!config.skipTypename) result.push('__typename');
+  return result;
+}
+
+export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] {
   const result: TypeInfo[] = [];
   const types = Object.values(schema.getTypeMap());
   for (const type of types) {
@@ -13,10 +21,10 @@ export function getTypeInfos(schema: GraphQLSchema): TypeInfo[] {
     // ref: https://github.com/graphql/graphql-js/blob/b12dcffe83098922dcc6c0ec94eb6fc032bd9772/src/type/introspection.ts#L552-L559
     if (type.name.startsWith('__')) continue;
 
-    // TODO: support __typename, __is<AbstractType> (__is<Interface>, __is<Union>)
     const fieldMap = type.getFields();
     const fieldNames = Object.values(fieldMap).map((field) => field.name);
-    result.push({ name: type.name, fieldNames });
+    const additionalFieldNames = getAdditionalFieldNames(config);
+    result.push({ name: type.name, fieldNames: [...additionalFieldNames, ...fieldNames] });
   }
   return result;
 }
