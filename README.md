@@ -63,22 +63,22 @@ Then, the utilities to define a factory are generated. You can define your prefe
 
 ```ts
 // src/app.ts
-import { defineBookFactory, defineAuthorFactory, lazy } from '../__generated__/fabbrica';
+import { defineBookFactory, defineAuthorFactory, dynamic } from '../__generated__/fabbrica';
 import { faker } from '@faker-js/faker';
 
 const BookFactory = defineBookFactory({
   defaultFields: {
     __typename: 'Book',
-    id: lazy(({ seq }) => `Book-${seq}`),
-    title: lazy(() => faker.word.noun()),
+    id: dynamic(({ seq }) => `Book-${seq}`),
+    title: dynamic(() => faker.word.noun()),
     author: undefined,
   },
 });
 const AuthorFactory = defineAuthorFactory({
   defaultFields: {
     __typename: 'Author',
-    id: lazy(({ seq }) => `Author-${seq}`),
-    name: lazy(() => faker.person.firstName()),
+    id: dynamic(({ seq }) => `Author-${seq}`),
+    name: dynamic(() => faker.person.firstName()),
     books: undefined,
   },
 });
@@ -141,8 +141,8 @@ Sequences allow you to build sequentially numbered data.
 ```ts
 const BookFactory = defineBookFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `Book-${seq}`),
-    title: lazy(async ({ seq }) => Promise.resolve(`Yuyushiki Vol.${seq}`)),
+    id: dynamic(({ seq }) => `Book-${seq}`),
+    title: dynamic(async ({ seq }) => Promise.resolve(`Yuyushiki Vol.${seq}`)),
     author: undefined,
   },
 });
@@ -165,9 +165,9 @@ Fields can be based on the values of other fields using `get` function.
 ```ts
 const UserFactory = defineUserFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `User-${seq}`),
+    id: dynamic(({ seq }) => `User-${seq}`),
     name: 'yukari',
-    email: lazy(async ({ get }) => `${(await get('name')) ?? 'defaultName'}@yuyushiki.net`),
+    email: dynamic(async ({ get }) => `${(await get('name')) ?? 'defaultName'}@yuyushiki.net`),
   },
 });
 expect(await UserFactory.build()).toStrictEqual({
@@ -189,8 +189,8 @@ You can build a list of mock data with `buildList` utility.
 ```ts
 const BookFactory = defineBookFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `Book-${seq}`),
-    title: lazy(({ seq }) => `Yuyushiki Vol.${seq}`),
+    id: dynamic(({ seq }) => `Book-${seq}`),
+    title: dynamic(({ seq }) => `Yuyushiki Vol.${seq}`),
     author: undefined,
   },
 });
@@ -208,16 +208,16 @@ You can build mock data of the relevant type in one shot.
 ```ts
 const BookFactory = defineBookFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `Book-${seq}`),
-    title: lazy(({ seq }) => `Yuyushiki Vol.${seq}`),
+    id: dynamic(({ seq }) => `Book-${seq}`),
+    title: dynamic(({ seq }) => `Yuyushiki Vol.${seq}`),
     author: undefined,
   },
 });
 const AuthorFactory = defineAuthorFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `Author-${seq}`),
+    id: dynamic(({ seq }) => `Author-${seq}`),
     name: 'Komata Mikami',
-    books: lazy(async () => BookFactory.buildList(1)), // Build mock data of related types
+    books: dynamic(async () => BookFactory.buildList(1)), // Build mock data of related types
   },
 });
 expect(await AuthorFactory.build()).toStrictEqual({
@@ -236,7 +236,7 @@ However, you must prepare a custom `define<Type>Factory` to use Transient Fields
 ```ts
 import {
   defineAuthorFactoryInternal,
-  lazy,
+  dynamic,
   DefaultFieldsResolver,
   Traits,
   AuthorFactoryDefineOptions,
@@ -260,9 +260,9 @@ function defineAuthorFactoryWithTransientFields<
 // Use custom `defineAuthorFactory`
 const AuthorFactory = defineAuthorFactoryWithTransientFields({
   defaultFields: {
-    id: lazy(({ seq }) => `Author-${seq}`),
+    id: dynamic(({ seq }) => `Author-${seq}`),
     name: 'Komata Mikami',
-    books: lazy(async ({ get }) => {
+    books: dynamic(async ({ get }) => {
       const bookCount = (await get('bookCount')) ?? 0;
       return BookFactory.buildList(bookCount);
     }),
@@ -291,7 +291,7 @@ import I_BANNER from '../assets/dummy/banner.png';
 
 const ImageFactory = defineImageFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `Image-${seq}`),
+    id: dynamic(({ seq }) => `Image-${seq}`),
     url: I_SPACER.src,
     width: I_SPACER.width,
     height: I_SPACER.height,
@@ -358,20 +358,20 @@ Creating a circular type with [Associations](#build-mock-data-of-related-types-a
 ```ts
 const BookFactory = defineBookFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `Book-${seq}`),
-    title: lazy(({ seq }) => `ゆゆ式 ${seq}巻`),
-    // NOTE: `lazy(({ seq }) => AuthorFactory.build())` causes a circular dependency between `BookFactory` and `AuthorFactory`.
+    id: dynamic(({ seq }) => `Book-${seq}`),
+    title: dynamic(({ seq }) => `ゆゆ式 ${seq}巻`),
+    // NOTE: `dynamic(({ seq }) => AuthorFactory.build())` causes a circular dependency between `BookFactory` and `AuthorFactory`.
     // As a result, the types of each other become undecidable and a compile error occurs.
     // So that the type is not undecidable, pass `undefined`.
-    author: lazy(({ seq }) => AuthorFactory.build()),
+    author: dynamic(({ seq }) => AuthorFactory.build()),
   },
 });
 const AuthorFactory = defineAuthorFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `Author-${seq}`),
-    name: lazy(({ seq }) => `${seq}上小又`),
+    id: dynamic(({ seq }) => `Author-${seq}`),
+    name: dynamic(({ seq }) => `${seq}上小又`),
     // NOTE: The type is not undecidable, pass `undefined`.
-    books: lazy(({ seq }) => BookFactory.buildList()),
+    books: dynamic(({ seq }) => BookFactory.buildList()),
   },
 });
 ```
@@ -394,15 +394,15 @@ This error is due to the type of each field being cycled, making the type undeci
 ```ts
 const BookFactory = defineBookFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `Book-${seq}`),
-    title: lazy(({ seq }) => `ゆゆ式 ${seq}巻`),
-    author: lazy(({ seq }) => AuthorFactory.build()),
+    id: dynamic(({ seq }) => `Book-${seq}`),
+    title: dynamic(({ seq }) => `ゆゆ式 ${seq}巻`),
+    author: dynamic(({ seq }) => AuthorFactory.build()),
   },
 });
 const AuthorFactory = defineAuthorFactory({
   defaultFields: {
-    id: lazy(({ seq }) => `Author-${seq}`),
-    name: lazy(({ seq }) => `${seq}上小又`),
+    id: dynamic(({ seq }) => `Author-${seq}`),
+    name: dynamic(({ seq }) => `${seq}上小又`),
     // Pass `undefined` to avoid type being undecidable.
     books: undefined,
   },

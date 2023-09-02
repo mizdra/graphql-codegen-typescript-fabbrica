@@ -9,7 +9,7 @@ import {
   defineBookFactory,
   defineImageFactory,
   defineUserFactory,
-  lazy,
+  dynamic,
   resetAllSequence,
 } from './__generated__/fabbrica.js';
 import { Author } from './__generated__/types.js';
@@ -19,9 +19,9 @@ describe('integration test', () => {
   it('circular dependent type', async () => {
     const BookFactory = defineBookFactory({
       defaultFields: {
-        id: lazy(({ seq }) => `Book-${seq}`),
-        title: lazy(({ seq }) => `ゆゆ式 ${seq}巻`),
-        // NOTE: `lazy(({ seq }) => AuthorFactory.build())` causes a circular dependency between `BookFactory` and `AuthorFactory`.
+        id: dynamic(({ seq }) => `Book-${seq}`),
+        title: dynamic(({ seq }) => `ゆゆ式 ${seq}巻`),
+        // NOTE: `dynamic(({ seq }) => AuthorFactory.build())` causes a circular dependency between `BookFactory` and `AuthorFactory`.
         // As a result, the types of each other become undecidable and a compile error occurs.
         // So that the type is not undecidable, pass `undefined`.
         author: undefined,
@@ -29,8 +29,8 @@ describe('integration test', () => {
     });
     const AuthorFactory = defineAuthorFactory({
       defaultFields: {
-        id: lazy(({ seq }) => `Author-${seq}`),
-        name: lazy(({ seq }) => `${seq}上小又`),
+        id: dynamic(({ seq }) => `Author-${seq}`),
+        name: dynamic(({ seq }) => `${seq}上小又`),
         // NOTE: The type is not undecidable, pass `undefined`.
         books: undefined,
       },
@@ -155,8 +155,8 @@ describe('defineTypeFactory', () => {
     it('accepts functional field resolvers', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
-          id: lazy(() => 'Book-0'),
-          title: lazy(async () => Promise.resolve('ゆゆ式')),
+          id: dynamic(() => 'Book-0'),
+          title: dynamic(async () => Promise.resolve('ゆゆ式')),
           author: undefined,
         },
       });
@@ -193,8 +193,8 @@ describe('defineTypeFactory', () => {
     it('creates fields with sequential id', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
-          id: lazy(({ seq }) => `Book-${seq}`),
-          title: lazy(async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`)),
+          id: dynamic(({ seq }) => `Book-${seq}`),
+          title: dynamic(async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`)),
           author: undefined,
         },
       });
@@ -216,10 +216,10 @@ describe('defineTypeFactory', () => {
       const lastNameResolver = vi.fn(() => 'Mikami');
       const UserFactory = defineUserFactory({
         defaultFields: {
-          id: lazy(({ seq }) => `User-${seq}`),
-          firstName: lazy(firstNameResolver),
-          lastName: lazy(lastNameResolver),
-          fullName: lazy(
+          id: dynamic(({ seq }) => `User-${seq}`),
+          firstName: dynamic(firstNameResolver),
+          lastName: dynamic(lastNameResolver),
+          fullName: dynamic(
             async ({ get }) => `${(await get('firstName')) ?? 'firstName'} ${(await get('lastName')) ?? 'lastName'}`,
           ),
         },
@@ -248,7 +248,7 @@ describe('defineTypeFactory', () => {
     it('overrides defaultFields', async () => {
       const ImageFactory = defineImageFactory({
         defaultFields: {
-          id: lazy(({ seq }) => `Image-${seq}`),
+          id: dynamic(({ seq }) => `Image-${seq}`),
           url: '#',
           width: null,
           height: null,
@@ -281,7 +281,7 @@ describe('defineTypeFactory', () => {
     it('overrides fields multiple times by chaining the use methods', async () => {
       const ImageFactory = defineImageFactory({
         defaultFields: {
-          id: lazy(({ seq }) => `Image-${seq}`),
+          id: dynamic(({ seq }) => `Image-${seq}`),
           url: '#',
           width: null,
           height: null,
@@ -333,16 +333,16 @@ describe('defineTypeFactory', () => {
 
       const BookFactory = defineBookFactory({
         defaultFields: {
-          id: lazy(({ seq }) => `Book-${seq}`),
-          title: lazy(({ seq }) => `ゆゆ式 ${seq}巻`),
+          id: dynamic(({ seq }) => `Book-${seq}`),
+          title: dynamic(({ seq }) => `ゆゆ式 ${seq}巻`),
           author: undefined,
         },
       });
       const AuthorFactory = defineAuthorFactoryWithTransientFields({
         defaultFields: {
-          id: lazy(({ seq }) => `Author-${seq}`),
+          id: dynamic(({ seq }) => `Author-${seq}`),
           name: '三上小又',
-          books: lazy(async ({ get }) => {
+          books: dynamic(async ({ get }) => {
             const bookCount = (await get('bookCount')) ?? 0;
             return BookFactory.buildList(bookCount);
           }),
@@ -387,7 +387,7 @@ describe('defineTypeFactory', () => {
     it('resets all sequence', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
-          id: lazy(({ seq }) => `Book-${seq}`),
+          id: dynamic(({ seq }) => `Book-${seq}`),
           title: 'ゆゆ式',
           author: undefined,
         },
@@ -499,8 +499,8 @@ describe('TypeFactoryInterface', () => {
         },
       });
       const book = await BookFactory.build({
-        id: lazy(() => 'Book-0'),
-        title: lazy(async () => Promise.resolve('ゆゆ式')),
+        id: dynamic(() => 'Book-0'),
+        title: dynamic(async () => Promise.resolve('ゆゆ式')),
         author: undefined,
       });
       expect(book).toStrictEqual({
@@ -572,7 +572,7 @@ describe('TypeFactoryInterface', () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
           id: 'Book-0',
-          title: lazy(defaultTitleResolver),
+          title: dynamic(defaultTitleResolver),
           author: undefined,
         },
       });
@@ -601,8 +601,8 @@ describe('TypeFactoryInterface', () => {
         },
       });
       const book = await BookFactory.build({
-        id: lazy(({ seq }) => `Book-${seq}`),
-        title: lazy(async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`)),
+        id: dynamic(({ seq }) => `Book-${seq}`),
+        title: dynamic(async ({ seq }) => Promise.resolve(`ゆゆ式 ${seq}巻`)),
       });
       expect(book).toStrictEqual({
         id: 'Book-0',
@@ -621,16 +621,16 @@ describe('TypeFactoryInterface', () => {
       const lastNameResolver = vi.fn(() => 'Mikami');
       const UserFactory = defineUserFactory({
         defaultFields: {
-          id: lazy(({ seq }) => `User-${seq}`),
+          id: dynamic(({ seq }) => `User-${seq}`),
           firstName: '',
           lastName: '',
           fullName: '',
         },
       });
       const User = await UserFactory.build({
-        firstName: lazy(firstNameResolver),
-        lastName: lazy(lastNameResolver),
-        fullName: lazy(
+        firstName: dynamic(firstNameResolver),
+        lastName: dynamic(lastNameResolver),
+        fullName: dynamic(
           async ({ get }) => `${(await get('firstName')) ?? 'firstName'} ${(await get('lastName')) ?? 'lastName'}`,
         ),
       });
@@ -657,7 +657,7 @@ describe('TypeFactoryInterface', () => {
     it('overrides defaultFields', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
-          id: lazy(({ seq }) => `Book-${seq}`),
+          id: dynamic(({ seq }) => `Book-${seq}`),
           title: 'ゆゆ式',
           author: undefined,
         },
@@ -717,7 +717,7 @@ describe('TypeFactoryInterface', () => {
     it('resets sequence', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
-          id: lazy(({ seq }) => `Book-${seq}`),
+          id: dynamic(({ seq }) => `Book-${seq}`),
           title: 'ゆゆ式',
           author: undefined,
         },
