@@ -1,4 +1,5 @@
 'use strict';
+const { join } = require('node:path');
 
 /** @type {import('eslint').Linter.BaseConfig} */
 module.exports = {
@@ -14,6 +15,13 @@ module.exports = {
   },
   rules: {
     'no-use-before-define': 'off',
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        includeTypes: true,
+        packageDir: [__dirname, join(__dirname, 'e2e')],
+      },
+    ],
   },
   overrides: [
     {

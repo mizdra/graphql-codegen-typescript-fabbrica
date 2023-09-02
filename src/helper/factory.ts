@@ -1,3 +1,5 @@
+// MEMO: The tests for this module are covered by `e2e/*.e2e.ts`.
+
 import {
   ResolvedFields,
   DefaultFieldsResolver,
