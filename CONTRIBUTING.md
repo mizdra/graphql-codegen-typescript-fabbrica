@@ -5,9 +5,9 @@ This is a guide for contributors.
 ## How to dev
 
 - `npm run build`: Build for production
-- `npm run dev`: Run for development
 - `npm run lint`: Run static-checking
-- `npm run test`: Run tests
+- `npm run test`: Run tests (except E2E tests)
+- `npm run e2e`: Run E2E tests
 
 ## How to release
 

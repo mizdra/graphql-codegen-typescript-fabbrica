@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "commonjs",
   "sideEffects": false,
-  "repository": "https://github.com/mizdra/app_name.git",
+  "repository": "https://github.com/mizdra/graphql-fabbrica.git",
   "author": "mizdra <pp.mizdra@gmail.com>",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -58,7 +58,12 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "keywords": [],
+  "keywords": [
+    "testing",
+    "mock",
+    "graphql",
+    "graphql-code-generator"
+  ],
   "files": [
     "src",
     "!src/test",
