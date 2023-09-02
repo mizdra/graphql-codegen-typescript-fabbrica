@@ -1,7 +1,7 @@
-import { Options } from './option.js';
+import { Config } from './config.js';
 import { TypeInfo } from './schema-scanner.js';
 
-function generatePreludeCode(options: Options, typeInfos: TypeInfo[]): string {
+function generatePreludeCode(config: Config, typeInfos: TypeInfo[]): string {
   const joinedTypeNames = typeInfos.map(({ name }) => name).join(', ');
   const code = `
 import {
@@ -11,7 +11,7 @@ import {
   type DefaultFieldsResolver,
   defineTypeFactoryInternal,
 } from '@mizdra/graphql-fabbrica/helper';
-import type { ${joinedTypeNames} } from '${options.typesFile}';
+import type { ${joinedTypeNames} } from '${config.typesFile}';
 
 export * from '@mizdra/graphql-fabbrica/helper';
   `.trim();
@@ -63,9 +63,9 @@ export function define${name}Factory<
   return `${code}\n`;
 }
 
-export function generateCode(options: Options, typeInfos: TypeInfo[]): string {
+export function generateCode(config: Config, typeInfos: TypeInfo[]): string {
   let code = '';
-  code += generatePreludeCode(options, typeInfos);
+  code += generatePreludeCode(config, typeInfos);
   for (const typeInfo of typeInfos) {
     code += generateTypeFactoryCode(typeInfo);
   }
