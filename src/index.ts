@@ -9,7 +9,7 @@ const plugin: CodegenPlugin = {
   plugin(schema, _documents, config, _info) {
     validateConfig(config);
     const normalizedConfig = normalizeConfig(config);
-    const typeInfos = getTypeInfos(schema);
+    const typeInfos = getTypeInfos(normalizedConfig, schema);
     const code = generateCode(normalizedConfig, typeInfos);
     return code;
   },
