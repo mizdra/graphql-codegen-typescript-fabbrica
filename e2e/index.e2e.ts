@@ -344,8 +344,7 @@ describe('defineTypeFactory', () => {
           name: '三上小又',
           books: lazy(async ({ get }) => {
             const bookCount = (await get('bookCount')) ?? 0;
-            // eslint-disable-next-line max-nested-callbacks
-            return Promise.all(Array.from({ length: bookCount }, async () => BookFactory.build()));
+            return BookFactory.buildList(bookCount);
           }),
           bookCount: 0,
         },
