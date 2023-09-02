@@ -2,7 +2,7 @@
   "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node18/tsconfig.json"],
   "exclude": ["node_modules", "dist", "bin"],
   "compilerOptions": {
-    "module": "Node16",
+    "module": "CommonJS",
     "moduleResolution": "node16",
     "noEmit": true,
     /* Lint Options */
