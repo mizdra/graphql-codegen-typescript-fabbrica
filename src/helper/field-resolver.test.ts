@@ -97,5 +97,3 @@ it('ResolvedFields', () => {
     c: number | undefined;
   }>();
 });
-
-it.todo('resolveFields');
