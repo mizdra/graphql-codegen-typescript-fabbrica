@@ -392,11 +392,20 @@ describe('defineTypeFactory', () => {
           author: undefined,
         },
       });
+      const AuthorFactory = defineAuthorFactory({
+        defaultFields: {
+          id: dynamic(({ seq }) => `Author-${seq}`),
+          name: '三上小又',
+          books: undefined,
+        },
+      });
       expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
       expect(await BookFactory.build()).toMatchObject({ id: 'Book-1' });
+      expect(await AuthorFactory.build()).toMatchObject({ id: 'Author-0' });
+      expect(await AuthorFactory.build()).toMatchObject({ id: 'Author-1' });
       resetAllSequence();
       expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
-      // TODO: Test other factories
+      expect(await AuthorFactory.build()).toMatchObject({ id: 'Author-0' });
     });
   });
 });
@@ -722,11 +731,20 @@ describe('TypeFactoryInterface', () => {
           author: undefined,
         },
       });
+      const AuthorFactory = defineAuthorFactory({
+        defaultFields: {
+          id: dynamic(({ seq }) => `Author-${seq}`),
+          name: '三上小又',
+          books: undefined,
+        },
+      });
       expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
       expect(await BookFactory.build()).toMatchObject({ id: 'Book-1' });
+      expect(await AuthorFactory.build()).toMatchObject({ id: 'Author-0' });
+      expect(await AuthorFactory.build()).toMatchObject({ id: 'Author-1' });
       BookFactory.resetSequence();
       expect(await BookFactory.build()).toMatchObject({ id: 'Book-0' });
-      // TODO: Test other factories
+      expect(await AuthorFactory.build()).toMatchObject({ id: 'Author-2' });
     });
   });
 });
