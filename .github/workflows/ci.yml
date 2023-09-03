@@ -54,5 +54,4 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'npm'
       - run: npm install
-      - run: npm run build
       - run: npm run e2e

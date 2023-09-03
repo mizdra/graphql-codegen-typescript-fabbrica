@@ -28,6 +28,7 @@
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier --check .",
     "test": "vitest",
+    "pree2e": "npm run build",
     "e2e": "npm -w e2e run start"
   },
   "prettier": "@mizdra/prettier-config-mizdra",
