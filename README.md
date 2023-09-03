@@ -202,7 +202,7 @@ expect(await UserFactory.build({ name: 'yui' })).toStrictEqual({
 
 ### Building lists
 
-You can build a list of mock data with `buildList` utility.
+You can build a list of mock data with the `buildList` method.
 
 ```ts
 const BookFactory = defineBookFactory({
@@ -378,9 +378,6 @@ const BookFactory = defineBookFactory({
   defaultFields: {
     id: dynamic(({ seq }) => `Book-${seq}`),
     title: dynamic(({ seq }) => `ゆゆ式 ${seq}巻`),
-    // NOTE: `dynamic(({ seq }) => AuthorFactory.build())` causes a circular dependency between `BookFactory` and `AuthorFactory`.
-    // As a result, the types of each other become undecidable and a compile error occurs.
-    // So that the type is not undecidable, pass `undefined`.
     author: dynamic(({ seq }) => AuthorFactory.build()),
   },
 });
@@ -388,7 +385,6 @@ const AuthorFactory = defineAuthorFactory({
   defaultFields: {
     id: dynamic(({ seq }) => `Author-${seq}`),
     name: dynamic(({ seq }) => `${seq}上小又`),
-    // NOTE: The type is not undecidable, pass `undefined`.
     books: dynamic(({ seq }) => BookFactory.buildList()),
   },
 });
@@ -396,15 +392,15 @@ const AuthorFactory = defineAuthorFactory({
 
 ```console
 $ npx tsc --noEmit
-index.e2e.ts:20:11 - error TS7022: 'BookFactory' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+example.ts:1:7 - error TS7022: 'BookFactory' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
 
-20     const BookFactory = defineBookFactory({
-             ~~~~~~~~~~~
+1     const BookFactory = defineBookFactory({
+            ~~~~~~~~~~~
 
-index.e2e.ts:30:11 - error TS7022: 'AuthorFactory' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+example.ts:8:7 - error TS7022: 'AuthorFactory' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
 
-30     const AuthorFactory = defineAuthorFactory({
-             ~~~~~~~~~~~~~
+8     const AuthorFactory = defineAuthorFactory({
+            ~~~~~~~~~~~~~
 ```
 
 This error is due to the type of each field being cycled, making the type undecidable. To avoid this, you can pass `undefined` to any field.
