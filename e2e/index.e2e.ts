@@ -8,9 +8,16 @@ import {
   defineAuthorFactoryInternal,
   defineBookFactory,
   defineImageFactory,
+  defineInterfaceTest_TypeWithInterfaceFieldFactory,
+  defineInterfaceTest_ImplementingTypeFactory,
   defineUserFactory,
   dynamic,
   resetAllSequence,
+  defineUnionTest_TypeFactory,
+  defineUnionTest_Member1Factory,
+  defineEnumTest_TypeFactory,
+  defineCustomScalarTest_TypeFactory,
+  defineNullableListTest_TypeFactory,
 } from './__generated__/fabbrica.js';
 import { Author } from './__generated__/types.js';
 import { oneOf } from './test/util.js';
@@ -82,6 +89,115 @@ describe('integration test', () => {
     }>(author);
     expectTypeOf(author).not.toBeNever();
   });
+});
+
+describe('GraphQL features test', () => {
+  it('nullable list', async () => {
+    const TypeFactory = defineNullableListTest_TypeFactory({
+      defaultFields: {
+        list: ['item1', 'item2', null],
+      },
+    });
+    const type = await TypeFactory.build();
+    expect(type).toStrictEqual({
+      list: ['item1', 'item2', null],
+    });
+    expectTypeOf(type).toEqualTypeOf<{ list: (string | null)[] }>();
+  });
+  it('interface', async () => {
+    const TypeWithInterfaceField = defineInterfaceTest_TypeWithInterfaceFieldFactory({
+      defaultFields: {
+        interface: undefined,
+      },
+    });
+    const ImplementingTypeFactory = defineInterfaceTest_ImplementingTypeFactory({
+      defaultFields: {
+        id: 'ImplementingType-0',
+        field: 'field',
+      },
+    });
+    const typeWithInterfaceField = await TypeWithInterfaceField.build({
+      interface: await ImplementingTypeFactory.build(),
+    });
+    expect(typeWithInterfaceField).toStrictEqual({
+      interface: {
+        id: 'ImplementingType-0',
+        field: 'field',
+      },
+    });
+    expectTypeOf(typeWithInterfaceField).toEqualTypeOf<{ interface: { id: string; field: string } }>();
+  });
+  it('union', async () => {
+    const TypeFactory = defineUnionTest_TypeFactory({
+      defaultFields: {
+        union: undefined,
+      },
+    });
+    const Member1Factory = defineUnionTest_Member1Factory({
+      defaultFields: {
+        field1: 'field1',
+      },
+    });
+    const type = await TypeFactory.build({
+      union: await Member1Factory.build(),
+    });
+    expect(type).toStrictEqual({
+      union: {
+        field1: 'field1',
+      },
+    });
+    expectTypeOf(type).toEqualTypeOf<{ union: { field1: string } }>();
+  });
+  it('enum', async () => {
+    const TypeFactory = defineEnumTest_TypeFactory({
+      defaultFields: {
+        enum: 'VALUE1',
+      },
+    });
+    const type = await TypeFactory.build();
+    expect(type).toStrictEqual({
+      enum: 'VALUE1',
+    });
+    expectTypeOf(type).toEqualTypeOf<{ enum: 'VALUE1' }>();
+  });
+  it('custom scalar', async () => {
+    const TypeFactory = defineCustomScalarTest_TypeFactory({
+      defaultFields: {
+        scalar1: new Date('2021-01-01T00:00:00.000Z'),
+        scalar2: { field: 'field' },
+      },
+    });
+    const type = await TypeFactory.build();
+    expect(type).toStrictEqual({
+      scalar1: new Date('2021-01-01T00:00:00.000Z'),
+      scalar2: { field: 'field' },
+    });
+    expectTypeOf(type).toEqualTypeOf<{ scalar1: Date; scalar2: { field: string } }>();
+
+    // The field of object-typed custom scalar is not optional.
+    defineCustomScalarTest_TypeFactory({
+      defaultFields: {
+        scalar1: new Date('2021-01-01T00:00:00.000Z'),
+        // FIXME: The type of `scalar2` should be `{ field: string } | undefined`.
+        // But the type is `{ field: string | undefined } | undefined`.
+        scalar2: { field: undefined },
+      },
+    });
+  });
+  it.todo('input', async () => {
+    // TODO: Support input
+    // const FooFactory = defineInputTest_FooFactory({
+    //   defaultFields: {
+    //     field: 'field',
+    //   },
+    // });
+    // const foo = await FooFactory.build();
+    // expect(foo).toStrictEqual({
+    //   field: 'field',
+    // });
+    // expectTypeOf(foo).toEqualTypeOf<{ field: string }>();
+  });
+  it.todo('naming convention');
 });
 
 describe('defineTypeFactory', () => {

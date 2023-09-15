@@ -20,3 +20,60 @@ type Image {
   width: Int
   height: Int
 }
+
+# NullableListTest
+type NullableListTest_Type {
+  list: [String]!
+}
+
+# InterfaceTest
+interface InterfaceTest_Interface {
+  id: ID!
+}
+type InterfaceTest_ImplementingType implements InterfaceTest_Interface {
+  id: ID!
+  field: String!
+}
+type InterfaceTest_TypeWithInterfaceField {
+  interface: InterfaceTest_Interface!
+}
+
+# UnionTest
+union UnionTest_Union = UnionTest_Member1 | UnionTest_Member2
+type UnionTest_Member1 {
+  field1: String!
+}
+type UnionTest_Member2 {
+  field2: String!
+}
+type UnionTest_Type {
+  union: UnionTest_Union!
+}
+
+# EnumTest
+type EnumTest_Type {
+  enum: EnumTest_Enum!
+}
+enum EnumTest_Enum {
+  VALUE1
+  VALUE2
+}
+
+# CustomScalarTest
+scalar CustomScalarTest_CustomScalar1
+scalar CustomScalarTest_CustomScalar2
+type CustomScalarTest_Type {
+  scalar1: CustomScalarTest_CustomScalar1!
+  scalar2: CustomScalarTest_CustomScalar2!
+}
+
+# InputTest
+input InputTest_Foo {
+  field: String!
+}
+
+# NamingConventionTest
+# TODO: Support naming convention
+# type NamingConventionTest_Type {
+#   field: String!
+# }
