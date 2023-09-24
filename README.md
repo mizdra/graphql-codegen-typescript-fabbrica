@@ -8,6 +8,12 @@ GraphQL Code Generator Plugin to define mock data factory.
 npm install --save-dev @mizdra/graphql-fabbrica
 ```
 
+## Requirements
+
+- `graphql` >= 16.0.0
+- `typescript` >= 5.0.0
+  - `--moduleResolution Bundler`, `--moduleResolution Node16` or `--moduleResolution NodeNext` is required
+
 ## Usage
 
 First, you should configure the configuration file of GraphQL Code Generator as follows.
@@ -366,6 +372,24 @@ Defines the file path containing all GraphQL types. This file can be generated w
 type: `boolean`, default: `false`
 
 Does not add `__typename` to the generated mock data. The value of this option must be the same as the option of the same name in [typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript).
+
+### `namingConvention`
+
+type: `NamingConvention`, default: `change-case-all#pascalCase`
+
+Allow you to override the naming convention of the output. The value of this option must be the same as the option of the same name in [graphql code generator](https://the-guild.dev/graphql/codegen/docs/config-reference/naming-convention#namingconvention).
+
+### `typesPrefix`
+
+type: `string`, default: `''`
+
+Prefixes all the generated types. This value must be the same as the option of the same name in [typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typesprefix).
+
+### `typesSuffix`
+
+type: `string`, default: `''`
+
+Suffixes all the generated types. This value must be the same as the option of the same name in [typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typessuffix).
 
 ## Troubleshooting
 
