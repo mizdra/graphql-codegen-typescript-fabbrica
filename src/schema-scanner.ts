@@ -3,9 +3,8 @@ import { GraphQLObjectType, GraphQLSchema, visit } from 'graphql';
 import { Config } from './config.js';
 import { createTypeInfoVisitor } from './visitor.js';
 
-// TODO: Support comment
-type FieldInfo = { name: string; typeString: string };
-export type TypeInfo = { name: string; fields: FieldInfo[] };
+type FieldInfo = { name: string; typeString: string; comment?: string | undefined };
+export type TypeInfo = { name: string; fields: FieldInfo[]; comment?: string | undefined };
 
 export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] {
   const userDefinedTypeNames = Object.values(schema.getTypeMap())

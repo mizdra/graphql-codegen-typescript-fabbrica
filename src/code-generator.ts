@@ -18,11 +18,17 @@ export * from '@mizdra/graphql-fabbrica/helper';
   return `${code}\n`;
 }
 
-function generateOptionalTypeDefinitionCode(typeInfo: TypeInfo): string {
+export function generateOptionalTypeDefinitionCode(typeInfo: TypeInfo): string {
   const { name, fields } = typeInfo;
-  const joinedPropDefinitions = fields.map((field) => `  ${field.name}: ${field.typeString};`).join('\n');
+  const comment = typeInfo.comment ?? '';
+  const joinedPropDefinitions = fields
+    .map((field) => {
+      const comment = field.comment ? `  ${field.comment}` : '';
+      return `${comment}  ${field.name}: ${field.typeString};`;
+    })
+    .join('\n');
   return `
-export type Optional${name} = {
+${comment}export type Optional${name} = {
 ${joinedPropDefinitions}
 };
 `.trimStart();
