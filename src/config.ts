@@ -1,12 +1,20 @@
+import { ConvertFn, RawTypesConfig, convertFactory } from '@graphql-codegen/visitor-plugin-common';
+
 export type RawConfig = {
   typesFile: string;
-  skipTypename?: boolean;
+  skipTypename?: RawTypesConfig['skipTypename'];
+  namingConvention?: RawTypesConfig['namingConvention'];
+  typesPrefix?: RawTypesConfig['typesPrefix'];
+  typesSuffix?: RawTypesConfig['typesSuffix'];
   // TODO: support addIsAbstractType
 };
 
 export type Config = {
   typesFile: string;
-  skipTypename: boolean;
+  skipTypename: Exclude<RawTypesConfig['skipTypename'], undefined>;
+  typesPrefix: Exclude<RawTypesConfig['typesPrefix'], undefined>;
+  typesSuffix: Exclude<RawTypesConfig['typesSuffix'], undefined>;
+  convert: ConvertFn;
   // TODO: support addIsAbstractType
 };
 
@@ -29,5 +37,9 @@ export function normalizeConfig(rawConfig: RawConfig): Config {
   return {
     typesFile: rawConfig.typesFile,
     skipTypename: rawConfig.skipTypename ?? false,
+    typesPrefix: rawConfig.typesPrefix ?? '',
+    typesSuffix: rawConfig.typesSuffix ?? '',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    convert: convertFactory(rawConfig as any),
   };
 }
