@@ -55,7 +55,7 @@ describe('getTypeInfos', () => {
             {
               "comment": undefined,
               "name": "author",
-              "typeString": "Book['author'] | undefined",
+              "typeString": "OptionalAuthor | undefined",
             },
           ],
           "name": "Book",
@@ -80,7 +80,7 @@ describe('getTypeInfos', () => {
             {
               "comment": undefined,
               "name": "books",
-              "typeString": "Author['books'] | undefined",
+              "typeString": "OptionalBook[] | undefined",
             },
           ],
           "name": "Author",
@@ -110,7 +110,7 @@ describe('getTypeInfos', () => {
             {
               "comment": undefined,
               "name": "bookAdded",
-              "typeString": "Subscription['bookAdded'] | undefined",
+              "typeString": "OptionalBook | undefined",
             },
           ],
           "name": "Subscription",
@@ -125,7 +125,7 @@ describe('getTypeInfos', () => {
             {
               "comment": undefined,
               "name": "addBook",
-              "typeString": "Mutation['addBook'] | undefined",
+              "typeString": "OptionalBook | undefined",
             },
           ],
           "name": "Mutation",
