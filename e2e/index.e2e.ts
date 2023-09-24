@@ -17,9 +17,10 @@ import {
   defineUnionTest_Member1Factory,
   defineEnumTest_TypeFactory,
   defineCustomScalarTest_TypeFactory,
-  defineNullableListTest_TypeFactory,
+  OptionalAuthor,
+  defineNamingConventionTest_RenamedTypeFactory,
+  defineNullableTest_TypeFactory,
 } from './__generated__/fabbrica.js';
-import { Author } from './__generated__/types.js';
 import { oneOf } from './test/util.js';
 
 describe('integration test', () => {
@@ -92,17 +93,28 @@ describe('integration test', () => {
 });
 
 describe('GraphQL features test', () => {
-  it('nullable list', async () => {
-    const TypeFactory = defineNullableListTest_TypeFactory({
+  it('nullable', async () => {
+    const TypeFactory = defineNullableTest_TypeFactory({
       defaultFields: {
-        list: ['item1', 'item2', null],
+        field1: null,
+        field2: ['item', null],
+        field3: { field: 'field' },
+        field4: [{ field: 'field' }, null],
       },
     });
     const type = await TypeFactory.build();
     expect(type).toStrictEqual({
-      list: ['item1', 'item2', null],
+      field1: null,
+      field2: ['item', null],
+      field3: { field: 'field' },
+      field4: [{ field: 'field' }, null],
     });
-    expectTypeOf(type).toEqualTypeOf<{ list: (string | null)[] }>();
+    expectTypeOf(type).toEqualTypeOf<{
+      field1: null;
+      field2: (string | null)[];
+      field3: { field: string };
+      field4: ({ field: string } | null)[];
+    }>();
   });
   it('interface', async () => {
     const TypeWithInterfaceField = defineInterfaceTest_TypeWithInterfaceFieldFactory({
@@ -178,8 +190,7 @@ describe('GraphQL features test', () => {
     defineCustomScalarTest_TypeFactory({
       defaultFields: {
         scalar1: new Date('2021-01-01T00:00:00.000Z'),
-        // FIXME: The type of `scalar2` should be `{ field: string } | undefined`.
-        // But the type is `{ field: string | undefined } | undefined`.
+        // @ts-expect-error -- not optional
         scalar2: { field: undefined },
       },
     });
@@ -197,7 +208,23 @@ describe('GraphQL features test', () => {
     // });
     // expectTypeOf(foo).toEqualTypeOf<{ field: string }>();
   });
-  it.todo('naming convention');
+});
+
+describe('GraphQL Code Generator features test', () => {
+  it('namingConvention', async () => {
+    const RenamedTypeFactory = defineNamingConventionTest_RenamedTypeFactory({
+      defaultFields: {
+        field: 'field',
+      },
+    });
+    const type = await RenamedTypeFactory.build();
+    expect(type).toStrictEqual({
+      field: 'field',
+    });
+    expectTypeOf(type).toEqualTypeOf<{ field: string }>();
+  });
+  it.todo('typesPrefix');
+  it.todo('typesSuffix');
 });
 
 describe('defineTypeFactory', () => {
@@ -439,8 +466,8 @@ describe('defineTypeFactory', () => {
         bookCount: number;
       };
       function defineAuthorFactoryWithTransientFields<
-        _DefaultFieldsResolver extends DefaultFieldsResolver<Author & AuthorTransientFields>,
-        _Traits extends Traits<Author, AuthorTransientFields>,
+        _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalAuthor & AuthorTransientFields>,
+        _Traits extends Traits<OptionalAuthor, AuthorTransientFields>,
       >(
         options: AuthorFactoryDefineOptions<AuthorTransientFields, _DefaultFieldsResolver, _Traits>,
       ): AuthorFactoryInterface<AuthorTransientFields, _DefaultFieldsResolver, _Traits> {

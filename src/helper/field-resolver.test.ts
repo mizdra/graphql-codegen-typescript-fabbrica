@@ -11,16 +11,16 @@ import {
 import { DeepOptional, DeepReadonly } from './util.js';
 
 it('Dynamic', async () => {
-  type TypeWithTransientFields = { id: string; a: number };
+  type OptionalTypeWithTransientFields = { id: string | undefined; a: number | undefined };
   type Field = string;
-  const readonlyOptionalType: DeepReadonly<DeepOptional<TypeWithTransientFields>> = {
+  const readonlyOptionalType: DeepReadonly<DeepOptional<OptionalTypeWithTransientFields>> = {
     id: '',
     a: 1,
   };
-  const get = async <FieldName extends keyof TypeWithTransientFields>(fieldName: FieldName) =>
+  const get = async <FieldName extends keyof OptionalTypeWithTransientFields>(fieldName: FieldName) =>
     Promise.resolve(readonlyOptionalType[fieldName]);
 
-  const dynamic1 = new Dynamic<TypeWithTransientFields, Field>(({ seq }) => `Book-${seq}`);
+  const dynamic1 = new Dynamic<OptionalTypeWithTransientFields, Field>(({ seq }) => `Book-${seq}`);
   expect(await dynamic1.get({ seq: 0, get })).toBe('Book-0');
 
   const dynamic2 = new Dynamic(async ({ seq }) => Promise.resolve(`Book-${seq}`));
@@ -28,68 +28,70 @@ it('Dynamic', async () => {
 });
 
 it('dynamic', async () => {
-  type TypeWithTransientFields = { id: string; a: number };
+  type OptionalTypeWithTransientFields = { id: string | undefined; a: number | undefined };
   type Field = string;
-  const readonlyOptionalType: DeepReadonly<DeepOptional<TypeWithTransientFields>> = {
+  const readonlyOptionalType: DeepReadonly<DeepOptional<OptionalTypeWithTransientFields>> = {
     id: '',
     a: 1,
   };
-  const get = async <FieldName extends keyof TypeWithTransientFields>(fieldName: FieldName) =>
+  const get = async <FieldName extends keyof OptionalTypeWithTransientFields>(fieldName: FieldName) =>
     Promise.resolve(readonlyOptionalType[fieldName]);
 
-  const l1 = dynamic<TypeWithTransientFields, Field>(({ seq }) => `Book-${seq}`);
+  const l1 = dynamic<OptionalTypeWithTransientFields, Field>(({ seq }) => `Book-${seq}`);
   expect(l1).instanceOf(Dynamic);
   expect(await l1.get({ seq: 0, get })).toBe('Book-0');
 
-  const l2 = dynamic<TypeWithTransientFields, Field>(async ({ seq }) => Promise.resolve(`Book-${seq}`));
+  const l2 = dynamic<OptionalTypeWithTransientFields, Field>(async ({ seq }) => Promise.resolve(`Book-${seq}`));
   expect(l2).instanceOf(Dynamic);
   expect(await l2.get({ seq: 0, get })).toBe('Book-0');
 });
 
 it('FieldResolver', () => {
-  type TypeWithTransientFields = { a: number };
-  expectTypeOf<FieldResolver<TypeWithTransientFields, TypeWithTransientFields['a']>>().toEqualTypeOf<
+  type OptionalTypeWithTransientFields = { a: number };
+  expectTypeOf<FieldResolver<OptionalTypeWithTransientFields, OptionalTypeWithTransientFields['a']>>().toEqualTypeOf<
     number | Dynamic<{ a: number }, number>
   >();
 });
 
 it('DefaultFieldsResolver', () => {
-  type TypeWithTransientFields = { a: number; b: SubType[] };
-  type SubType = { c: number };
-  expectTypeOf<DefaultFieldsResolver<TypeWithTransientFields>>().toEqualTypeOf<{
-    a: number | undefined | Dynamic<TypeWithTransientFields, number | undefined>;
+  type OptionalTypeWithTransientFields = { a: number | undefined; b: OptionalSubType[] | undefined };
+  type OptionalSubType = { c: number | undefined };
+  expectTypeOf<DefaultFieldsResolver<OptionalTypeWithTransientFields>>().toEqualTypeOf<{
+    a: number | undefined | Dynamic<OptionalTypeWithTransientFields, number | undefined>;
     b:
       | readonly { readonly c: number | undefined }[]
       | undefined
-      | Dynamic<TypeWithTransientFields, readonly { readonly c: number | undefined }[] | undefined>;
+      | Dynamic<OptionalTypeWithTransientFields, readonly { readonly c: number | undefined }[] | undefined>;
   }>();
 });
 
 it('InputFieldsResolver', () => {
-  type TypeWithTransientFields = { a: number; b: SubType[] };
-  type SubType = { c: number };
-  expectTypeOf<InputFieldsResolver<TypeWithTransientFields>>().toEqualTypeOf<{
-    a?: number | undefined | Dynamic<TypeWithTransientFields, number | undefined>;
+  type OptionalTypeWithTransientFields = { a: number | undefined; b: OptionalSubType[] | undefined };
+  type OptionalSubType = { c: number | undefined };
+  expectTypeOf<InputFieldsResolver<OptionalTypeWithTransientFields>>().toEqualTypeOf<{
+    a?: number | undefined | Dynamic<OptionalTypeWithTransientFields, number | undefined>;
     b?:
       | readonly { readonly c: number | undefined }[]
       | undefined
-      | Dynamic<TypeWithTransientFields, readonly { readonly c: number | undefined }[] | undefined>;
+      | Dynamic<OptionalTypeWithTransientFields, readonly { readonly c: number | undefined }[] | undefined>;
   }>();
 });
 
 it('ResolvedField', () => {
-  type Type = { a: number };
+  type OptionalTypeWithTransientFields = { a: number | undefined };
   expectTypeOf<ResolvedField<number>>().toEqualTypeOf<number>();
-  expectTypeOf<ResolvedField<Dynamic<Type, Type['a']>>>().toEqualTypeOf<number>();
+  expectTypeOf<
+    ResolvedField<Dynamic<OptionalTypeWithTransientFields, OptionalTypeWithTransientFields['a']>>
+  >().toEqualTypeOf<number | undefined>();
 });
 
 it('ResolvedFields', () => {
-  type Type = { a: number };
+  type OptionalTypeWithTransientFields = { a: number | undefined };
   expectTypeOf<
     ResolvedFields<{
-      a: FieldResolver<Type, number>;
-      b: FieldResolver<Type, undefined>;
-      c: FieldResolver<Type, number | undefined>;
+      a: FieldResolver<OptionalTypeWithTransientFields, number>;
+      b: FieldResolver<OptionalTypeWithTransientFields, undefined>;
+      c: FieldResolver<OptionalTypeWithTransientFields, number | undefined>;
     }>
   >().toEqualTypeOf<{
     a: number;

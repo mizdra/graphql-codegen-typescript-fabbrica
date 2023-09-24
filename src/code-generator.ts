@@ -11,34 +11,48 @@ import {
   type DefaultFieldsResolver,
   defineTypeFactoryInternal,
 } from '@mizdra/graphql-fabbrica/helper';
-import type { ${joinedTypeNames} } from '${config.typesFile}';
+import type { Maybe, ${joinedTypeNames} } from '${config.typesFile}';
 
 export * from '@mizdra/graphql-fabbrica/helper';
   `.trim();
   return `${code}\n`;
 }
 
-function generateTypeFactoryCode(typeInfo: TypeInfo): string {
-  const { name, fieldNames } = typeInfo;
-  const joinedFieldNames = fieldNames.map((name) => `'${name}'`).join(', ');
-  const code = `
-const ${name}FieldNames = [${joinedFieldNames}] as const;
+function generateOptionalTypeDefinitionCode(typeInfo: TypeInfo): string {
+  const { name, fields } = typeInfo;
+  const joinedPropDefinitions = fields.map((field) => `  ${field.name}: ${field.typeString};`).join('\n');
+  return `
+export type Optional${name} = {
+${joinedPropDefinitions}
+};
+`.trimStart();
+}
 
+function generateFieldNamesDefinitionCode(typeInfo: TypeInfo): string {
+  const { name, fields } = typeInfo;
+  const joinedFieldNames = fields.map((field) => `'${field.name}'`).join(', ');
+  return `const ${name}FieldNames = [${joinedFieldNames}] as const;\n`;
+}
+
+function generateTypeFactoryCode(typeInfo: TypeInfo): string {
+  const { name } = typeInfo;
+  return `
 export type ${name}FactoryDefineOptions<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<${name} & TransientFields>,
-  _Traits extends Traits<${name}, TransientFields>,
-> = TypeFactoryDefineOptions<${name}, TransientFields, _DefaultFieldsResolver, _Traits>;
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Optional${name} & TransientFields>,
+  _Traits extends Traits<Optional${name}, TransientFields>,
+> = TypeFactoryDefineOptions<Optional${name}, TransientFields, _DefaultFieldsResolver, _Traits>;
+
 export type ${name}FactoryInterface<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<${name} & TransientFields>,
-  _Traits extends Traits<${name}, TransientFields>,
-> = TypeFactoryInterface<${name}, TransientFields, _DefaultFieldsResolver, _Traits>;
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Optional${name} & TransientFields>,
+  _Traits extends Traits<Optional${name}, TransientFields>,
+> = TypeFactoryInterface<Optional${name}, TransientFields, _DefaultFieldsResolver, _Traits>;
 
 export function define${name}FactoryInternal<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<${name} & TransientFields>,
-  _Traits extends Traits<${name}, TransientFields>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Optional${name} & TransientFields>,
+  _Traits extends Traits<Optional${name}, TransientFields>,
 >(
   options: ${name}FactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
 ): ${name}FactoryInterface<TransientFields, _DefaultFieldsResolver, _Traits> {
@@ -52,22 +66,26 @@ export function define${name}FactoryInternal<
  * @returns factory {@link ${name}FactoryInterface}
  */
 export function define${name}Factory<
-  _DefaultFieldsResolver extends DefaultFieldsResolver<${name}>,
-  _Traits extends Traits<${name}, {}>,
+  _DefaultFieldsResolver extends DefaultFieldsResolver<Optional${name}>,
+  _Traits extends Traits<Optional${name}, {}>,
 >(
   options: ${name}FactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
 ): ${name}FactoryInterface<{}, _DefaultFieldsResolver, _Traits> {
   return define${name}FactoryInternal(options);
 }
-  `.trim();
-  return `${code}\n`;
+`.trimStart();
 }
 
 export function generateCode(config: Config, typeInfos: TypeInfo[]): string {
   let code = '';
   code += generatePreludeCode(config, typeInfos);
   for (const typeInfo of typeInfos) {
+    code += generateOptionalTypeDefinitionCode(typeInfo);
+    code += '\n';
+    code += generateFieldNamesDefinitionCode(typeInfo);
+    code += '\n';
     code += generateTypeFactoryCode(typeInfo);
+    code += '\n';
   }
   return code;
 }

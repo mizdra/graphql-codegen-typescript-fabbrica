@@ -1,30 +1,23 @@
-import { GraphQLObjectType, GraphQLSchema } from 'graphql';
+import { getCachedDocumentNodeFromSchema } from '@graphql-codegen/plugin-helpers';
+import { GraphQLObjectType, GraphQLSchema, visit } from 'graphql';
 import { Config } from './config.js';
+import { createTypeInfoVisitor } from './visitor.js';
 
-export type TypeInfo = { name: string; fieldNames: string[] };
-
-function getAdditionalFieldNames(config: Config): string[] {
-  // TODO: support __is<AbstractType> (__is<InterfaceType>, __is<UnionType>)
-  const result = [];
-  if (!config.skipTypename) result.push('__typename');
-  return result;
-}
+// TODO: Support comment
+type FieldInfo = { name: string; typeString: string };
+export type TypeInfo = { name: string; fields: FieldInfo[] };
 
 export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] {
-  const result: TypeInfo[] = [];
-  const types = Object.values(schema.getTypeMap());
-  for (const type of types) {
-    // Ignore non-object types (e.g. scalars, enums, unions, interfaces)
-    if (!(type instanceof GraphQLObjectType)) continue;
-
+  const userDefinedTypeNames = Object.values(schema.getTypeMap())
     // Ignore introspectionTypes
     // ref: https://github.com/graphql/graphql-js/blob/b12dcffe83098922dcc6c0ec94eb6fc032bd9772/src/type/introspection.ts#L552-L559
-    if (type.name.startsWith('__')) continue;
+    .filter((type) => type instanceof GraphQLObjectType && !type.name.startsWith('__'))
+    .map((type) => type.name);
 
-    const fieldMap = type.getFields();
-    const fieldNames = Object.values(fieldMap).map((field) => field.name);
-    const additionalFieldNames = getAdditionalFieldNames(config);
-    result.push({ name: type.name, fieldNames: [...additionalFieldNames, ...fieldNames] });
-  }
-  return result;
+  const visitor = createTypeInfoVisitor(config, userDefinedTypeNames);
+  const ast = getCachedDocumentNodeFromSchema(schema);
+
+  visit(ast, visitor);
+
+  return visitor.getTypeInfos();
 }

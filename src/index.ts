@@ -1,7 +1,6 @@
 // MEMO: The tests for this module are covered by `e2e/*.e2e.ts`.
 
-// eslint-disable-next-line n/no-unpublished-import -- types only
-import type { CodegenPlugin } from '@graphql-codegen/plugin-helpers';
+import { type CodegenPlugin } from '@graphql-codegen/plugin-helpers';
 import { generateCode } from './code-generator.js';
 import { normalizeConfig, validateConfig } from './config.js';
 import { getTypeInfos } from './schema-scanner.js';
