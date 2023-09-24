@@ -19,4 +19,18 @@ describe('validateConfig', () => {
       '`options.skipTypename` must be a boolean',
     );
   });
+  it('typesPrefix', () => {
+    expect(() => validateConfig({ typesFile: './types', typesPrefix: 'Prefix' })).not.toThrow();
+    expect(() => validateConfig({ typesFile: './types' })).not.toThrow();
+    expect(() => validateConfig({ typesFile: './types', typesPrefix: 1 })).toThrow(
+      '`options.typesPrefix` must be a string',
+    );
+  });
+  it('typesSuffix', () => {
+    expect(() => validateConfig({ typesFile: './types', typesSuffix: 'Suffix' })).not.toThrow();
+    expect(() => validateConfig({ typesFile: './types' })).not.toThrow();
+    expect(() => validateConfig({ typesFile: './types', typesSuffix: 1 })).toThrow(
+      '`options.typesSuffix` must be a string',
+    );
+  });
 });

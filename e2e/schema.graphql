@@ -21,9 +21,15 @@ type Image {
   height: Int
 }
 
-# NullableListTest
-type NullableListTest_Type {
-  list: [String]!
+# NullableTest
+type NullableTest_Type {
+  field1: String
+  field2: [String]
+  field3: NullableTest_SubType
+  field4: [NullableTest_SubType]
+}
+type NullableTest_SubType {
+  field: String!
 }
 
 # InterfaceTest
@@ -73,7 +79,18 @@ input InputTest_Foo {
 }
 
 # NamingConventionTest
-# TODO: Support naming convention
-# type NamingConventionTest_Type {
+type NamingConventionTest_Type {
+  field: String!
+}
+
+# TypesPrefixTest
+# TODO: Add test for typesPrefix
+# type TypesPrefixTest_Type {
+#   field: String!
+# }
+
+# TypesSuffixTest
+# TODO: Add test for typesSuffix
+# type TypesSuffixTest_Type {
 #   field: String!
 # }

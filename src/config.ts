@@ -31,6 +31,12 @@ export function validateConfig(rawConfig: unknown): asserts rawConfig is RawConf
   if ('skipTypename' in rawConfig && typeof rawConfig['skipTypename'] !== 'boolean') {
     throw new Error('`options.skipTypename` must be a boolean');
   }
+  if ('typesPrefix' in rawConfig && typeof rawConfig['typesPrefix'] !== 'string') {
+    throw new Error('`options.typesPrefix` must be a string');
+  }
+  if ('typesSuffix' in rawConfig && typeof rawConfig['typesSuffix'] !== 'string') {
+    throw new Error('`options.typesSuffix` must be a string');
+  }
 }
 
 export function normalizeConfig(rawConfig: RawConfig): Config {
