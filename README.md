@@ -8,6 +8,12 @@ GraphQL Code Generator Plugin to define mock data factory.
 npm install --save-dev @mizdra/graphql-fabbrica
 ```
 
+## Requirements
+
+- `graphql` >= 16.0.0
+- `typescript` >= 5.0.0
+  - `--moduleResolution Bundler`, `--moduleResolution Node16` or `--moduleResolution NodeNext` is required
+
 ## Usage
 
 First, you should configure the configuration file of GraphQL Code Generator as follows.
