@@ -1,22 +1,106 @@
-import { getCachedDocumentNodeFromSchema } from '@graphql-codegen/plugin-helpers';
-import { GraphQLObjectType, GraphQLSchema, visit } from 'graphql';
+import { transformComment } from '@graphql-codegen/visitor-plugin-common';
+import {
+  GraphQLSchema,
+  ASTNode,
+  FieldDefinitionNode,
+  Kind,
+  ObjectTypeDefinitionNode,
+  TypeNode,
+  InputObjectTypeDefinitionNode,
+  InputValueDefinitionNode,
+} from 'graphql';
 import { Config } from './config.js';
-import { createTypeInfoVisitor } from './visitor.js';
+
+// The fork of https://github.com/dotansimha/graphql-code-generator/blob/e1dc75f3c598bf7f83138ca533619716fc73f823/packages/plugins/typescript/resolvers/src/visitor.ts#L85-L91
+function clearOptional(str: string): string {
+  if (str.startsWith('Maybe')) {
+    return str.replace(/Maybe<(.*?)>$/u, '$1');
+  }
+  return str;
+}
+
+// The fork of https://github.com/dotansimha/graphql-code-generator/blob/ba84a3a2758d94dac27fcfbb1bafdf3ed7c32929/packages/plugins/other/visitor-plugin-common/src/base-visitor.ts#L422
+function convertName(node: ASTNode | string, config: Config): string {
+  let convertedName = '';
+  convertedName += config.typesPrefix;
+  convertedName += config.convert(node);
+  convertedName += config.typesSuffix;
+  return convertedName;
+}
+
+function isTypeBasedOnUserDefinedType(node: TypeNode, userDefinedTypeNames: string[]): boolean {
+  if (node.kind === Kind.NON_NULL_TYPE) {
+    return isTypeBasedOnUserDefinedType(node.type, userDefinedTypeNames);
+  } else if (node.kind === Kind.LIST_TYPE) {
+    return isTypeBasedOnUserDefinedType(node.type, userDefinedTypeNames);
+  } else {
+    return userDefinedTypeNames.includes(node.name.value);
+  }
+}
+
+function parseTypeNode(node: TypeNode, config: Config): string {
+  if (node.kind === Kind.NON_NULL_TYPE) {
+    return clearOptional(parseTypeNode(node.type, config));
+  } else if (node.kind === Kind.LIST_TYPE) {
+    return `Maybe<${parseTypeNode(node.type, config)}[]>`;
+  } else {
+    return `Maybe<Optional${convertName(node.name.value, config)}>`;
+  }
+}
+
+function parseFieldDefinitionOrInputValueDefinition(
+  node: FieldDefinitionNode | InputValueDefinitionNode,
+  objectTypeName: string,
+  config: Config,
+  userDefinedTypeNames: string[],
+): { typeString: string; comment: string | undefined } {
+  const comment = node.description ? transformComment(node.description) : undefined;
+  if (isTypeBasedOnUserDefinedType(node.type, userDefinedTypeNames)) {
+    return { typeString: `${parseTypeNode(node.type, config)} | undefined`, comment };
+  } else {
+    return { typeString: `${objectTypeName}['${node.name.value}'] | undefined`, comment };
+  }
+}
+
+function parseObjectTypeDefinitionOrInputObjectTypeDefinition(
+  node: ObjectTypeDefinitionNode | InputObjectTypeDefinitionNode,
+  config: Config,
+  userDefinedTypeNames: string[],
+): TypeInfo {
+  const objectTypeName = convertName(node.name.value, config);
+  const comment = node.description ? transformComment(node.description) : undefined;
+  return {
+    name: objectTypeName,
+    fields: [
+      // TODO: support __is<AbstractType> (__is<InterfaceType>, __is<UnionType>)
+      ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${objectTypeName}'` }] : []),
+      ...(node.fields ?? []).map((field) => ({
+        name: field.name.value,
+        ...parseFieldDefinitionOrInputValueDefinition(field, objectTypeName, config, userDefinedTypeNames),
+      })),
+    ],
+    comment,
+  };
+}
 
 type FieldInfo = { name: string; typeString: string; comment?: string | undefined };
 export type TypeInfo = { name: string; fields: FieldInfo[]; comment?: string | undefined };
 
 export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] {
-  const userDefinedTypeNames = Object.values(schema.getTypeMap())
-    // Ignore introspectionTypes
-    // ref: https://github.com/graphql/graphql-js/blob/b12dcffe83098922dcc6c0ec94eb6fc032bd9772/src/type/introspection.ts#L552-L559
-    .filter((type) => type instanceof GraphQLObjectType && !type.name.startsWith('__'))
-    .map((type) => type.name);
+  const types = Object.values(schema.getTypeMap());
 
-  const visitor = createTypeInfoVisitor(config, userDefinedTypeNames);
-  const ast = getCachedDocumentNodeFromSchema(schema);
+  const typeDefinitions = types
+    .map((type) => type.astNode)
+    .filter((node): node is ObjectTypeDefinitionNode | InputObjectTypeDefinitionNode => {
+      if (!node) return false;
+      return node.kind === Kind.OBJECT_TYPE_DEFINITION || node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION;
+    });
 
-  visit(ast, visitor);
+  const userDefinedTypeNames = typeDefinitions.map((type) => type.name.value);
 
-  return visitor.getTypeInfos();
+  const typeInfos = typeDefinitions.map((node) =>
+    parseObjectTypeDefinitionOrInputObjectTypeDefinition(node, config, userDefinedTypeNames),
+  );
+
+  return typeInfos;
 }
