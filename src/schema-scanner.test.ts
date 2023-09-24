@@ -36,20 +36,24 @@ describe('getTypeInfos', () => {
     expect(getTypeInfos(config, schema)).toMatchInlineSnapshot(`
       [
         {
+          "comment": undefined,
           "fields": [
             {
               "name": "__typename",
               "typeString": "'Book'",
             },
             {
+              "comment": undefined,
               "name": "id",
               "typeString": "Book['id'] | undefined",
             },
             {
+              "comment": undefined,
               "name": "title",
               "typeString": "Book['title'] | undefined",
             },
             {
+              "comment": undefined,
               "name": "author",
               "typeString": "Book['author'] | undefined",
             },
@@ -57,20 +61,24 @@ describe('getTypeInfos', () => {
           "name": "Book",
         },
         {
+          "comment": undefined,
           "fields": [
             {
               "name": "__typename",
               "typeString": "'Author'",
             },
             {
+              "comment": undefined,
               "name": "id",
               "typeString": "Author['id'] | undefined",
             },
             {
+              "comment": undefined,
               "name": "name",
               "typeString": "Author['name'] | undefined",
             },
             {
+              "comment": undefined,
               "name": "books",
               "typeString": "Author['books'] | undefined",
             },
@@ -78,12 +86,14 @@ describe('getTypeInfos', () => {
           "name": "Author",
         },
         {
+          "comment": undefined,
           "fields": [
             {
               "name": "__typename",
               "typeString": "'Query'",
             },
             {
+              "comment": undefined,
               "name": "node",
               "typeString": "Query['node'] | undefined",
             },
@@ -91,12 +101,14 @@ describe('getTypeInfos', () => {
           "name": "Query",
         },
         {
+          "comment": undefined,
           "fields": [
             {
               "name": "__typename",
               "typeString": "'Subscription'",
             },
             {
+              "comment": undefined,
               "name": "bookAdded",
               "typeString": "Subscription['bookAdded'] | undefined",
             },
@@ -104,12 +116,14 @@ describe('getTypeInfos', () => {
           "name": "Subscription",
         },
         {
+          "comment": undefined,
           "fields": [
             {
               "name": "__typename",
               "typeString": "'Mutation'",
             },
             {
+              "comment": undefined,
               "name": "addBook",
               "typeString": "Mutation['addBook'] | undefined",
             },
@@ -130,16 +144,56 @@ describe('getTypeInfos', () => {
     expect(getTypeInfos(config, schema)).toMatchInlineSnapshot(`
       [
         {
+          "comment": undefined,
           "fields": [
             {
               "name": "__typename",
               "typeString": "'Book'",
             },
             {
+              "comment": undefined,
               "name": "id",
               "typeString": "Book['id'] | undefined",
             },
             {
+              "comment": undefined,
+              "name": "title",
+              "typeString": "Book['title'] | undefined",
+            },
+          ],
+          "name": "Book",
+        },
+      ]
+    `);
+  });
+  it('includes description comment', () => {
+    const schema = buildSchema(`
+"The book"
+type Book {
+  id: ID!
+  "The book title"
+  title: String!
+}
+    `);
+    const config: Config = fakeConfig();
+    expect(getTypeInfos(config, schema)).toMatchInlineSnapshot(`
+      [
+        {
+          "comment": "/** The book */
+      ",
+          "fields": [
+            {
+              "name": "__typename",
+              "typeString": "'Book'",
+            },
+            {
+              "comment": undefined,
+              "name": "id",
+              "typeString": "Book['id'] | undefined",
+            },
+            {
+              "comment": "/** The book title */
+      ",
               "name": "title",
               "typeString": "Book['title'] | undefined",
             },
