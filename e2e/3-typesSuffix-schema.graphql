@@ -1,0 +1,8 @@
+# TypesSuffixTest
+type Type {
+  field1: String!
+  field2: SubType!
+}
+type SubType {
+  field: String!
+}

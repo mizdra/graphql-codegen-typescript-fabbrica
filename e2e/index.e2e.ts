@@ -20,8 +20,10 @@ import {
   OptionalAuthor,
   defineNamingConventionTest_RenamedTypeFactory,
   defineNullableTest_TypeFactory,
-} from './__generated__/fabbrica.js';
+} from './__generated__/1-basic/fabbrica.js';
 import { oneOf } from './test/util.js';
+import { definePrefixTypeFactory } from './__generated__/2-typesPrefix/fabbrica.js';
+import { defineTypeSuffixFactory } from './__generated__/3-typesSuffix/fabbrica.js';
 
 describe('integration test', () => {
   it('circular dependent type', async () => {
@@ -214,17 +216,45 @@ describe('GraphQL Code Generator features test', () => {
   it('namingConvention', async () => {
     const RenamedTypeFactory = defineNamingConventionTest_RenamedTypeFactory({
       defaultFields: {
-        field: 'field',
+        field1: 'field1',
+        field2: { field: 'field' },
       },
     });
     const type = await RenamedTypeFactory.build();
     expect(type).toStrictEqual({
-      field: 'field',
+      field1: 'field1',
+      field2: { field: 'field' },
     });
-    expectTypeOf(type).toEqualTypeOf<{ field: string }>();
+    expectTypeOf(type).toEqualTypeOf<{ field1: string; field2: { field: string } }>();
   });
-  it.todo('typesPrefix');
-  it.todo('typesSuffix');
+  it('typesPrefix', async () => {
+    const TypePrefix = definePrefixTypeFactory({
+      defaultFields: {
+        field1: 'field1',
+        field2: { field: 'field' },
+      },
+    });
+    const type = await TypePrefix.build();
+    expect(type).toStrictEqual({
+      field1: 'field1',
+      field2: { field: 'field' },
+    });
+    expectTypeOf(type).toEqualTypeOf<{ field1: string; field2: { field: string } }>();
+  });
+  it('typesSuffix', async () => {
+    const TypeSuffix = defineTypeSuffixFactory({
+      defaultFields: {
+        field1: 'field1',
+        field2: { field: 'field' },
+      },
+    });
+    const type = await TypeSuffix.build();
+    expect(type).toStrictEqual({
+      field1: 'field1',
+      field2: { field: 'field' },
+    });
+    expectTypeOf(type).toEqualTypeOf<{ field1: string; field2: { field: string } }>();
+  });
 });
 
 describe('defineTypeFactory', () => {

@@ -1,31 +1,72 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
 
+const defaultTypeScriptPluginConfig = {
+  nonOptionalTypename: true,
+  enumsAsTypes: true,
+  avoidOptionals: true,
+  skipTypename: true,
+};
+const defaultFabbricaPluginConfig = {
+  typesFile: './types',
+  skipTypename: true,
+};
+
 const config: CodegenConfig = {
-  schema: './schema.graphql',
-  config: {
-    namingConvention: {
-      typeNames: './my-naming-fn.js',
-    },
-  },
   generates: {
-    '__generated__/types.ts': {
+    '__generated__/1-basic/types.ts': {
+      schema: './1-basic-schema.graphql',
       plugins: ['typescript'],
       config: {
-        nonOptionalTypename: true,
-        enumsAsTypes: true,
-        avoidOptionals: true,
-        skipTypename: true,
+        ...defaultTypeScriptPluginConfig,
         scalars: {
           CustomScalarTest_CustomScalar1: 'Date',
           CustomScalarTest_CustomScalar2: '{ field: string }',
         },
+        namingConvention: {
+          typeNames: './my-naming-fn.js',
+        },
       },
     },
-    './__generated__/fabbrica.ts': {
+    './__generated__/1-basic/fabbrica.ts': {
+      schema: './1-basic-schema.graphql',
       plugins: ['@mizdra/graphql-fabbrica'],
       config: {
-        typesFile: './types',
-        skipTypename: true,
+        ...defaultFabbricaPluginConfig,
+        namingConvention: {
+          typeNames: './my-naming-fn.js',
+        },
+      },
+    },
+    '__generated__/2-typesPrefix/types.ts': {
+      schema: './2-typesPrefix-schema.graphql',
+      plugins: ['typescript'],
+      config: {
+        ...defaultTypeScriptPluginConfig,
+        typesPrefix: 'Prefix',
+      },
+    },
+    './__generated__/2-typesPrefix/fabbrica.ts': {
+      schema: './2-typesPrefix-schema.graphql',
+      plugins: ['@mizdra/graphql-fabbrica'],
+      config: {
+        ...defaultFabbricaPluginConfig,
+        typesPrefix: 'Prefix',
+      },
+    },
+    '__generated__/3-typesSuffix/types.ts': {
+      schema: './3-typesSuffix-schema.graphql',
+      plugins: ['typescript'],
+      config: {
+        ...defaultTypeScriptPluginConfig,
+        typesSuffix: 'Suffix',
+      },
+    },
+    './__generated__/3-typesSuffix/fabbrica.ts': {
+      schema: './3-typesSuffix-schema.graphql',
+      plugins: ['@mizdra/graphql-fabbrica'],
+      config: {
+        ...defaultFabbricaPluginConfig,
+        typesSuffix: 'Suffix',
       },
     },
   },

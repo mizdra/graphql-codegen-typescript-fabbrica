@@ -80,17 +80,9 @@ input InputTest_Foo {
 
 # NamingConventionTest
 type NamingConventionTest_Type {
+  field1: String!
+  field2: SubType!
+}
+type SubType {
   field: String!
 }
-
-# TypesPrefixTest
-# TODO: Add test for typesPrefix
-# type TypesPrefixTest_Type {
-#   field: String!
-# }
-
-# TypesSuffixTest
-# TODO: Add test for typesSuffix
-# type TypesSuffixTest_Type {
-#   field: String!
-# }
