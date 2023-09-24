@@ -20,6 +20,7 @@ import {
   OptionalAuthor,
   defineNamingConventionTest_RenamedTypeFactory,
   defineNullableTest_TypeFactory,
+  defineInputTest_InputFactory,
 } from './__generated__/1-basic/fabbrica.js';
 import { oneOf } from './test/util.js';
 import { definePrefixTypeFactory } from './__generated__/2-typesPrefix/fabbrica.js';
@@ -197,18 +198,19 @@ describe('GraphQL features test', () => {
       },
     });
   });
-  it.todo('input', async () => {
-    // TODO: Support input
-    // const FooFactory = defineInputTest_FooFactory({
-    //   defaultFields: {
-    //     field: 'field',
-    //   },
-    // });
-    // const foo = await FooFactory.build();
-    // expect(foo).toStrictEqual({
-    //   field: 'field',
-    // });
-    // expectTypeOf(foo).toEqualTypeOf<{ field: string }>();
+  it('input', async () => {
+    const InputFactory = defineInputTest_InputFactory({
+      defaultFields: {
+        field1: 'field1',
+        field2: { field: 'field' },
+      },
+    });
+    const input = await InputFactory.build();
+    expect(input).toStrictEqual({
+      field1: 'field1',
+      field2: { field: 'field' },
+    });
+    expectTypeOf(input).toEqualTypeOf<{ field1: string; field2: { field: string } }>();
   });
 });
 
