@@ -230,13 +230,13 @@ describe('GraphQL Code Generator features test', () => {
     expectTypeOf(type).toEqualTypeOf<{ field1: string; field2: { field: string } }>();
   });
   it('typesPrefix', async () => {
-    const TypePrefix = definePrefixTypeFactory({
+    const TypePrefixFactory = definePrefixTypeFactory({
       defaultFields: {
         field1: 'field1',
         field2: { field: 'field' },
       },
     });
-    const type = await TypePrefix.build();
+    const type = await TypePrefixFactory.build();
     expect(type).toStrictEqual({
       field1: 'field1',
       field2: { field: 'field' },
@@ -244,13 +244,13 @@ describe('GraphQL Code Generator features test', () => {
     expectTypeOf(type).toEqualTypeOf<{ field1: string; field2: { field: string } }>();
   });
   it('typesSuffix', async () => {
-    const TypeSuffix = defineTypeSuffixFactory({
+    const TypeSuffixFactory = defineTypeSuffixFactory({
       defaultFields: {
         field1: 'field1',
         field2: { field: 'field' },
       },
     });
-    const type = await TypeSuffix.build();
+    const type = await TypeSuffixFactory.build();
     expect(type).toStrictEqual({
       field1: 'field1',
       field2: { field: 'field' },
