@@ -1,4 +1,13 @@
-import { ASTNode, FieldDefinitionNode, Kind, ObjectTypeDefinitionNode, TypeNode, ASTVisitor } from 'graphql';
+import {
+  ASTNode,
+  FieldDefinitionNode,
+  Kind,
+  ObjectTypeDefinitionNode,
+  TypeNode,
+  ASTVisitor,
+  InputObjectTypeDefinitionNode,
+  InputValueDefinitionNode,
+} from 'graphql';
 import { Config } from './config.js';
 import { TypeInfo } from './schema-scanner.js';
 
@@ -45,7 +54,10 @@ export const createTypeInfoVisitor = (
     }
   }
 
-  function parseFieldDefinition(node: FieldDefinitionNode, objectTypeName: string): string {
+  function parseFieldDefinitionOrInputValueDefinition(
+    node: FieldDefinitionNode | InputValueDefinitionNode,
+    objectTypeName: string,
+  ): string {
     let typeString: string;
     if (isTypeBasedOnUserDefinedType(node.type, userDefinedTypeNames)) {
       typeString = `${parseTypeNode(node.type)} | undefined`;
@@ -55,7 +67,9 @@ export const createTypeInfoVisitor = (
     return typeString;
   }
 
-  function parseObjectTypeDefinition(node: ObjectTypeDefinitionNode): TypeInfo {
+  function parseObjectTypeDefinitionOrInputObjectTypeDefinition(
+    node: ObjectTypeDefinitionNode | InputObjectTypeDefinitionNode,
+  ): TypeInfo {
     const objectTypeName = convertName(node.name.value, config);
     return {
       name: objectTypeName,
@@ -64,7 +78,7 @@ export const createTypeInfoVisitor = (
         ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${objectTypeName}'` }] : []),
         ...(node.fields ?? []).map((field) => ({
           name: field.name.value,
-          typeString: parseFieldDefinition(field, objectTypeName),
+          typeString: parseFieldDefinitionOrInputValueDefinition(field, objectTypeName),
         })),
       ],
     };
@@ -72,9 +86,11 @@ export const createTypeInfoVisitor = (
 
   return {
     ObjectTypeDefinition(node) {
-      typeInfos.push(parseObjectTypeDefinition(node));
+      typeInfos.push(parseObjectTypeDefinitionOrInputObjectTypeDefinition(node));
     },
-    // TODO: Support InputObjectTypeDefinition
+    InputObjectTypeDefinition(node) {
+      typeInfos.push(parseObjectTypeDefinitionOrInputObjectTypeDefinition(node));
+    },
     getTypeInfos() {
       return typeInfos;
     },
