@@ -48,7 +48,7 @@ function parseTypeNode(node: TypeNode, config: Config): string {
   }
 }
 
-function parseFieldDefinitionOrInputValueDefinition(
+function parseFieldOrInputValueDefinition(
   node: FieldDefinitionNode | InputValueDefinitionNode,
   objectTypeName: string,
   config: Config,
@@ -62,7 +62,7 @@ function parseFieldDefinitionOrInputValueDefinition(
   }
 }
 
-function parseObjectTypeDefinitionOrInputObjectTypeDefinition(
+function parseObjectTypeOrInputObjectTypeDefinition(
   node: ObjectTypeDefinitionNode | InputObjectTypeDefinitionNode,
   config: Config,
   userDefinedTypeNames: string[],
@@ -76,7 +76,7 @@ function parseObjectTypeDefinitionOrInputObjectTypeDefinition(
       ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${objectTypeName}'` }] : []),
       ...(node.fields ?? []).map((field) => ({
         name: field.name.value,
-        ...parseFieldDefinitionOrInputValueDefinition(field, objectTypeName, config, userDefinedTypeNames),
+        ...parseFieldOrInputValueDefinition(field, objectTypeName, config, userDefinedTypeNames),
       })),
     ],
     comment,
@@ -89,17 +89,17 @@ export type TypeInfo = { name: string; fields: FieldInfo[]; comment?: string | u
 export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] {
   const types = Object.values(schema.getTypeMap());
 
-  const typeDefinitions = types
+  const objectTypeOrInputObjectTypeDefinitions = types
     .map((type) => type.astNode)
     .filter((node): node is ObjectTypeDefinitionNode | InputObjectTypeDefinitionNode => {
       if (!node) return false;
       return node.kind === Kind.OBJECT_TYPE_DEFINITION || node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION;
     });
 
-  const userDefinedTypeNames = typeDefinitions.map((type) => type.name.value);
+  const userDefinedTypeNames = objectTypeOrInputObjectTypeDefinitions.map((type) => type.name.value);
 
-  const typeInfos = typeDefinitions.map((node) =>
-    parseObjectTypeDefinitionOrInputObjectTypeDefinition(node, config, userDefinedTypeNames),
+  const typeInfos = objectTypeOrInputObjectTypeDefinitions.map((node) =>
+    parseObjectTypeOrInputObjectTypeDefinition(node, config, userDefinedTypeNames),
   );
 
   return typeInfos;
