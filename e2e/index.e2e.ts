@@ -18,6 +18,7 @@ import {
   defineEnumTest_TypeFactory,
   defineCustomScalarTest_TypeFactory,
   defineNullableListTest_TypeFactory,
+  OptionalAuthor,
 } from './__generated__/fabbrica.js';
 import { Author } from './__generated__/types.js';
 import { oneOf } from './test/util.js';
@@ -439,8 +440,8 @@ describe('defineTypeFactory', () => {
         bookCount: number;
       };
       function defineAuthorFactoryWithTransientFields<
-        _DefaultFieldsResolver extends DefaultFieldsResolver<Author & AuthorTransientFields>,
-        _Traits extends Traits<Author, AuthorTransientFields>,
+        _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalAuthor & AuthorTransientFields>,
+        _Traits extends Traits<OptionalAuthor, AuthorTransientFields>,
       >(
         options: AuthorFactoryDefineOptions<AuthorTransientFields, _DefaultFieldsResolver, _Traits>,
       ): AuthorFactoryInterface<AuthorTransientFields, _DefaultFieldsResolver, _Traits> {
