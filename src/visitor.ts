@@ -41,7 +41,7 @@ export const createTypeInfoVisitor = (
     } else if (node.kind === Kind.LIST_TYPE) {
       return `Maybe<${parseTypeNode(node.type)}[]>`;
     } else {
-      return `Maybe<Optional${node.name.value}>`;
+      return `Maybe<Optional${convertName(node.name.value, config)}>`;
     }
   }
 
