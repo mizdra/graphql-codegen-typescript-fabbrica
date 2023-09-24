@@ -1,3 +1,4 @@
+import { transformComment } from '@graphql-codegen/visitor-plugin-common';
 import {
   ASTNode,
   FieldDefinitionNode,
@@ -57,20 +58,20 @@ export const createTypeInfoVisitor = (
   function parseFieldDefinitionOrInputValueDefinition(
     node: FieldDefinitionNode | InputValueDefinitionNode,
     objectTypeName: string,
-  ): string {
-    let typeString: string;
+  ): { typeString: string; comment: string | undefined } {
+    const comment = node.description ? transformComment(node.description) : undefined;
     if (isTypeBasedOnUserDefinedType(node.type, userDefinedTypeNames)) {
-      typeString = `${parseTypeNode(node.type)} | undefined`;
+      return { typeString: `${parseTypeNode(node.type)} | undefined`, comment };
     } else {
-      typeString = `${objectTypeName}['${node.name.value}'] | undefined`;
+      return { typeString: `${objectTypeName}['${node.name.value}'] | undefined`, comment };
     }
-    return typeString;
   }
 
   function parseObjectTypeDefinitionOrInputObjectTypeDefinition(
     node: ObjectTypeDefinitionNode | InputObjectTypeDefinitionNode,
   ): TypeInfo {
     const objectTypeName = convertName(node.name.value, config);
+    const comment = node.description ? transformComment(node.description) : undefined;
     return {
       name: objectTypeName,
       fields: [
@@ -78,9 +79,10 @@ export const createTypeInfoVisitor = (
         ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${objectTypeName}'` }] : []),
         ...(node.fields ?? []).map((field) => ({
           name: field.name.value,
-          typeString: parseFieldDefinitionOrInputValueDefinition(field, objectTypeName),
+          ...parseFieldDefinitionOrInputValueDefinition(field, objectTypeName),
         })),
       ],
+      comment,
     };
   }
 
