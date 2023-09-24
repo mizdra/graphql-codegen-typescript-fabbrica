@@ -201,16 +201,14 @@ describe('GraphQL features test', () => {
   it('input', async () => {
     const InputFactory = defineInputTest_InputFactory({
       defaultFields: {
-        field1: 'field1',
-        field2: { field: 'field' },
+        field: 'field',
       },
     });
     const input = await InputFactory.build();
     expect(input).toStrictEqual({
-      field1: 'field1',
-      field2: { field: 'field' },
+      field: 'field',
     });
-    expectTypeOf(input).toEqualTypeOf<{ field1: string; field2: { field: string } }>();
+    expectTypeOf(input).toEqualTypeOf<{ field: string }>();
   });
 });
 

@@ -75,10 +75,6 @@ type CustomScalarTest_Type {
 
 # InputTest
 input InputTest_Input {
-  field1: String!
-  field2: InputTest_SubType!
-}
-type InputTest_SubType {
   field: String!
 }
 
