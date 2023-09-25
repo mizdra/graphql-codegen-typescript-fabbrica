@@ -8,6 +8,7 @@ import {
   TypeNode,
   InputObjectTypeDefinitionNode,
   InputValueDefinitionNode,
+  UnionTypeDefinitionNode,
 } from 'graphql';
 import { Config } from './config.js';
 
@@ -66,14 +67,18 @@ function parseObjectTypeOrInputObjectTypeDefinition(
   node: ObjectTypeDefinitionNode | InputObjectTypeDefinitionNode,
   config: Config,
   userDefinedTypeNames: string[],
+  getAbstractTypeNames: (type: ObjectTypeDefinitionNode) => string[],
 ): TypeInfo {
   const objectTypeName = convertName(node.name.value, config);
   const comment = node.description ? transformComment(node.description) : undefined;
+  const abstractTypeNames = node.kind === Kind.OBJECT_TYPE_DEFINITION ? getAbstractTypeNames(node) : [];
   return {
     name: objectTypeName,
     fields: [
-      // TODO: support __is<AbstractType> (__is<InterfaceType>, __is<UnionType>)
       ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${objectTypeName}'` }] : []),
+      ...(!config.skipAbstractType
+        ? abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${objectTypeName}'` }))
+        : []),
       ...(node.fields ?? []).map((field) => ({
         name: field.name.value,
         ...parseFieldOrInputValueDefinition(field, objectTypeName, config, userDefinedTypeNames),
@@ -95,11 +100,24 @@ export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] 
       if (!node) return false;
       return node.kind === Kind.OBJECT_TYPE_DEFINITION || node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION;
     });
+  const unionTypeDefinitions = types
+    .map((type) => type.astNode)
+    .filter((node): node is UnionTypeDefinitionNode => {
+      if (!node) return false;
+      return node.kind === Kind.UNION_TYPE_DEFINITION;
+    });
+  function getAbstractTypeNames(type: ObjectTypeDefinitionNode): string[] {
+    const interfaceNames = (type.interfaces ?? []).map((i) => i.name.value);
+    const unionNames = unionTypeDefinitions
+      .filter((union) => (union.types ?? []).some((member) => member.name.value === type.name.value))
+      .map((union) => union.name.value);
+    return [...interfaceNames, ...unionNames];
+  }
 
   const userDefinedTypeNames = objectTypeOrInputObjectTypeDefinitions.map((type) => type.name.value);
 
   const typeInfos = objectTypeOrInputObjectTypeDefinitions.map((node) =>
-    parseObjectTypeOrInputObjectTypeDefinition(node, config, userDefinedTypeNames),
+    parseObjectTypeOrInputObjectTypeDefinition(node, config, userDefinedTypeNames, getAbstractTypeNames),
   );
 
   return typeInfos;

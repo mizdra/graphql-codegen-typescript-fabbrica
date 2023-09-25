@@ -3,6 +3,7 @@ import { ConvertFn, RawTypesConfig, convertFactory } from '@graphql-codegen/visi
 export type RawConfig = {
   typesFile: string;
   skipTypename?: RawTypesConfig['skipTypename'];
+  skipAbstractType?: boolean | undefined;
   namingConvention?: RawTypesConfig['namingConvention'];
   typesPrefix?: RawTypesConfig['typesPrefix'];
   typesSuffix?: RawTypesConfig['typesSuffix'];
@@ -12,6 +13,7 @@ export type RawConfig = {
 export type Config = {
   typesFile: string;
   skipTypename: Exclude<RawTypesConfig['skipTypename'], undefined>;
+  skipAbstractType: boolean;
   typesPrefix: Exclude<RawTypesConfig['typesPrefix'], undefined>;
   typesSuffix: Exclude<RawTypesConfig['typesSuffix'], undefined>;
   convert: ConvertFn;
@@ -31,6 +33,9 @@ export function validateConfig(rawConfig: unknown): asserts rawConfig is RawConf
   if ('skipTypename' in rawConfig && typeof rawConfig['skipTypename'] !== 'boolean') {
     throw new Error('`options.skipTypename` must be a boolean');
   }
+  if ('skipAbstractType' in rawConfig && typeof rawConfig['skipAbstractType'] !== 'boolean') {
+    throw new Error('`options.skipAbstractType` must be a boolean');
+  }
   if ('typesPrefix' in rawConfig && typeof rawConfig['typesPrefix'] !== 'string') {
     throw new Error('`options.typesPrefix` must be a string');
   }
@@ -43,6 +48,7 @@ export function normalizeConfig(rawConfig: RawConfig): Config {
   return {
     typesFile: rawConfig.typesFile,
     skipTypename: rawConfig.skipTypename ?? false,
+    skipAbstractType: rawConfig.skipAbstractType ?? true,
     typesPrefix: rawConfig.typesPrefix ?? '',
     typesSuffix: rawConfig.typesSuffix ?? '',
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
