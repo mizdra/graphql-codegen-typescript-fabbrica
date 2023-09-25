@@ -9,27 +9,15 @@ import { fakeConfig } from './test/util.js';
 describe('getTypeInfos', () => {
   it('returns typename and field names', () => {
     const schema = buildSchema(`
-      interface Node {
-        id: ID!
-      }
-      type Book implements Node {
+      type Book {
         id: ID!
         title: String!
         author: Author!
       }
-      type Author implements Node {
+      type Author {
         id: ID!
         name: String!
         books: [Book!]!
-      }
-      type Query {
-        node(id: ID!): Node
-      }
-      type Subscription {
-        bookAdded: Book!
-      }
-      type Mutation {
-        addBook(title: String!, authorId: ID!): Book!
       }
     `);
     const config: Config = fakeConfig();
@@ -55,7 +43,7 @@ describe('getTypeInfos', () => {
             {
               "comment": undefined,
               "name": "author",
-              "typeString": "Book['author'] | undefined",
+              "typeString": "OptionalAuthor | undefined",
             },
           ],
           "name": "Book",
@@ -80,57 +68,184 @@ describe('getTypeInfos', () => {
             {
               "comment": undefined,
               "name": "books",
-              "typeString": "Author['books'] | undefined",
+              "typeString": "OptionalBook[] | undefined",
             },
           ],
           "name": "Author",
         },
-        {
-          "comment": undefined,
-          "fields": [
-            {
-              "name": "__typename",
-              "typeString": "'Query'",
-            },
-            {
-              "comment": undefined,
-              "name": "node",
-              "typeString": "Query['node'] | undefined",
-            },
-          ],
-          "name": "Query",
-        },
-        {
-          "comment": undefined,
-          "fields": [
-            {
-              "name": "__typename",
-              "typeString": "'Subscription'",
-            },
-            {
-              "comment": undefined,
-              "name": "bookAdded",
-              "typeString": "Subscription['bookAdded'] | undefined",
-            },
-          ],
-          "name": "Subscription",
-        },
-        {
-          "comment": undefined,
-          "fields": [
-            {
-              "name": "__typename",
-              "typeString": "'Mutation'",
-            },
-            {
-              "comment": undefined,
-              "name": "addBook",
-              "typeString": "Mutation['addBook'] | undefined",
-            },
-          ],
-          "name": "Mutation",
-        },
       ]
+    `);
+  });
+  it('argument', () => {
+    const schema = buildSchema(`
+      type Argument {
+        field(arg: String!): String!
+      }
+    `);
+    const config: Config = fakeConfig();
+    expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+      {
+        "comment": undefined,
+        "fields": [
+          {
+            "name": "__typename",
+            "typeString": "'Argument'",
+          },
+          {
+            "comment": undefined,
+            "name": "field",
+            "typeString": "Argument['field'] | undefined",
+          },
+        ],
+        "name": "Argument",
+      }
+    `);
+  });
+  it('nullable', () => {
+    const schema = buildSchema(`
+      type Type {
+        field1: String
+        field2: [String]
+        field3: SubType
+        field4: [SubType]
+      }
+      type SubType {
+        field: String!
+      }
+    `);
+    const config: Config = fakeConfig();
+    expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+      {
+        "comment": undefined,
+        "fields": [
+          {
+            "name": "__typename",
+            "typeString": "'Type'",
+          },
+          {
+            "comment": undefined,
+            "name": "field1",
+            "typeString": "Type['field1'] | undefined",
+          },
+          {
+            "comment": undefined,
+            "name": "field2",
+            "typeString": "Type['field2'] | undefined",
+          },
+          {
+            "comment": undefined,
+            "name": "field3",
+            "typeString": "Maybe<OptionalSubType> | undefined",
+          },
+          {
+            "comment": undefined,
+            "name": "field4",
+            "typeString": "Maybe<Maybe<OptionalSubType>[]> | undefined",
+          },
+        ],
+        "name": "Type",
+      }
+    `);
+  });
+  it('interface', () => {
+    const schema = buildSchema(`
+      interface Interface1 {
+        fieldA: String!
+      }
+      interface Interface2 {
+        fieldB: String!
+      }
+      type ImplementingType implements Interface1 & Interface2 {
+        fieldA: String!
+        fieldB: String!
+      }
+    `);
+    const config: Config = fakeConfig();
+    expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+      {
+        "comment": undefined,
+        "fields": [
+          {
+            "name": "__typename",
+            "typeString": "'ImplementingType'",
+          },
+          {
+            "comment": undefined,
+            "name": "fieldA",
+            "typeString": "ImplementingType['fieldA'] | undefined",
+          },
+          {
+            "comment": undefined,
+            "name": "fieldB",
+            "typeString": "ImplementingType['fieldB'] | undefined",
+          },
+        ],
+        "name": "ImplementingType",
+      }
+    `);
+  });
+  it('union', () => {
+    const schema = buildSchema(`
+      union Union1 = Member1 | Member2
+      union Union2 = Member1 | Member2
+      type Member1 {
+        field1: String!
+      }
+      type Member2 {
+        field2: String!
+      }
+    `);
+    const config: Config = fakeConfig();
+    expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+      {
+        "comment": undefined,
+        "fields": [
+          {
+            "name": "__typename",
+            "typeString": "'Member1'",
+          },
+          {
+            "comment": undefined,
+            "name": "field1",
+            "typeString": "Member1['field1'] | undefined",
+          },
+        ],
+        "name": "Member1",
+      }
+    `);
+  });
+  it('input', () => {
+    const schema = buildSchema(`
+      input Input {
+        field1: String!
+        field2: SubType!
+      }
+      type SubType {
+        field: String!
+      }
+    `);
+    const config: Config = fakeConfig();
+    expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+      {
+        "comment": undefined,
+        "fields": [
+          {
+            "name": "__typename",
+            "typeString": "'Input'",
+          },
+          {
+            "comment": undefined,
+            "name": "field1",
+            "typeString": "Input['field1'] | undefined",
+          },
+          {
+            "comment": undefined,
+            "name": "field2",
+            "typeString": "OptionalSubType | undefined",
+          },
+        ],
+        "name": "Input",
+      }
     `);
   });
   it('includes __typename if skipTypename is false', () => {
