@@ -10,7 +10,7 @@ export function oneOf<const T>(items: T[]): T {
 export function fakeConfig(args: Partial<Config> = {}): Config {
   return {
     typesFile: './types',
-    skipTypename: false,
+    skipTypename: true,
     skipIsAbstractType: true,
     typesPrefix: '',
     typesSuffix: '',

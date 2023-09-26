@@ -27,10 +27,6 @@ describe('getTypeInfos', () => {
           "comment": undefined,
           "fields": [
             {
-              "name": "__typename",
-              "typeString": "'Book'",
-            },
-            {
               "comment": undefined,
               "name": "id",
               "typeString": "Book['id'] | undefined",
@@ -51,10 +47,6 @@ describe('getTypeInfos', () => {
         {
           "comment": undefined,
           "fields": [
-            {
-              "name": "__typename",
-              "typeString": "'Author'",
-            },
             {
               "comment": undefined,
               "name": "id",
@@ -88,10 +80,6 @@ describe('getTypeInfos', () => {
         "comment": undefined,
         "fields": [
           {
-            "name": "__typename",
-            "typeString": "'Argument'",
-          },
-          {
             "comment": undefined,
             "name": "field",
             "typeString": "Argument['field'] | undefined",
@@ -118,10 +106,6 @@ describe('getTypeInfos', () => {
       {
         "comment": undefined,
         "fields": [
-          {
-            "name": "__typename",
-            "typeString": "'Type'",
-          },
           {
             "comment": undefined,
             "name": "field1",
@@ -165,10 +149,6 @@ describe('getTypeInfos', () => {
         "comment": undefined,
         "fields": [
           {
-            "name": "__typename",
-            "typeString": "'ImplementingType'",
-          },
-          {
             "comment": undefined,
             "name": "fieldA",
             "typeString": "ImplementingType['fieldA'] | undefined",
@@ -186,10 +166,6 @@ describe('getTypeInfos', () => {
       {
         "comment": undefined,
         "fields": [
-          {
-            "name": "__typename",
-            "typeString": "'ImplementingType'",
-          },
           {
             "name": "__isInterface1",
             "typeString": "'ImplementingType'",
@@ -229,10 +205,6 @@ describe('getTypeInfos', () => {
         "comment": undefined,
         "fields": [
           {
-            "name": "__typename",
-            "typeString": "'Member1'",
-          },
-          {
             "comment": undefined,
             "name": "field1",
             "typeString": "Member1['field1'] | undefined",
@@ -245,10 +217,6 @@ describe('getTypeInfos', () => {
       {
         "comment": undefined,
         "fields": [
-          {
-            "name": "__typename",
-            "typeString": "'Member1'",
-          },
           {
             "name": "__isUnion1",
             "typeString": "'Member1'",
@@ -282,10 +250,6 @@ describe('getTypeInfos', () => {
       {
         "comment": undefined,
         "fields": [
-          {
-            "name": "__typename",
-            "typeString": "'Input'",
-          },
           {
             "comment": undefined,
             "name": "field1",
@@ -350,10 +314,6 @@ type Book {
           "comment": "/** The book */
       ",
           "fields": [
-            {
-              "name": "__typename",
-              "typeString": "'Book'",
-            },
             {
               "comment": undefined,
               "name": "id",
