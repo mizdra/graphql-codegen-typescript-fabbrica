@@ -417,7 +417,6 @@ describe('getTypeInfos', () => {
           }
         `);
       });
-      // FIXME
       it('does not effect to __typename and __is<AbstractType>', () => {
         const schema = buildSchema(`
           type Type {
@@ -434,11 +433,11 @@ describe('getTypeInfos', () => {
           [
             {
               "name": "__typename",
-              "typeString": "'type'",
+              "typeString": "'Type'",
             },
             {
               "name": "__isUnion",
-              "typeString": "'type'",
+              "typeString": "'Type'",
             },
             {
               "comment": undefined,
@@ -480,7 +479,6 @@ describe('getTypeInfos', () => {
           }
         `);
       });
-      // FIXME
       it('does not effect to __typename and __is<AbstractType>', () => {
         const schema = buildSchema(`
           type Type {
@@ -497,11 +495,11 @@ describe('getTypeInfos', () => {
           [
             {
               "name": "__typename",
-              "typeString": "'IType'",
+              "typeString": "'Type'",
             },
             {
               "name": "__isUnion",
-              "typeString": "'IType'",
+              "typeString": "'Type'",
             },
             {
               "comment": undefined,
@@ -543,7 +541,6 @@ describe('getTypeInfos', () => {
           }
         `);
       });
-      // FIXME
       it('does not effect to __typename and __is<AbstractType>', () => {
         const schema = buildSchema(`
           type Type {
@@ -560,11 +557,11 @@ describe('getTypeInfos', () => {
           [
             {
               "name": "__typename",
-              "typeString": "'TypeI'",
+              "typeString": "'Type'",
             },
             {
               "name": "__isUnion",
-              "typeString": "'TypeI'",
+              "typeString": "'Type'",
             },
             {
               "comment": undefined,
