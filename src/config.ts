@@ -51,7 +51,8 @@ export function normalizeConfig(rawConfig: RawConfig): Config {
     skipIsAbstractType: rawConfig.skipIsAbstractType ?? true,
     typesPrefix: rawConfig.typesPrefix ?? '',
     typesSuffix: rawConfig.typesSuffix ?? '',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    convert: convertFactory(rawConfig as any),
+    convert: rawConfig.namingConvention
+      ? convertFactory({ namingConvention: rawConfig.namingConvention })
+      : convertFactory({}),
   };
 }
