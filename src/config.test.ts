@@ -19,6 +19,13 @@ describe('validateConfig', () => {
       '`options.skipTypename` must be a boolean',
     );
   });
+  it('skipIsAbstractType', () => {
+    expect(() => validateConfig({ typesFile: './types', skipIsAbstractType: oneOf([true, false]) })).not.toThrow();
+    expect(() => validateConfig({ typesFile: './types' })).not.toThrow();
+    expect(() => validateConfig({ typesFile: './types', skipIsAbstractType: 1 })).toThrow(
+      '`options.skipIsAbstractType` must be a boolean',
+    );
+  });
   it('typesPrefix', () => {
     expect(() => validateConfig({ typesFile: './types', typesPrefix: 'Prefix' })).not.toThrow();
     expect(() => validateConfig({ typesFile: './types' })).not.toThrow();

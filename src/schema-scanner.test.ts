@@ -160,13 +160,42 @@ describe('getTypeInfos', () => {
         fieldB: String!
       }
     `);
-    const config: Config = fakeConfig();
-    expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+    expect(getTypeInfos(fakeConfig({ skipIsAbstractType: true }), schema)[0]).toMatchInlineSnapshot(`
       {
         "comment": undefined,
         "fields": [
           {
             "name": "__typename",
+            "typeString": "'ImplementingType'",
+          },
+          {
+            "comment": undefined,
+            "name": "fieldA",
+            "typeString": "ImplementingType['fieldA'] | undefined",
+          },
+          {
+            "comment": undefined,
+            "name": "fieldB",
+            "typeString": "ImplementingType['fieldB'] | undefined",
+          },
+        ],
+        "name": "ImplementingType",
+      }
+    `);
+    expect(getTypeInfos(fakeConfig({ skipIsAbstractType: false }), schema)[0]).toMatchInlineSnapshot(`
+      {
+        "comment": undefined,
+        "fields": [
+          {
+            "name": "__typename",
+            "typeString": "'ImplementingType'",
+          },
+          {
+            "name": "__isInterface1",
+            "typeString": "'ImplementingType'",
+          },
+          {
+            "name": "__isInterface2",
             "typeString": "'ImplementingType'",
           },
           {
@@ -195,13 +224,37 @@ describe('getTypeInfos', () => {
         field2: String!
       }
     `);
-    const config: Config = fakeConfig();
-    expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+    expect(getTypeInfos(fakeConfig({ skipIsAbstractType: true }), schema)[0]).toMatchInlineSnapshot(`
       {
         "comment": undefined,
         "fields": [
           {
             "name": "__typename",
+            "typeString": "'Member1'",
+          },
+          {
+            "comment": undefined,
+            "name": "field1",
+            "typeString": "Member1['field1'] | undefined",
+          },
+        ],
+        "name": "Member1",
+      }
+    `);
+    expect(getTypeInfos(fakeConfig({ skipIsAbstractType: false }), schema)[0]).toMatchInlineSnapshot(`
+      {
+        "comment": undefined,
+        "fields": [
+          {
+            "name": "__typename",
+            "typeString": "'Member1'",
+          },
+          {
+            "name": "__isUnion1",
+            "typeString": "'Member1'",
+          },
+          {
+            "name": "__isUnion2",
             "typeString": "'Member1'",
           },
           {

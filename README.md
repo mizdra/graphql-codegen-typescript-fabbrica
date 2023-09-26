@@ -371,25 +371,128 @@ Defines the file path containing all GraphQL types. This file can be generated w
 
 type: `boolean`, default: `false`
 
-Does not add `__typename` to the generated mock data. The value of this option must be the same as the option of the same name in [typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript).
+Does not add `__typename` to the fields that can be passed to factory.
+
+```ts
+import { CodegenConfig } from '@graphql-codegen/cli';
+const config: CodegenConfig = {
+  schema: './schema.graphql',
+  generates: {
+    '__generated__/types.ts': {
+      plugins: ['typescript'],
+      config: {
+        // ...
+      },
+    },
+    './__generated__/fabbrica.ts': {
+      plugins: ['@mizdra/graphql-fabbrica'],
+      config: {
+        // ...
+        skipTypename: true,
+      },
+    },
+  },
+};
+module.exports = config;
+```
+
+### `skipIsAbstractType`
+
+type: `boolean`, default: `true`
+
+Does not add `__is<AbstractType>` to the fields that can be passed to factory. `__is<AbstractType>` is a field that relay-compiler automatically adds to the query[^1][^2]. It is recommended for Relay users to set this option to `false`.
+
+[^1]: https://github.com/facebook/relay/issues/3129#issuecomment-659439154
+[^2]: https://github.com/search?q=repo%3Afacebook%2Frelay%20%2F__is%3CAbstractType%3E%2F&type=code
+
+```ts
+import { CodegenConfig } from '@graphql-codegen/cli';
+const config: CodegenConfig = {
+  schema: './schema.graphql',
+  generates: {
+    '__generated__/types.ts': {
+      plugins: ['typescript'],
+      config: {
+        // ...
+      },
+    },
+    './__generated__/fabbrica.ts': {
+      plugins: ['@mizdra/graphql-fabbrica'],
+      config: {
+        // ...
+        skipIsAbstractType: false,
+      },
+    },
+  },
+};
+module.exports = config;
+```
 
 ### `namingConvention`
 
 type: `NamingConvention`, default: `change-case-all#pascalCase`
 
-Allow you to override the naming convention of the output. The value of this option must be the same as the option of the same name in [graphql code generator](https://the-guild.dev/graphql/codegen/docs/config-reference/naming-convention#namingconvention).
+Allow you to override the naming convention of the output.
+
+This option is compatible with [the one for typescript plugin](https://the-guild.dev/graphql/codegen/docs/config-reference/naming-convention#namingconvention). If you specify it for the typescript plugin, you must set the same value for graphql-fabbrica.
+
+```ts
+import { CodegenConfig } from '@graphql-codegen/cli';
+const config: CodegenConfig = {
+  schema: './schema.graphql',
+  config: {
+    namingConvention: 'change-case-all#lowerCase',
+  },
+  generates: {
+    '__generated__/types.ts': {
+      plugins: ['typescript'],
+      // ...
+    },
+    './__generated__/fabbrica.ts': {
+      plugins: ['@mizdra/graphql-fabbrica'],
+      // ...
+    },
+  },
+};
+module.exports = config;
+```
 
 ### `typesPrefix`
 
 type: `string`, default: `''`
 
-Prefixes all the generated types. This value must be the same as the option of the same name in [typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typesprefix).
+Prefixes all the generated types.
+
+This option is compatible with [the one for typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typesprefix). If you specify it for the typescript plugin, you must set the same value for graphql-fabbrica.
+
+```ts
+import { CodegenConfig } from '@graphql-codegen/cli';
+const config: CodegenConfig = {
+  schema: './schema.graphql',
+  config: {
+    typesPrefix: 'I',
+  },
+  generates: {
+    '__generated__/types.ts': {
+      plugins: ['typescript'],
+      // ...
+    },
+    './__generated__/fabbrica.ts': {
+      plugins: ['@mizdra/graphql-fabbrica'],
+      // ...
+    },
+  },
+};
+module.exports = config;
+```
 
 ### `typesSuffix`
 
 type: `string`, default: `''`
 
-Suffixes all the generated types. This value must be the same as the option of the same name in [typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typessuffix).
+Suffixes all the generated types.
+
+This option is compatible with [the one for typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typessuffix). If you specify it for the typescript plugin, you must set the same value for graphql-fabbrica.
 
 ## Troubleshooting
 
