@@ -51,7 +51,7 @@ function parseTypeNode(node: TypeNode, config: Config): string {
 
 function parseFieldOrInputValueDefinition(
   node: FieldDefinitionNode | InputValueDefinitionNode,
-  objectTypeName: string,
+  convertedTypeName: string,
   config: Config,
   userDefinedTypeNames: string[],
 ): { typeString: string; comment: string | undefined } {
@@ -59,7 +59,7 @@ function parseFieldOrInputValueDefinition(
   if (isTypeBasedOnUserDefinedType(node.type, userDefinedTypeNames)) {
     return { typeString: `${parseTypeNode(node.type, config)} | undefined`, comment };
   } else {
-    return { typeString: `${objectTypeName}['${node.name.value}'] | undefined`, comment };
+    return { typeString: `${convertedTypeName}['${node.name.value}'] | undefined`, comment };
   }
 }
 
@@ -69,19 +69,20 @@ function parseObjectTypeOrInputObjectTypeDefinition(
   userDefinedTypeNames: string[],
   getAbstractTypeNames: (type: ObjectTypeDefinitionNode) => string[],
 ): TypeInfo {
-  const objectTypeName = convertName(node.name.value, config);
+  const originalTypeName = node.name.value;
+  const convertedTypeName = convertName(originalTypeName, config);
   const comment = node.description ? transformComment(node.description) : undefined;
   const abstractTypeNames = node.kind === Kind.OBJECT_TYPE_DEFINITION ? getAbstractTypeNames(node) : [];
   return {
-    name: objectTypeName,
+    name: convertedTypeName,
     fields: [
-      ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${objectTypeName}'` }] : []),
+      ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${originalTypeName}'` }] : []),
       ...(!config.skipIsAbstractType
-        ? abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${objectTypeName}'` }))
+        ? abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${originalTypeName}'` }))
         : []),
       ...(node.fields ?? []).map((field) => ({
         name: field.name.value,
-        ...parseFieldOrInputValueDefinition(field, objectTypeName, config, userDefinedTypeNames),
+        ...parseFieldOrInputValueDefinition(field, convertedTypeName, config, userDefinedTypeNames),
       })),
     ],
     comment,
