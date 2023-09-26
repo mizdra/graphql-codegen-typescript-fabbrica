@@ -21,10 +21,12 @@ import {
   defineNamingConventionTest_RenamedTypeFactory,
   defineNullableTest_TypeFactory,
   defineInputTest_InputFactory,
+  defineNonOptionalFields_OptionalFieldsTypeFactory,
 } from './__generated__/1-basic/fabbrica.js';
 import { oneOf } from './test/util.js';
 import { definePrefixTypeFactory } from './__generated__/2-typesPrefix/fabbrica.js';
 import { defineTypeSuffixFactory } from './__generated__/3-typesSuffix/fabbrica.js';
+import { defineNonOptionalFields_NonOptionalFieldsTypeFactory } from './__generated__/4-non-optional-fields/fabbrica.js';
 
 describe('integration test', () => {
   it('circular dependent type', async () => {
@@ -407,6 +409,34 @@ describe('defineTypeFactory', () => {
       // The result of the field resolver is cached, so the resolver is called only once.
       expect(firstNameResolver).toHaveBeenCalledTimes(1);
       expect(lastNameResolver).toHaveBeenCalledTimes(1);
+    });
+    describe('nonOptionalFields', () => {
+      it('requires to pass all fields if nonOptionalFields is false', async () => {
+        defineNonOptionalFields_NonOptionalFieldsTypeFactory({
+          // @ts-expect-error -- expects error
+          defaultFields: {
+            field1: 'field1',
+            // field2: 'field2',
+          },
+        });
+      });
+      it('requires to pass all fields if nonOptionalFields is true', async () => {
+        const TypeFactory = defineNonOptionalFields_OptionalFieldsTypeFactory({
+          defaultFields: {
+            field1: 'field1',
+            // field2: 'field2',
+          },
+        });
+        // field2 is not included if it is not passed to `defaultFields` or `build`.
+        const type1 = await TypeFactory.build();
+        expect(type1).toStrictEqual({ field1: 'field1' });
+        expectTypeOf(type1).toEqualTypeOf<{ field1: string }>();
+
+        // field2 is included if it is passed to `defaultFields` or `build`.
+        const type2 = await TypeFactory.build({ field2: 'field2' });
+        expect(type2).toStrictEqual({ field1: 'field1', field2: 'field2' });
+        expectTypeOf(type2).toEqualTypeOf<{ field1: string; field2: string }>();
+      });
     });
   });
   describe('traits', () => {

@@ -1,0 +1,4 @@
+type NonOptionalFields_NonOptionalFieldsType {
+  field1: String!
+  field2: String!
+}
