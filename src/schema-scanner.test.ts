@@ -1,5 +1,6 @@
 // NOTE: To avoid `Cannot use GraphQLSchema xxx from another module or realm.`, import from 'graphql/index.js' instead of 'graphql'.
 // ref: https://github.com/graphql/graphql-js/issues/1479
+import { convertFactory } from '@graphql-codegen/visitor-plugin-common';
 import { buildSchema } from 'graphql/index.js';
 import { describe, expect, it } from 'vitest';
 import { Config } from './config.js';
@@ -265,38 +266,87 @@ describe('getTypeInfos', () => {
       }
     `);
   });
-  it('includes __typename if skipTypename is false', () => {
-    const schema = buildSchema(`
-      type Book {
-        id: ID!
-        title: String!
-      }
-    `);
-    const config: Config = fakeConfig({ skipTypename: false });
-    expect(getTypeInfos(config, schema)).toMatchInlineSnapshot(`
-      [
-        {
-          "comment": undefined,
-          "fields": [
-            {
-              "name": "__typename",
-              "typeString": "'Book'",
-            },
-            {
-              "comment": undefined,
-              "name": "id",
-              "typeString": "Book['id'] | undefined",
-            },
-            {
-              "comment": undefined,
-              "name": "title",
-              "typeString": "Book['title'] | undefined",
-            },
-          ],
-          "name": "Book",
-        },
-      ]
-    `);
+  describe('skipTypename', () => {
+    it('includes __typename if skipTypename is false', () => {
+      const schema = buildSchema(`
+        type Type {
+          field: String!
+        }
+      `);
+      const config: Config = fakeConfig({ skipTypename: false });
+      expect(getTypeInfos(config, schema)[0]?.fields).toMatchInlineSnapshot(`
+        [
+          {
+            "name": "__typename",
+            "typeString": "'Type'",
+          },
+          {
+            "comment": undefined,
+            "name": "field",
+            "typeString": "Type['field'] | undefined",
+          },
+        ]
+      `);
+    });
+    it('does not include __typename if skipTypename is true', () => {
+      const schema = buildSchema(`
+        type Type {
+          field: String!
+        }
+      `);
+      const config: Config = fakeConfig({ skipTypename: true });
+      expect(getTypeInfos(config, schema)[0]?.fields).toMatchInlineSnapshot(`
+        [
+          {
+            "comment": undefined,
+            "name": "field",
+            "typeString": "Type['field'] | undefined",
+          },
+        ]
+      `);
+    });
+  });
+  describe('skipIsAbstractType', () => {
+    it('includes __typename if skipIsAbstractType is false', () => {
+      const schema = buildSchema(`
+        type Type {
+          field: String!
+        }
+        union Union = Type
+      `);
+      const config: Config = fakeConfig({ skipIsAbstractType: false });
+      expect(getTypeInfos(config, schema)[0]?.fields).toMatchInlineSnapshot(`
+        [
+          {
+            "name": "__isUnion",
+            "typeString": "'Type'",
+          },
+          {
+            "comment": undefined,
+            "name": "field",
+            "typeString": "Type['field'] | undefined",
+          },
+        ]
+      `);
+    });
+    it('does not include __typename if skipIsAbstractType is true', () => {
+      const schema = buildSchema(`
+        type Type {
+          field: String!
+        }
+        union Union = Type
+      `);
+      const config: Config = fakeConfig({ skipIsAbstractType: true });
+      expect(getTypeInfos(config, schema)[0]?.fields).toMatchInlineSnapshot(`
+        [
+          {
+            "comment": undefined,
+            "name": "field",
+            "typeString": "Type['field'] | undefined",
+          },
+        ]
+      `);
+    });
   });
   it('includes description comment', () => {
     const schema = buildSchema(`
@@ -331,4 +381,17 @@ type Book {
       ]
     `);
   });
+  // it('renames type by namingConvention', () => {
+  //   const schema = buildSchema(`
+  //     type Type {
+  //       field1: String!
+  //       field2: SubType!
+  //     }
+  //     type SubType {
+  //       field: String!
+  //     }
+  //   `);
+  //   const config: Config = fakeConfig({ convert: convertFactory({ namingConvention: 'change-case-all#lowerCase' }) });
+  //   expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot();
+  // });
 });
