@@ -76,7 +76,7 @@ function parseObjectTypeOrInputObjectTypeDefinition(
     name: objectTypeName,
     fields: [
       ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${objectTypeName}'` }] : []),
-      ...(!config.skipAbstractType
+      ...(!config.skipIsAbstractType
         ? abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${objectTypeName}'` }))
         : []),
       ...(node.fields ?? []).map((field) => ({

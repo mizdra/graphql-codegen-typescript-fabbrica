@@ -160,7 +160,7 @@ describe('getTypeInfos', () => {
         fieldB: String!
       }
     `);
-    expect(getTypeInfos(fakeConfig({ skipAbstractType: true }), schema)[0]).toMatchInlineSnapshot(`
+    expect(getTypeInfos(fakeConfig({ skipIsAbstractType: true }), schema)[0]).toMatchInlineSnapshot(`
       {
         "comment": undefined,
         "fields": [
@@ -182,7 +182,7 @@ describe('getTypeInfos', () => {
         "name": "ImplementingType",
       }
     `);
-    expect(getTypeInfos(fakeConfig({ skipAbstractType: false }), schema)[0]).toMatchInlineSnapshot(`
+    expect(getTypeInfos(fakeConfig({ skipIsAbstractType: false }), schema)[0]).toMatchInlineSnapshot(`
       {
         "comment": undefined,
         "fields": [
@@ -224,7 +224,7 @@ describe('getTypeInfos', () => {
         field2: String!
       }
     `);
-    expect(getTypeInfos(fakeConfig({ skipAbstractType: true }), schema)[0]).toMatchInlineSnapshot(`
+    expect(getTypeInfos(fakeConfig({ skipIsAbstractType: true }), schema)[0]).toMatchInlineSnapshot(`
       {
         "comment": undefined,
         "fields": [
@@ -241,7 +241,7 @@ describe('getTypeInfos', () => {
         "name": "Member1",
       }
     `);
-    expect(getTypeInfos(fakeConfig({ skipAbstractType: false }), schema)[0]).toMatchInlineSnapshot(`
+    expect(getTypeInfos(fakeConfig({ skipIsAbstractType: false }), schema)[0]).toMatchInlineSnapshot(`
       {
         "comment": undefined,
         "fields": [
