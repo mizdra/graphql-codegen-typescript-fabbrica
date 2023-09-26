@@ -384,18 +384,196 @@ describe('getTypeInfos', () => {
         `);
       });
     });
+    describe('namingConvention', () => {
+      it('renames type by namingConvention', () => {
+        const schema = buildSchema(`
+          type Type {
+            field1: String!
+            field2: SubType!
+          }
+          type SubType {
+            field: String!
+          }
+        `);
+        const config: Config = fakeConfig({
+          convert: convertFactory({ namingConvention: 'change-case-all#lowerCase' }),
+        });
+        expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+          {
+            "comment": undefined,
+            "fields": [
+              {
+                "comment": undefined,
+                "name": "field1",
+                "typeString": "type['field1'] | undefined",
+              },
+              {
+                "comment": undefined,
+                "name": "field2",
+                "typeString": "Optionalsubtype | undefined",
+              },
+            ],
+            "name": "type",
+          }
+        `);
+      });
+      // FIXME
+      it('does not effect to __typename and __is<AbstractType>', () => {
+        const schema = buildSchema(`
+          type Type {
+            field: String!
+          }
+          union Union = Type
+        `);
+        const config: Config = fakeConfig({
+          skipTypename: false,
+          skipIsAbstractType: false,
+          convert: convertFactory({ namingConvention: 'change-case-all#lowerCase' }),
+        });
+        expect(getTypeInfos(config, schema)[0]?.fields).toMatchInlineSnapshot(`
+          [
+            {
+              "name": "__typename",
+              "typeString": "'type'",
+            },
+            {
+              "name": "__isUnion",
+              "typeString": "'type'",
+            },
+            {
+              "comment": undefined,
+              "name": "field",
+              "typeString": "type['field'] | undefined",
+            },
+          ]
+        `);
+      });
+    });
+    describe('typesPrefix', () => {
+      it('renames type by typesPrefix', () => {
+        const schema = buildSchema(`
+          type Type {
+            field1: String!
+            field2: SubType!
+          }
+          type SubType {
+            field: String!
+          }
+        `);
+        const config: Config = fakeConfig({ typesPrefix: 'I' });
+        expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+          {
+            "comment": undefined,
+            "fields": [
+              {
+                "comment": undefined,
+                "name": "field1",
+                "typeString": "IType['field1'] | undefined",
+              },
+              {
+                "comment": undefined,
+                "name": "field2",
+                "typeString": "OptionalISubType | undefined",
+              },
+            ],
+            "name": "IType",
+          }
+        `);
+      });
+      // FIXME
+      it('does not effect to __typename and __is<AbstractType>', () => {
+        const schema = buildSchema(`
+          type Type {
+            field: String!
+          }
+          union Union = Type
+        `);
+        const config: Config = fakeConfig({
+          skipTypename: false,
+          skipIsAbstractType: false,
+          typesPrefix: 'I',
+        });
+        expect(getTypeInfos(config, schema)[0]?.fields).toMatchInlineSnapshot(`
+          [
+            {
+              "name": "__typename",
+              "typeString": "'IType'",
+            },
+            {
+              "name": "__isUnion",
+              "typeString": "'IType'",
+            },
+            {
+              "comment": undefined,
+              "name": "field",
+              "typeString": "IType['field'] | undefined",
+            },
+          ]
+        `);
+      });
+    });
+    describe('typesSuffix', () => {
+      it('renames type by typesSuffix', () => {
+        const schema = buildSchema(`
+          type Type {
+            field1: String!
+            field2: SubType!
+          }
+          type SubType {
+            field: String!
+          }
+        `);
+        const config: Config = fakeConfig({ typesSuffix: 'I' });
+        expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot(`
+          {
+            "comment": undefined,
+            "fields": [
+              {
+                "comment": undefined,
+                "name": "field1",
+                "typeString": "TypeI['field1'] | undefined",
+              },
+              {
+                "comment": undefined,
+                "name": "field2",
+                "typeString": "OptionalSubTypeI | undefined",
+              },
+            ],
+            "name": "TypeI",
+          }
+        `);
+      });
+      // FIXME
+      it('does not effect to __typename and __is<AbstractType>', () => {
+        const schema = buildSchema(`
+          type Type {
+            field: String!
+          }
+          union Union = Type
+        `);
+        const config: Config = fakeConfig({
+          skipTypename: false,
+          skipIsAbstractType: false,
+          typesSuffix: 'I',
+        });
+        expect(getTypeInfos(config, schema)[0]?.fields).toMatchInlineSnapshot(`
+          [
+            {
+              "name": "__typename",
+              "typeString": "'TypeI'",
+            },
+            {
+              "name": "__isUnion",
+              "typeString": "'TypeI'",
+            },
+            {
+              "comment": undefined,
+              "name": "field",
+              "typeString": "TypeI['field'] | undefined",
+            },
+          ]
+        `);
+      });
+    });
   });
-  // it('renames type by namingConvention', () => {
-  //   const schema = buildSchema(`
-  //     type Type {
-  //       field1: String!
-  //       field2: SubType!
-  //     }
-  //     type SubType {
-  //       field: String!
-  //     }
-  //   `);
-  //   const config: Config = fakeConfig({ convert: convertFactory({ namingConvention: 'change-case-all#lowerCase' }) });
-  //   expect(getTypeInfos(config, schema)[0]).toMatchInlineSnapshot();
-  // });
 });
