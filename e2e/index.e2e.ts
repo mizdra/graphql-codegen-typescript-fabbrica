@@ -59,7 +59,7 @@ describe('integration test', () => {
         books: undefined,
       },
     });
-    assertType<{
+    expectTypeOf(book).toEqualTypeOf<{
       id: string;
       title: string;
       author: {
@@ -67,8 +67,7 @@ describe('integration test', () => {
         name: string;
         books: undefined;
       };
-    }>(book);
-    expectTypeOf(book).not.toBeNever();
+    }>();
 
     const author = await AuthorFactory.build({
       books: [book],
@@ -78,10 +77,10 @@ describe('integration test', () => {
       name: '1上小又',
       books: [book],
     });
-    assertType<{
+    expectTypeOf(author).toEqualTypeOf<{
       id: string;
       name: string;
-      books: readonly {
+      books: {
         id: string;
         title: string;
         author: {
@@ -90,8 +89,7 @@ describe('integration test', () => {
           books: undefined;
         };
       }[];
-    }>(author);
-    expectTypeOf(author).not.toBeNever();
+    }>();
   });
 });
 
@@ -281,7 +279,7 @@ describe('defineTypeFactory', () => {
           books: [],
         },
       });
-      assertType<{
+      expectTypeOf(book).toEqualTypeOf<{
         id: string;
         title: string;
         author: {
@@ -289,8 +287,7 @@ describe('defineTypeFactory', () => {
           name: string;
           books: never[];
         };
-      }>(book);
-      expectTypeOf(book).not.toBeNever();
+      }>();
     });
     it('accepts undefined fields', async () => {
       const BookFactory = defineBookFactory({
@@ -314,7 +311,7 @@ describe('defineTypeFactory', () => {
           books: undefined,
         },
       });
-      assertType<{
+      expectTypeOf(book).toEqualTypeOf<{
         id: string;
         title: undefined;
         author: {
@@ -322,8 +319,7 @@ describe('defineTypeFactory', () => {
           name: string;
           books: undefined;
         };
-      }>(book);
-      expectTypeOf(book).not.toBeNever();
+      }>();
     });
     it('accepts functional field resolvers', async () => {
       const BookFactory = defineBookFactory({
@@ -339,12 +335,11 @@ describe('defineTypeFactory', () => {
         title: 'ゆゆ式',
         author: undefined,
       });
-      assertType<{
+      expectTypeOf(book).toEqualTypeOf<{
         id: string;
         title: string;
         author: undefined;
-      }>(book);
-      expectTypeOf(book).not.toBeNever();
+      }>();
     });
     it('accepts readonly array as field', async () => {
       const books = [{ id: 'Book-0', title: 'ゆゆ式', author: undefined }] as const;
@@ -356,12 +351,11 @@ describe('defineTypeFactory', () => {
         },
       });
       const author = await AuthorFactory.build();
-      assertType<{
+      expectTypeOf(author).toEqualTypeOf<{
         id: string;
         name: string;
-        books: readonly [{ id: 'Book-0'; title: 'ゆゆ式'; author: undefined }];
-      }>(author);
-      expectTypeOf(author).not.toBeNever();
+        books: readonly [{ readonly id: 'Book-0'; readonly title: 'ゆゆ式'; readonly author: undefined }];
+      }>();
     });
     it('creates fields with sequential id', async () => {
       const BookFactory = defineBookFactory({
@@ -377,12 +371,11 @@ describe('defineTypeFactory', () => {
         title: 'ゆゆ式 0巻',
         author: undefined,
       });
-      assertType<{
+      expectTypeOf(book).toEqualTypeOf<{
         id: string;
         title: string;
         author: undefined;
-      }>(book);
-      expectTypeOf(book).not.toBeNever();
+      }>();
     });
     it('creates fields based on the values of other fields', async () => {
       const firstNameResolver = vi.fn(() => 'Komata');
@@ -404,13 +397,12 @@ describe('defineTypeFactory', () => {
         lastName: 'Mikami',
         fullName: 'Komata Mikami',
       });
-      assertType<{
+      expectTypeOf(user).toEqualTypeOf<{
         id: string;
         firstName: string;
         lastName: string;
         fullName: string;
-      }>(user);
-      expectTypeOf(user).not.toBeNever();
+      }>();
 
       // The result of the field resolver is cached, so the resolver is called only once.
       expect(firstNameResolver).toHaveBeenCalledTimes(1);
@@ -443,13 +435,12 @@ describe('defineTypeFactory', () => {
         width: 48,
         height: 48,
       });
-      assertType<{
+      expectTypeOf(image).toEqualTypeOf<{
         id: string;
         url: string;
         width: number;
         height: number;
-      }>(image);
-      expectTypeOf(image).not.toBeNever();
+      }>();
     });
     it('overrides fields multiple times by chaining the use methods', async () => {
       const ImageFactory = defineImageFactory({
@@ -480,13 +471,12 @@ describe('defineTypeFactory', () => {
         width: 256,
         height: 256,
       });
-      assertType<{
+      expectTypeOf(image).toEqualTypeOf<{
         id: string;
         url: string;
         width: number;
         height: number;
-      }>(image);
-      expectTypeOf(image).not.toBeNever();
+      }>();
     });
   });
   describe('transientFields', () => {
@@ -528,12 +518,11 @@ describe('defineTypeFactory', () => {
         name: '三上小又',
         books: [],
       });
-      assertType<{
+      expectTypeOf(author1).toEqualTypeOf<{
         id: string;
         name: string;
         books: { id: string; title: string; author: undefined }[];
-      }>(author1);
-      expectTypeOf(author1).not.toBeNever();
+      }>();
 
       const author2 = await AuthorFactory.build({ bookCount: 3 });
       expect(author2).toStrictEqual({
@@ -545,7 +534,7 @@ describe('defineTypeFactory', () => {
           { id: 'Book-2', title: 'ゆゆ式 2巻', author: undefined },
         ],
       });
-      assertType<{
+      expectTypeOf(author2).toEqualTypeOf<{
         id: string;
         name: string;
         books: {
@@ -553,7 +542,7 @@ describe('defineTypeFactory', () => {
           title: string;
           author: undefined;
         }[];
-      }>(author2);
+      }>();
     });
   });
   describe('resetAllSequence', () => {
@@ -608,7 +597,7 @@ describe('TypeFactoryInterface', () => {
           books: [],
         },
       });
-      assertType<{
+      expectTypeOf(book1).toEqualTypeOf<{
         id: string;
         title: string;
         author: {
@@ -616,8 +605,7 @@ describe('TypeFactoryInterface', () => {
           name: string;
           books: never[];
         };
-      }>(book1);
-      expectTypeOf(book1).not.toBeNever();
+      }>();
 
       // Passing input fields allows overriding the default field.
       const book2 = await BookFactory.build({
@@ -632,7 +620,7 @@ describe('TypeFactoryInterface', () => {
           books: [],
         },
       });
-      assertType<{
+      expectTypeOf(book2).toEqualTypeOf<{
         id: string;
         title: string;
         author: {
@@ -640,8 +628,7 @@ describe('TypeFactoryInterface', () => {
           name: string;
           books: never[];
         };
-      }>(book2);
-      expectTypeOf(book2).not.toBeNever();
+      }>();
     });
     it('accepts undefined fields', async () => {
       const book = await BookFactory.build({
@@ -661,7 +648,7 @@ describe('TypeFactoryInterface', () => {
           books: undefined,
         },
       });
-      assertType<{
+      expectTypeOf(book).toEqualTypeOf<{
         id: string;
         title: undefined;
         author: {
@@ -669,8 +656,7 @@ describe('TypeFactoryInterface', () => {
           name: string;
           books: undefined;
         };
-      }>(book);
-      expectTypeOf(book).not.toBeNever();
+      }>();
     });
     it('accepts functional field resolvers', async () => {
       const BookFactory = defineBookFactory({
@@ -690,12 +676,11 @@ describe('TypeFactoryInterface', () => {
         title: 'ゆゆ式',
         author: undefined,
       });
-      assertType<{
+      expectTypeOf(book).toEqualTypeOf<{
         id: string;
         title: string;
         author: undefined;
-      }>(book);
-      expectTypeOf(book).not.toBeNever();
+      }>();
     });
     it('accepts readonly array as field', async () => {
       const books = [{ id: 'Book-0', title: 'ゆゆ式', author: undefined }] as const;
@@ -707,12 +692,11 @@ describe('TypeFactoryInterface', () => {
         },
       });
       const author = await AuthorFactory.build({ books });
-      assertType<{
+      expectTypeOf(author).toEqualTypeOf<{
         id: string;
         name: string;
-        books: readonly [{ id: 'Book-0'; title: 'ゆゆ式'; author: undefined }];
-      }>(author);
-      expectTypeOf(author).not.toBeNever();
+        books: readonly [{ readonly id: 'Book-0'; readonly title: 'ゆゆ式'; readonly author: undefined }];
+      }>();
     });
     it('returns the object with mutable fields', async () => {
       const AuthorFactory = defineAuthorFactory({
@@ -728,12 +712,11 @@ describe('TypeFactoryInterface', () => {
       author1.id = 'Author-1';
       author1.name = '1上小又';
       author1.books = [{ id: 'Book-1', title: 'ゆゆ式 1巻', author: undefined }];
-      assertType<{
+      expectTypeOf(author1).toEqualTypeOf<{
         id: string;
         name: string;
         books: { id: string; title: string; author: undefined }[];
-      }>(author1);
-      expectTypeOf(author1).not.toBeNever();
+      }>();
 
       // The readonly modifier of the input value is kept.
       const books = [{ id: 'Book-1', title: 'ゆゆ式 1巻', author: undefined }] as const;
@@ -742,12 +725,11 @@ describe('TypeFactoryInterface', () => {
       author2.name = '1上小又';
       // @ts-expect-error -- ignore readonly error
       author2.books = [{ id: 'Book-2', title: 'ゆゆ式 2巻', author: undefined }];
-      assertType<{
+      expectTypeOf(author2).toEqualTypeOf<{
         id: string;
         name: string;
-        books: readonly [{ id: 'Book-1'; title: 'ゆゆ式 1巻'; author: undefined }];
-      }>(author2);
-      expectTypeOf(author2).not.toBeNever();
+        books: readonly [{ readonly id: 'Book-1'; readonly title: 'ゆゆ式 1巻'; readonly author: undefined }];
+      }>();
     });
     it('does not call the overridden resolvers', async () => {
       const defaultTitleResolver = vi.fn(() => 'ゆゆ式');
@@ -766,12 +748,11 @@ describe('TypeFactoryInterface', () => {
         title: 'ゆゆ式 100巻',
         author: undefined,
       });
-      assertType<{
+      expectTypeOf(book).toEqualTypeOf<{
         id: string;
         title: string;
         author: undefined;
-      }>(book);
-      expectTypeOf(book).not.toBeNever();
+      }>();
       expect(defaultTitleResolver).not.toHaveBeenCalled();
     });
     it('creates fields with sequential id', async () => {
@@ -791,12 +772,11 @@ describe('TypeFactoryInterface', () => {
         title: 'ゆゆ式 0巻',
         author: undefined,
       });
-      assertType<{
+      expectTypeOf(book).toEqualTypeOf<{
         id: string;
         title: string;
         author: undefined;
-      }>(book);
-      expectTypeOf(book).not.toBeNever();
+      }>();
     });
     it('creates fields based on the values of other fields', async () => {
       const firstNameResolver = vi.fn(() => 'Komata');
@@ -822,13 +802,12 @@ describe('TypeFactoryInterface', () => {
         lastName: 'Mikami',
         fullName: 'Komata Mikami',
       });
-      assertType<{
+      expectTypeOf(User).toEqualTypeOf<{
         id: string;
         firstName: string;
         lastName: string;
         fullName: string;
-      }>(User);
-      expectTypeOf(User).not.toBeNever();
+      }>();
 
       // The result of the field resolver is cached, so the resolver is called only once.
       expect(firstNameResolver).toHaveBeenCalledTimes(1);
@@ -858,22 +837,21 @@ describe('TypeFactoryInterface', () => {
           author: undefined,
         },
       ]);
-      assertType<
+      expectTypeOf(books1).toEqualTypeOf<
         {
           id: string;
           title: string;
           author: undefined;
         }[]
-      >(books1);
-      expectTypeOf(books1).not.toBeNever();
+      >();
 
       BookFactory.resetSequence();
 
       // Passing input fields allows overriding the default field.
-      const book2 = await BookFactory.buildList(2, {
+      const books2 = await BookFactory.buildList(2, {
         title: 'ゆゆ式 100巻',
       });
-      expect(book2).toStrictEqual([
+      expect(books2).toStrictEqual([
         {
           id: 'Book-0',
           title: 'ゆゆ式 100巻',
@@ -885,14 +863,13 @@ describe('TypeFactoryInterface', () => {
           author: undefined,
         },
       ]);
-      assertType<
+      expectTypeOf(books2).toEqualTypeOf<
         {
           id: string;
           title: string;
           author: undefined;
         }[]
-      >(book2);
-      expectTypeOf(book2).not.toBeNever();
+      >();
     });
   });
   describe('resetSequence', () => {

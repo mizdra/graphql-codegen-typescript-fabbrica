@@ -34,13 +34,13 @@ export interface TypeFactoryInterface<
   _Traits extends Traits<OptionalType, TransientFields>,
 > {
   build(): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof OptionalType>>;
-  build<const T extends InputFieldsResolver<OptionalType & TransientFields>>(
+  build<T extends InputFieldsResolver<OptionalType & TransientFields>>(
     inputFieldsResolver: T,
   ): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof OptionalType>>;
   buildList(
     count: number,
   ): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof OptionalType>[]>;
-  buildList<const T extends InputFieldsResolver<OptionalType & TransientFields>>(
+  buildList<T extends InputFieldsResolver<OptionalType & TransientFields>>(
     count: number,
     inputFieldsResolver: T,
   ): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof OptionalType>[]>;
@@ -70,7 +70,7 @@ export function defineTypeFactoryInternal<
   const seqKey = {};
   const getSeq = () => getSequenceCounter(seqKey);
   return {
-    async build<const T extends InputFieldsResolver<OptionalType & TransientFields>>(
+    async build<T extends InputFieldsResolver<OptionalType & TransientFields>>(
       inputFieldsResolver?: T,
     ): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof OptionalType>> {
       const seq = getSeq();
@@ -81,7 +81,7 @@ export function defineTypeFactoryInternal<
         inputFieldsResolver ?? ({} as T),
       );
     },
-    async buildList<const T extends InputFieldsResolver<OptionalType & TransientFields>>(
+    async buildList<T extends InputFieldsResolver<OptionalType & TransientFields>>(
       count: number,
       inputFieldsResolver?: T,
     ): Promise<Pick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof OptionalType>[]> {
