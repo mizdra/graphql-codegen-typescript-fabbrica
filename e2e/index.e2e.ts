@@ -848,10 +848,10 @@ describe('TypeFactoryInterface', () => {
       BookFactory.resetSequence();
 
       // Passing input fields allows overriding the default field.
-      const book2 = await BookFactory.buildList(2, {
+      const books2 = await BookFactory.buildList(2, {
         title: 'ゆゆ式 100巻',
       });
-      expect(book2).toStrictEqual([
+      expect(books2).toStrictEqual([
         {
           id: 'Book-0',
           title: 'ゆゆ式 100巻',
@@ -863,7 +863,7 @@ describe('TypeFactoryInterface', () => {
           author: undefined,
         },
       ]);
-      expectTypeOf(book2).toEqualTypeOf<
+      expectTypeOf(books2).toEqualTypeOf<
         {
           id: string;
           title: string;
