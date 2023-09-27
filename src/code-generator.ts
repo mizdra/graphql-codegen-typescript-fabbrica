@@ -40,8 +40,11 @@ function generateFieldNamesDefinitionCode(typeInfo: TypeInfo): string {
   return `const ${name}FieldNames = [${joinedFieldNames}] as const;\n`;
 }
 
-function generateTypeFactoryCode(typeInfo: TypeInfo): string {
+function generateTypeFactoryCode(config: Config, typeInfo: TypeInfo): string {
   const { name } = typeInfo;
+  function wrapRequired(str: string) {
+    return config.nonOptionalFields ? `Required<${str}>` : str;
+  }
   return `
 export type ${name}FactoryDefineOptions<
   TransientFields extends Record<string, unknown>,
@@ -57,7 +60,7 @@ export type ${name}FactoryInterface<
 
 export function define${name}FactoryInternal<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<Optional${name} & TransientFields>,
+  _DefaultFieldsResolver extends ${wrapRequired(`DefaultFieldsResolver<Optional${name} & TransientFields>`)},
   _Traits extends Traits<Optional${name}, TransientFields>,
 >(
   options: ${name}FactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
@@ -72,7 +75,7 @@ export function define${name}FactoryInternal<
  * @returns factory {@link ${name}FactoryInterface}
  */
 export function define${name}Factory<
-  _DefaultFieldsResolver extends DefaultFieldsResolver<Optional${name}>,
+  _DefaultFieldsResolver extends ${wrapRequired(`DefaultFieldsResolver<Optional${name}>`)},
   _Traits extends Traits<Optional${name}, {}>,
 >(
   options: ${name}FactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
@@ -90,7 +93,7 @@ export function generateCode(config: Config, typeInfos: TypeInfo[]): string {
     code += '\n';
     code += generateFieldNamesDefinitionCode(typeInfo);
     code += '\n';
-    code += generateTypeFactoryCode(typeInfo);
+    code += generateTypeFactoryCode(config, typeInfo);
     code += '\n';
   }
   return code;
