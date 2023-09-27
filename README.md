@@ -101,12 +101,12 @@ expect(book0).toStrictEqual({
   title: expect.any(String),
   author: undefined,
 });
-assertType<{
+expectTypeOf(book0).toEqualTypeOf<{
   __typename: 'Book';
   id: string;
   title: string;
   author: undefined;
-}>(book0);
+}>();
 
 // nested
 const book1 = await BookFactory.build({
@@ -123,7 +123,7 @@ expect(book1).toStrictEqual({
     books: undefined,
   },
 });
-assertType<{
+expectTypeOf(book1).toEqualTypeOf<{
   __typename: 'Book';
   id: string;
   title: string;
@@ -133,7 +133,7 @@ assertType<{
     name: string;
     books: undefined;
   };
-}>(book1);
+}>();
 ```
 
 ## Notable features
