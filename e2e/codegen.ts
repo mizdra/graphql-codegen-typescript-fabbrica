@@ -69,6 +69,21 @@ const config: CodegenConfig = {
         typesSuffix: 'Suffix',
       },
     },
+    '__generated__/4-non-optional-fields/types.ts': {
+      schema: './4-non-optional-fields-schema.graphql',
+      plugins: ['typescript'],
+      config: {
+        ...defaultTypeScriptPluginConfig,
+      },
+    },
+    './__generated__/4-non-optional-fields/fabbrica.ts': {
+      schema: './4-non-optional-fields-schema.graphql',
+      plugins: ['@mizdra/graphql-fabbrica'],
+      config: {
+        ...defaultFabbricaPluginConfig,
+        nonOptionalFields: true,
+      },
+    },
   },
 };
 

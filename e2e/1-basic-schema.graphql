@@ -86,3 +86,9 @@ type NamingConventionTest_Type {
 type NamingConventionTest_SubType {
   field: String!
 }
+
+# NonOptionalFields
+type NonOptionalFields_OptionalFieldsType {
+  field1: String!
+  field2: String!
+}

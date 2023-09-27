@@ -57,8 +57,8 @@ it('DefaultFieldsResolver', () => {
   type OptionalTypeWithTransientFields = { a: number | undefined; b: OptionalSubType[] | undefined };
   type OptionalSubType = { c: number | undefined };
   expectTypeOf<DefaultFieldsResolver<OptionalTypeWithTransientFields>>().toEqualTypeOf<{
-    a: number | undefined | Dynamic<OptionalTypeWithTransientFields, number | undefined>;
-    b:
+    a?: number | undefined | Dynamic<OptionalTypeWithTransientFields, number | undefined>;
+    b?:
       | readonly { readonly c: number | undefined }[]
       | undefined
       | Dynamic<OptionalTypeWithTransientFields, readonly { readonly c: number | undefined }[] | undefined>;

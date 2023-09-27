@@ -25,3 +25,10 @@ export type Merge<F, S> = {
     ? F[K]
     : never;
 };
+
+/**
+ * @example `StrictlyPick<{ a: number, c: number }, 'a' | 'b'>` is `{ a: number }`.
+ */
+export type StrictlyPick<T, K> = {
+  [P in K & keyof T]: T[P];
+};

@@ -1,5 +1,5 @@
 import { expectTypeOf, it } from 'vitest';
-import { DeepReadonly, type DeepOptional, type Merge } from './util.js';
+import { DeepReadonly, type DeepOptional, type Merge, StrictlyPick } from './util.js';
 
 it('DeepOptional', () => {
   type Input = {
@@ -43,5 +43,15 @@ it('Merge', () => {
     b: string;
     c: number | string;
     d: string;
+  }>();
+});
+
+it('StrictlyPick', () => {
+  expectTypeOf<StrictlyPick<{ a: number; b: number; c: number }, 'a' | 'b'>>().toEqualTypeOf<{
+    a: number;
+    b: number;
+  }>();
+  expectTypeOf<StrictlyPick<{ a: number; c: number }, 'a' | 'b'>>().toEqualTypeOf<{
+    a: number;
   }>();
 });

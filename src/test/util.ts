@@ -12,6 +12,7 @@ export function fakeConfig(args: Partial<Config> = {}): Config {
     typesFile: './types',
     skipTypename: true,
     skipIsAbstractType: true,
+    nonOptionalFields: false,
     typesPrefix: '',
     typesSuffix: '',
     convert: convertFactory({}),
