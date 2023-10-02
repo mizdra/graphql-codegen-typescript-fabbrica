@@ -11,6 +11,6 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@mizdra/graphql-fabbrica": ".."
+    "@mizdra/graphql-codegen-typescript-fabbrica": ".."
   }
 }

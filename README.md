@@ -1,11 +1,11 @@
-# graphql-fabbrica
+# graphql-codegen-typescript-fabbrica
 
 GraphQL Code Generator Plugin to define mock data factory.
 
 ## Installation
 
 ```sh
-npm install --save-dev @mizdra/graphql-fabbrica
+npm install --save-dev @mizdra/graphql-codegen-typescript-fabbrica
 ```
 
 ## Requirements
@@ -34,7 +34,7 @@ const config: CodegenConfig = {
       },
     },
     './__generated__/fabbrica.ts': {
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         typesFile: './types', // required
       },
@@ -385,7 +385,7 @@ const config: CodegenConfig = {
       },
     },
     './__generated__/fabbrica.ts': {
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         // ...
         skipTypename: true,
@@ -417,7 +417,7 @@ const config: CodegenConfig = {
       },
     },
     './__generated__/fabbrica.ts': {
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         // ...
         skipIsAbstractType: false,
@@ -446,7 +446,7 @@ const config: CodegenConfig = {
       },
     },
     './__generated__/fabbrica.ts': {
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         // ...
         nonOptionalDefaultFields: true,
@@ -463,7 +463,7 @@ type: `NamingConvention`, default: `change-case-all#pascalCase`
 
 Allow you to override the naming convention of the output.
 
-This option is compatible with [the one for typescript plugin](https://the-guild.dev/graphql/codegen/docs/config-reference/naming-convention#namingconvention). If you specify it for the typescript plugin, you must set the same value for graphql-fabbrica.
+This option is compatible with [the one for typescript plugin](https://the-guild.dev/graphql/codegen/docs/config-reference/naming-convention#namingconvention). If you specify it for the typescript plugin, you must set the same value for graphql-codegen-typescript-fabbrica.
 
 ```ts
 import { CodegenConfig } from '@graphql-codegen/cli';
@@ -478,7 +478,7 @@ const config: CodegenConfig = {
       // ...
     },
     './__generated__/fabbrica.ts': {
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       // ...
     },
   },
@@ -492,7 +492,7 @@ type: `string`, default: `''`
 
 Prefixes all the generated types.
 
-This option is compatible with [the one for typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typesprefix). If you specify it for the typescript plugin, you must set the same value for graphql-fabbrica.
+This option is compatible with [the one for typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typesprefix). If you specify it for the typescript plugin, you must set the same value for graphql-codegen-typescript-fabbrica.
 
 ```ts
 import { CodegenConfig } from '@graphql-codegen/cli';
@@ -507,7 +507,7 @@ const config: CodegenConfig = {
       // ...
     },
     './__generated__/fabbrica.ts': {
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       // ...
     },
   },
@@ -521,7 +521,7 @@ type: `string`, default: `''`
 
 Suffixes all the generated types.
 
-This option is compatible with [the one for typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typessuffix). If you specify it for the typescript plugin, you must set the same value for graphql-fabbrica.
+This option is compatible with [the one for typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#typessuffix). If you specify it for the typescript plugin, you must set the same value for graphql-codegen-typescript-fabbrica.
 
 ## Troubleshooting
 
@@ -579,7 +579,7 @@ const AuthorFactory = defineAuthorFactory({
 });
 ```
 
-### `error TS2307: Cannot find module '@mizdra/graphql-fabbrica/helper' or its corresponding type declarations.`
+### `error TS2307: Cannot find module '@mizdra/graphql-codegen-typescript-fabbrica/helper' or its corresponding type declarations.`
 
 Incorrect values for the `moduleResolution` option in `tsconfig.json` cause compile errors.
 
@@ -593,9 +593,9 @@ Incorrect values for the `moduleResolution` option in `tsconfig.json` cause comp
 
 ```console
 $ npx tsc --noEmit
-__generated__/1-basic/fabbrica.ts:7:8 - error TS2307: Cannot find module '@mizdra/graphql-fabbrica/helper' or its corresponding type declarations.
+__generated__/1-basic/fabbrica.ts:7:8 - error TS2307: Cannot find module '@mizdra/graphql-codegen-typescript-fabbrica/helper' or its corresponding type declarations.
 
-7 } from '@mizdra/graphql-fabbrica/helper';
+7 } from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ```
 
@@ -613,6 +613,6 @@ To resolve this error, set the value of `moduleResolution` to `Bundler`, `Node16
 
 This library is licensed under the MIT license.
 
-The copyright contains two names. The first is [@mizdra](https://github.com/mizdra), author of graphql-fabbrica. The second is [@Quramy](https://github.com/Quramy), author of [prisma-fabbrica](https://github.com/Quramy/prisma-fabbrica).
+The copyright contains two names. The first is [@mizdra](https://github.com/mizdra), author of graphql-codegen-typescript-fabbrica. The second is [@Quramy](https://github.com/Quramy), author of [prisma-fabbrica](https://github.com/Quramy/prisma-fabbrica).
 
-The name of the author of prisma-fabbrica is written because graphql-fabbrica reuses some of prisma-fabbrica's code.
+The name of the author of prisma-fabbrica is written because graphql-codegen-typescript-fabbrica reuses some of prisma-fabbrica's code.
