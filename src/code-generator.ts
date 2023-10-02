@@ -10,10 +10,10 @@ import {
   type TypeFactoryInterface,
   type DefaultFieldsResolver,
   defineTypeFactoryInternal,
-} from '@mizdra/graphql-fabbrica/helper';
+} from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
 import type { Maybe, ${joinedTypeNames} } from '${config.typesFile}';
 
-export * from '@mizdra/graphql-fabbrica/helper';
+export * from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
   `.trim();
   return `${code}\n`;
 }

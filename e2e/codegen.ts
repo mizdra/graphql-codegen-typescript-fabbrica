@@ -29,7 +29,7 @@ const config: CodegenConfig = {
     },
     './__generated__/1-basic/fabbrica.ts': {
       schema: './1-basic-schema.graphql',
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         ...defaultFabbricaPluginConfig,
         namingConvention: {
@@ -47,7 +47,7 @@ const config: CodegenConfig = {
     },
     './__generated__/2-typesPrefix/fabbrica.ts': {
       schema: './2-typesPrefix-schema.graphql',
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         ...defaultFabbricaPluginConfig,
         typesPrefix: 'Prefix',
@@ -63,7 +63,7 @@ const config: CodegenConfig = {
     },
     './__generated__/3-typesSuffix/fabbrica.ts': {
       schema: './3-typesSuffix-schema.graphql',
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         ...defaultFabbricaPluginConfig,
         typesSuffix: 'Suffix',
@@ -78,7 +78,7 @@ const config: CodegenConfig = {
     },
     './__generated__/4-non-optional-fields/fabbrica.ts': {
       schema: './4-non-optional-fields-schema.graphql',
-      plugins: ['@mizdra/graphql-fabbrica'],
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         ...defaultFabbricaPluginConfig,
         nonOptionalDefaultFields: true,
