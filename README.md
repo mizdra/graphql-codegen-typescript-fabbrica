@@ -428,6 +428,35 @@ const config: CodegenConfig = {
 module.exports = config;
 ```
 
+### `nonOptionalFields`
+
+type: `boolean`, default: `false`
+
+Make it mandatory to pass all fields to `defaultFields`. This is useful to force the `defaultFields` to be updated when new fields are added to the schema.
+
+```ts
+import { CodegenConfig } from '@graphql-codegen/cli';
+const config: CodegenConfig = {
+  schema: './schema.graphql',
+  generates: {
+    '__generated__/types.ts': {
+      plugins: ['typescript'],
+      config: {
+        // ...
+      },
+    },
+    './__generated__/fabbrica.ts': {
+      plugins: ['@mizdra/graphql-fabbrica'],
+      config: {
+        // ...
+        nonOptionalFields: true,
+      },
+    },
+  },
+};
+module.exports = config;
+```
+
 ### `namingConvention`
 
 type: `NamingConvention`, default: `change-case-all#pascalCase`
