@@ -428,7 +428,7 @@ const config: CodegenConfig = {
 module.exports = config;
 ```
 
-### `nonOptionalFields`
+### `nonOptionalDefaultFields`
 
 type: `boolean`, default: `false`
 
@@ -449,7 +449,7 @@ const config: CodegenConfig = {
       plugins: ['@mizdra/graphql-fabbrica'],
       config: {
         // ...
-        nonOptionalFields: true,
+        nonOptionalDefaultFields: true,
       },
     },
   },

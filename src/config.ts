@@ -4,7 +4,7 @@ export type RawConfig = {
   typesFile: string;
   skipTypename?: RawTypesConfig['skipTypename'];
   skipIsAbstractType?: boolean | undefined;
-  nonOptionalFields?: boolean | undefined;
+  nonOptionalDefaultFields?: boolean | undefined;
   namingConvention?: RawTypesConfig['namingConvention'];
   typesPrefix?: RawTypesConfig['typesPrefix'];
   typesSuffix?: RawTypesConfig['typesSuffix'];
@@ -15,7 +15,7 @@ export type Config = {
   typesFile: string;
   skipTypename: Exclude<RawTypesConfig['skipTypename'], undefined>;
   skipIsAbstractType: boolean;
-  nonOptionalFields: boolean;
+  nonOptionalDefaultFields: boolean;
   typesPrefix: Exclude<RawTypesConfig['typesPrefix'], undefined>;
   typesSuffix: Exclude<RawTypesConfig['typesSuffix'], undefined>;
   convert: ConvertFn;
@@ -38,8 +38,8 @@ export function validateConfig(rawConfig: unknown): asserts rawConfig is RawConf
   if ('skipIsAbstractType' in rawConfig && typeof rawConfig['skipIsAbstractType'] !== 'boolean') {
     throw new Error('`options.skipIsAbstractType` must be a boolean');
   }
-  if ('nonOptionalFields' in rawConfig && typeof rawConfig['nonOptionalFields'] !== 'boolean') {
-    throw new Error('`options.nonOptionalFields` must be a boolean');
+  if ('nonOptionalDefaultFields' in rawConfig && typeof rawConfig['nonOptionalDefaultFields'] !== 'boolean') {
+    throw new Error('`options.nonOptionalDefaultFields` must be a boolean');
   }
   if ('typesPrefix' in rawConfig && typeof rawConfig['typesPrefix'] !== 'string') {
     throw new Error('`options.typesPrefix` must be a string');
@@ -54,7 +54,7 @@ export function normalizeConfig(rawConfig: RawConfig): Config {
     typesFile: rawConfig.typesFile,
     skipTypename: rawConfig.skipTypename ?? false,
     skipIsAbstractType: rawConfig.skipIsAbstractType ?? true,
-    nonOptionalFields: rawConfig.nonOptionalFields ?? false,
+    nonOptionalDefaultFields: rawConfig.nonOptionalDefaultFields ?? false,
     typesPrefix: rawConfig.typesPrefix ?? '',
     typesSuffix: rawConfig.typesSuffix ?? '',
     convert: rawConfig.namingConvention

@@ -1,4 +1,4 @@
-type NonOptionalFields_NonOptionalFieldsType {
+type NonOptionalDefaultFields_NonOptionalDefaultFieldsType {
   field1: String!
   field2: String!
 }
