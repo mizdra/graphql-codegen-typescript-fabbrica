@@ -1,38 +1,34 @@
 import { DeepReadonly, Merge, StrictlyPick } from './util.js';
 
-export type FieldResolverOptions<OptionalTypeWithTransientFields> = {
+export type FieldResolverOptions<TypeWithTransientFields> = {
   seq: number;
-  get: <FieldName extends keyof OptionalTypeWithTransientFields>(
+  get: <FieldName extends keyof TypeWithTransientFields>(
     fieldName: FieldName,
-  ) => Promise<DeepReadonly<OptionalTypeWithTransientFields[FieldName]> | undefined>;
+  ) => Promise<DeepReadonly<TypeWithTransientFields[FieldName]> | undefined>;
 };
 
-export class Dynamic<OptionalTypeWithTransientFields, Field> {
+export class Dynamic<TypeWithTransientFields, Field> {
   constructor(
-    private readonly factory: (
-      options: FieldResolverOptions<OptionalTypeWithTransientFields>,
-    ) => Field | Promise<Field>,
+    private readonly factory: (options: FieldResolverOptions<TypeWithTransientFields>) => Field | Promise<Field>,
   ) {}
-  async get(options: FieldResolverOptions<OptionalTypeWithTransientFields>): Promise<Field> {
+  async get(options: FieldResolverOptions<TypeWithTransientFields>): Promise<Field> {
     return this.factory(options);
   }
 }
 /** Wrapper to delay field generation until needed. */
-export function dynamic<OptionalTypeWithTransientFields, Field>(
-  factory: (options: FieldResolverOptions<OptionalTypeWithTransientFields>) => Field | Promise<Field>,
-): Dynamic<OptionalTypeWithTransientFields, Field> {
+export function dynamic<TypeWithTransientFields, Field>(
+  factory: (options: FieldResolverOptions<TypeWithTransientFields>) => Field | Promise<Field>,
+): Dynamic<TypeWithTransientFields, Field> {
   return new Dynamic(factory);
 }
 
-export type FieldResolver<OptionalTypeWithTransientFields, Field> =
-  | Field
-  | Dynamic<OptionalTypeWithTransientFields, Field>;
+export type FieldResolver<TypeWithTransientFields, Field> = Field | Dynamic<TypeWithTransientFields, Field>;
 
 /** The type of `defaultFields` or `inputFields` option. */
-export type FieldsResolver<OptionalTypeWithTransientFields> = {
-  [FieldName in keyof OptionalTypeWithTransientFields]?: FieldResolver<
-    OptionalTypeWithTransientFields,
-    DeepReadonly<OptionalTypeWithTransientFields[FieldName]>
+export type FieldsResolver<TypeWithTransientFields> = {
+  [FieldName in keyof TypeWithTransientFields]?: FieldResolver<
+    TypeWithTransientFields,
+    DeepReadonly<TypeWithTransientFields[FieldName]>
   >;
 };
 
@@ -46,26 +42,26 @@ export type ResolvedFields<FieldsResolver extends Record<string, FieldResolver<u
 };
 
 export async function resolveFields<
-  OptionalType extends Record<string, unknown>,
+  Type extends Record<string, unknown>,
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends FieldsResolver<OptionalType & TransientFields>,
-  _InputFieldsResolver extends FieldsResolver<OptionalType & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<Type & TransientFields>,
+  _InputFieldsResolver extends FieldsResolver<Type & TransientFields>,
 >(
-  fieldNames: readonly (keyof OptionalType)[],
+  fieldNames: readonly (keyof Type)[],
   seq: number,
   defaultFieldsResolver: _DefaultFieldsResolver,
   inputFieldsResolver: _InputFieldsResolver,
 ): Promise<
-  StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<_InputFieldsResolver>>, keyof OptionalType>
+  StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<_InputFieldsResolver>>, keyof Type>
 > {
-  type OptionalTypeWithTransientFields = OptionalType & TransientFields;
+  type TypeWithTransientFields = Type & TransientFields;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Use any type as it is impossible to match types.
   const fields = {} as any;
 
   async function resolveField<
-    _FieldResolverOptions extends FieldResolverOptions<OptionalTypeWithTransientFields>,
-    _FieldResolver extends FieldResolver<OptionalTypeWithTransientFields, unknown>,
+    _FieldResolverOptions extends FieldResolverOptions<TypeWithTransientFields>,
+    _FieldResolver extends FieldResolver<TypeWithTransientFields, unknown>,
   >(options: _FieldResolverOptions, fieldResolver: _FieldResolver): Promise<ResolvedField<_FieldResolver>> {
     if (fieldResolver instanceof Dynamic) {
       return fieldResolver.get(options);
@@ -74,12 +70,12 @@ export async function resolveFields<
     }
   }
 
-  async function resolveFieldAndUpdateCache<FieldName extends keyof OptionalTypeWithTransientFields>(
+  async function resolveFieldAndUpdateCache<FieldName extends keyof TypeWithTransientFields>(
     fieldName: FieldName,
-  ): Promise<DeepReadonly<OptionalTypeWithTransientFields[FieldName]> | undefined> {
+  ): Promise<DeepReadonly<TypeWithTransientFields[FieldName]> | undefined> {
     if (fieldName in fields) return fields[fieldName];
 
-    let fieldResolver: FieldResolver<OptionalType & TransientFields, unknown>;
+    let fieldResolver: FieldResolver<Type & TransientFields, unknown>;
     if (fieldName in inputFieldsResolver) {
       fieldResolver = inputFieldsResolver[fieldName as keyof _InputFieldsResolver];
     } else if (fieldName in defaultFieldsResolver) {
@@ -93,7 +89,7 @@ export async function resolveFields<
     return fields[fieldName];
   }
 
-  const options: FieldResolverOptions<OptionalTypeWithTransientFields> = {
+  const options: FieldResolverOptions<TypeWithTransientFields> = {
     seq,
     get: resolveFieldAndUpdateCache,
   };
