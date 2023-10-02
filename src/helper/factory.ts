@@ -1,25 +1,19 @@
 // MEMO: The tests for this module are covered by `e2e/*.e2e.ts`.
 
-import {
-  ResolvedFields,
-  DefaultFieldsResolver,
-  InputFieldsResolver,
-  resolveFields,
-  FieldResolver,
-} from './field-resolver.js';
+import { ResolvedFields, FieldsResolver, resolveFields, FieldResolver } from './field-resolver.js';
 import { getSequenceCounter, resetSequence } from './sequence.js';
 import { Merge, StrictlyPick } from './util.js';
 
 export type Traits<OptionalType extends Record<string, unknown>, TransientFields extends Record<string, unknown>> = {
   [traitName: string]: {
-    defaultFields: InputFieldsResolver<OptionalType & TransientFields>;
+    defaultFields: FieldsResolver<OptionalType & TransientFields>;
   };
 };
 
 export interface TypeFactoryDefineOptions<
   OptionalType extends Record<string, unknown>,
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalType & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalType & TransientFields>,
   _Traits extends Traits<OptionalType, TransientFields>,
 > {
   defaultFields: _DefaultFieldsResolver;
@@ -36,13 +30,13 @@ export interface TypeFactoryInterface<
   _Traits extends Traits<OptionalType, TransientFields>,
 > {
   build(): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof OptionalType>>;
-  build<T extends InputFieldsResolver<OptionalType & TransientFields>>(
+  build<T extends FieldsResolver<OptionalType & TransientFields>>(
     inputFieldsResolver: T,
   ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof OptionalType>>;
   buildList(
     count: number,
   ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof OptionalType>[]>;
-  buildList<T extends InputFieldsResolver<OptionalType & TransientFields>>(
+  buildList<T extends FieldsResolver<OptionalType & TransientFields>>(
     count: number,
     inputFieldsResolver: T,
   ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof OptionalType>[]>;
@@ -60,7 +54,7 @@ export interface TypeFactoryInterface<
 export function defineTypeFactoryInternal<
   OptionalType extends Record<string, unknown>,
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalType & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalType & TransientFields>,
   _Traits extends Traits<OptionalType, TransientFields>,
 >(
   typeFieldNames: readonly (keyof OptionalType)[],
@@ -72,7 +66,7 @@ export function defineTypeFactoryInternal<
   const seqKey = {};
   const getSeq = () => getSequenceCounter(seqKey);
   return {
-    async build<T extends InputFieldsResolver<OptionalType & TransientFields>>(
+    async build<T extends FieldsResolver<OptionalType & TransientFields>>(
       inputFieldsResolver?: T,
     ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof OptionalType>> {
       const seq = getSeq();
@@ -83,7 +77,7 @@ export function defineTypeFactoryInternal<
         inputFieldsResolver ?? ({} as T),
       );
     },
-    async buildList<T extends InputFieldsResolver<OptionalType & TransientFields>>(
+    async buildList<T extends FieldsResolver<OptionalType & TransientFields>>(
       count: number,
       inputFieldsResolver?: T,
     ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof OptionalType>[]> {

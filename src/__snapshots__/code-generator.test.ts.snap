@@ -5,7 +5,7 @@ exports[`generateCode > generates code 1`] = `
   type Traits,
   type TypeFactoryDefineOptions,
   type TypeFactoryInterface,
-  type DefaultFieldsResolver,
+  type FieldsResolver,
   defineTypeFactoryInternal,
 } from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
 import type { Maybe, Book, Author } from './types';
@@ -21,19 +21,19 @@ const BookFieldNames = ['id', 'title', 'author'] as const;
 
 export type BookFactoryDefineOptions<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalBook & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalBook & TransientFields>,
   _Traits extends Traits<OptionalBook, TransientFields>,
 > = TypeFactoryDefineOptions<OptionalBook, TransientFields, _DefaultFieldsResolver, _Traits>;
 
 export type BookFactoryInterface<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalBook & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalBook & TransientFields>,
   _Traits extends Traits<OptionalBook, TransientFields>,
 > = TypeFactoryInterface<OptionalBook, TransientFields, _DefaultFieldsResolver, _Traits>;
 
 export function defineBookFactoryInternal<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalBook & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalBook & TransientFields>,
   _Traits extends Traits<OptionalBook, TransientFields>,
 >(
   options: BookFactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
@@ -48,7 +48,7 @@ export function defineBookFactoryInternal<
  * @returns factory {@link BookFactoryInterface}
  */
 export function defineBookFactory<
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalBook>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalBook>,
   _Traits extends Traits<OptionalBook, {}>,
 >(
   options: BookFactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
@@ -66,19 +66,19 @@ const AuthorFieldNames = ['id', 'name', 'books'] as const;
 
 export type AuthorFactoryDefineOptions<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalAuthor & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalAuthor & TransientFields>,
   _Traits extends Traits<OptionalAuthor, TransientFields>,
 > = TypeFactoryDefineOptions<OptionalAuthor, TransientFields, _DefaultFieldsResolver, _Traits>;
 
 export type AuthorFactoryInterface<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalAuthor & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalAuthor & TransientFields>,
   _Traits extends Traits<OptionalAuthor, TransientFields>,
 > = TypeFactoryInterface<OptionalAuthor, TransientFields, _DefaultFieldsResolver, _Traits>;
 
 export function defineAuthorFactoryInternal<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalAuthor & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalAuthor & TransientFields>,
   _Traits extends Traits<OptionalAuthor, TransientFields>,
 >(
   options: AuthorFactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
@@ -93,7 +93,7 @@ export function defineAuthorFactoryInternal<
  * @returns factory {@link AuthorFactoryInterface}
  */
 export function defineAuthorFactory<
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalAuthor>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalAuthor>,
   _Traits extends Traits<OptionalAuthor, {}>,
 >(
   options: AuthorFactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,

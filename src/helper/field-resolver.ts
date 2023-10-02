@@ -27,16 +27,14 @@ export function dynamic<OptionalTypeWithTransientFields, Field>(
 export type FieldResolver<OptionalTypeWithTransientFields, Field> =
   | Field
   | Dynamic<OptionalTypeWithTransientFields, Field>;
-/** The type of `defaultFields` option of `defineFactory` function. */
-export type DefaultFieldsResolver<OptionalTypeWithTransientFields> = {
+
+/** The type of `defaultFields` or `inputFields` option. */
+export type FieldsResolver<OptionalTypeWithTransientFields> = {
   [FieldName in keyof OptionalTypeWithTransientFields]?: FieldResolver<
     OptionalTypeWithTransientFields,
     DeepReadonly<OptionalTypeWithTransientFields[FieldName]>
   >;
 };
-/** The type of `inputFields` option of `build` method. */
-export type InputFieldsResolver<OptionalTypeWithTransientFields> =
-  DefaultFieldsResolver<OptionalTypeWithTransientFields>;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type ResolvedField<T extends FieldResolver<unknown, unknown>> = T extends FieldResolver<infer _, infer R>
@@ -50,8 +48,8 @@ export type ResolvedFields<FieldsResolver extends Record<string, FieldResolver<u
 export async function resolveFields<
   OptionalType extends Record<string, unknown>,
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalType & TransientFields>,
-  _InputFieldsResolver extends InputFieldsResolver<OptionalType & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<OptionalType & TransientFields>,
+  _InputFieldsResolver extends FieldsResolver<OptionalType & TransientFields>,
 >(
   fieldNames: readonly (keyof OptionalType)[],
   seq: number,

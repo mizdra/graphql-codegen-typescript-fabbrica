@@ -8,7 +8,7 @@ import {
   type Traits,
   type TypeFactoryDefineOptions,
   type TypeFactoryInterface,
-  type DefaultFieldsResolver,
+  type FieldsResolver,
   defineTypeFactoryInternal,
 } from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
 import type { Maybe, ${joinedTypeNames} } from '${config.typesFile}';
@@ -48,19 +48,19 @@ function generateTypeFactoryCode(config: Config, typeInfo: TypeInfo): string {
   return `
 export type ${name}FactoryDefineOptions<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<Optional${name} & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<Optional${name} & TransientFields>,
   _Traits extends Traits<Optional${name}, TransientFields>,
 > = TypeFactoryDefineOptions<Optional${name}, TransientFields, _DefaultFieldsResolver, _Traits>;
 
 export type ${name}FactoryInterface<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends DefaultFieldsResolver<Optional${name} & TransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<Optional${name} & TransientFields>,
   _Traits extends Traits<Optional${name}, TransientFields>,
 > = TypeFactoryInterface<Optional${name}, TransientFields, _DefaultFieldsResolver, _Traits>;
 
 export function define${name}FactoryInternal<
   TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends ${wrapRequired(`DefaultFieldsResolver<Optional${name} & TransientFields>`)},
+  _DefaultFieldsResolver extends ${wrapRequired(`FieldsResolver<Optional${name} & TransientFields>`)},
   _Traits extends Traits<Optional${name}, TransientFields>,
 >(
   options: ${name}FactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
@@ -75,7 +75,7 @@ export function define${name}FactoryInternal<
  * @returns factory {@link ${name}FactoryInterface}
  */
 export function define${name}Factory<
-  _DefaultFieldsResolver extends ${wrapRequired(`DefaultFieldsResolver<Optional${name}>`)},
+  _DefaultFieldsResolver extends ${wrapRequired(`FieldsResolver<Optional${name}>`)},
   _Traits extends Traits<Optional${name}, {}>,
 >(
   options: ${name}FactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,

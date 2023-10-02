@@ -5,8 +5,7 @@ import {
   type ResolvedField,
   Dynamic,
   dynamic,
-  InputFieldsResolver,
-  DefaultFieldsResolver,
+  FieldsResolver,
 } from './field-resolver.js';
 import { DeepOptional, DeepReadonly } from './util.js';
 
@@ -53,22 +52,10 @@ it('FieldResolver', () => {
   >();
 });
 
-it('DefaultFieldsResolver', () => {
+it('FieldsResolver', () => {
   type OptionalTypeWithTransientFields = { a: number | undefined; b: OptionalSubType[] | undefined };
   type OptionalSubType = { c: number | undefined };
-  expectTypeOf<DefaultFieldsResolver<OptionalTypeWithTransientFields>>().toEqualTypeOf<{
-    a?: number | undefined | Dynamic<OptionalTypeWithTransientFields, number | undefined>;
-    b?:
-      | readonly { readonly c: number | undefined }[]
-      | undefined
-      | Dynamic<OptionalTypeWithTransientFields, readonly { readonly c: number | undefined }[] | undefined>;
-  }>();
-});
-
-it('InputFieldsResolver', () => {
-  type OptionalTypeWithTransientFields = { a: number | undefined; b: OptionalSubType[] | undefined };
-  type OptionalSubType = { c: number | undefined };
-  expectTypeOf<InputFieldsResolver<OptionalTypeWithTransientFields>>().toEqualTypeOf<{
+  expectTypeOf<FieldsResolver<OptionalTypeWithTransientFields>>().toEqualTypeOf<{
     a?: number | undefined | Dynamic<OptionalTypeWithTransientFields, number | undefined>;
     b?:
       | readonly { readonly c: number | undefined }[]
