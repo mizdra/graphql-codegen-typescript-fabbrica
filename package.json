@@ -1,7 +1,7 @@
 {
   "name": "@mizdra/graphql-codegen-typescript-fabbrica",
   "description": "GraphQL Code Generator Plugin to define mock data factory.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "commonjs",
   "sideEffects": false,
   "repository": "https://github.com/mizdra/graphql-codegen-typescript-fabbrica.git",
