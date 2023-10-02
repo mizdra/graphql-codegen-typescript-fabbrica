@@ -43,7 +43,7 @@ function generateFieldNamesDefinitionCode(typeInfo: TypeInfo): string {
 function generateTypeFactoryCode(config: Config, typeInfo: TypeInfo): string {
   const { name } = typeInfo;
   function wrapRequired(str: string) {
-    return config.nonOptionalFields ? `Required<${str}>` : str;
+    return config.nonOptionalDefaultFields ? `Required<${str}>` : str;
   }
   return `
 export type ${name}FactoryDefineOptions<

@@ -81,7 +81,7 @@ const config: CodegenConfig = {
       plugins: ['@mizdra/graphql-fabbrica'],
       config: {
         ...defaultFabbricaPluginConfig,
-        nonOptionalFields: true,
+        nonOptionalDefaultFields: true,
       },
     },
   },

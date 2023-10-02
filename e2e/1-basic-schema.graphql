@@ -87,8 +87,8 @@ type NamingConventionTest_SubType {
   field: String!
 }
 
-# NonOptionalFields
-type NonOptionalFields_OptionalFieldsType {
+# NonOptionalDefaultFields
+type NonOptionalDefaultFields_OptionalDefaultFieldsType {
   field1: String!
   field2: String!
 }

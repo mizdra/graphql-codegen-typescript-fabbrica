@@ -26,11 +26,13 @@ describe('validateConfig', () => {
       '`options.skipIsAbstractType` must be a boolean',
     );
   });
-  it('nonOptionalFields', () => {
-    expect(() => validateConfig({ typesFile: './types', nonOptionalFields: oneOf([true, false]) })).not.toThrow();
+  it('nonOptionalDefaultFields', () => {
+    expect(() =>
+      validateConfig({ typesFile: './types', nonOptionalDefaultFields: oneOf([true, false]) }),
+    ).not.toThrow();
     expect(() => validateConfig({ typesFile: './types' })).not.toThrow();
-    expect(() => validateConfig({ typesFile: './types', nonOptionalFields: 1 })).toThrow(
-      '`options.nonOptionalFields` must be a boolean',
+    expect(() => validateConfig({ typesFile: './types', nonOptionalDefaultFields: 1 })).toThrow(
+      '`options.nonOptionalDefaultFields` must be a boolean',
     );
   });
   it('typesPrefix', () => {

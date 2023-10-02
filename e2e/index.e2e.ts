@@ -21,12 +21,12 @@ import {
   defineNamingConventionTest_RenamedTypeFactory,
   defineNullableTest_TypeFactory,
   defineInputTest_InputFactory,
-  defineNonOptionalFields_OptionalFieldsTypeFactory,
+  defineNonOptionalDefaultFields_OptionalDefaultFieldsTypeFactory,
 } from './__generated__/1-basic/fabbrica.js';
 import { oneOf } from './test/util.js';
 import { definePrefixTypeFactory } from './__generated__/2-typesPrefix/fabbrica.js';
 import { defineTypeSuffixFactory } from './__generated__/3-typesSuffix/fabbrica.js';
-import { defineNonOptionalFields_NonOptionalFieldsTypeFactory } from './__generated__/4-non-optional-fields/fabbrica.js';
+import { defineNonOptionalDefaultFields_NonOptionalDefaultFieldsTypeFactory } from './__generated__/4-non-optional-fields/fabbrica.js';
 
 describe('integration test', () => {
   it('circular dependent type', async () => {
@@ -410,9 +410,9 @@ describe('defineTypeFactory', () => {
       expect(firstNameResolver).toHaveBeenCalledTimes(1);
       expect(lastNameResolver).toHaveBeenCalledTimes(1);
     });
-    describe('nonOptionalFields', () => {
-      it('requires to pass all fields if nonOptionalFields is false', async () => {
-        defineNonOptionalFields_NonOptionalFieldsTypeFactory({
+    describe('nonOptionalDefaultFields', () => {
+      it('requires to pass all fields if nonOptionalDefaultFields is false', async () => {
+        defineNonOptionalDefaultFields_NonOptionalDefaultFieldsTypeFactory({
           // @ts-expect-error -- expects error
           defaultFields: {
             field1: 'field1',
@@ -420,8 +420,8 @@ describe('defineTypeFactory', () => {
           },
         });
       });
-      it('requires to pass all fields if nonOptionalFields is true', async () => {
-        const TypeFactory = defineNonOptionalFields_OptionalFieldsTypeFactory({
+      it('requires to pass all fields if nonOptionalDefaultFields is true', async () => {
+        const TypeFactory = defineNonOptionalDefaultFields_OptionalDefaultFieldsTypeFactory({
           defaultFields: {
             field1: 'field1',
             // field2: 'field2',
