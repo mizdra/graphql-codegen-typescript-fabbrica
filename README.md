@@ -579,6 +579,36 @@ const AuthorFactory = defineAuthorFactory({
 });
 ```
 
+### `error TS2307: Cannot find module '@mizdra/graphql-fabbrica/helper' or its corresponding type declarations.`
+
+Incorrect values for the `moduleResolution` option in `tsconfig.json` cause compile errors.
+
+```json
+{
+  "compilerOptions": {
+    "moduleResolution": "node" // incorrect
+  }
+}
+```
+
+```console
+$ npx tsc --noEmit
+__generated__/1-basic/fabbrica.ts:7:8 - error TS2307: Cannot find module '@mizdra/graphql-fabbrica/helper' or its corresponding type declarations.
+
+7 } from '@mizdra/graphql-fabbrica/helper';
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+To resolve this error, set the value of `moduleResolution` to `Bundler`, `Node16` or `NodeNext`.
+
+```json
+{
+  "compilerOptions": {
+    "moduleResolution": "Bundler" // ok
+  }
+}
+```
+
 ## License
 
 This library is licensed under the MIT license.
