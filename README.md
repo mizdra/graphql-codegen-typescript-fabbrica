@@ -30,7 +30,6 @@ const config: CodegenConfig = {
       config: {
         enumsAsTypes: true, // required
         avoidOptionals: true, // required
-        nonOptionalTypename: true, // required
       },
     },
     './__generated__/fabbrica.ts': {
