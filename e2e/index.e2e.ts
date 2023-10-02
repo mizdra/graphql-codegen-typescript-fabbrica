@@ -2,7 +2,7 @@ import { expect, it, describe, assertType, expectTypeOf, vi } from 'vitest';
 import {
   AuthorFactoryDefineOptions,
   AuthorFactoryInterface,
-  DefaultFieldsResolver,
+  FieldsResolver,
   Traits,
   defineAuthorFactory,
   defineAuthorFactoryInternal,
@@ -516,7 +516,7 @@ describe('defineTypeFactory', () => {
         bookCount: number;
       };
       function defineAuthorFactoryWithTransientFields<
-        _DefaultFieldsResolver extends DefaultFieldsResolver<OptionalAuthor & AuthorTransientFields>,
+        _DefaultFieldsResolver extends FieldsResolver<OptionalAuthor & AuthorTransientFields>,
         _Traits extends Traits<OptionalAuthor, AuthorTransientFields>,
       >(
         options: AuthorFactoryDefineOptions<AuthorTransientFields, _DefaultFieldsResolver, _Traits>,

@@ -260,7 +260,7 @@ However, you must prepare a custom `define<Type>Factory` to use Transient Fields
 import {
   defineAuthorFactoryInternal,
   dynamic,
-  DefaultFieldsResolver,
+  FieldsResolver,
   Traits,
   AuthorFactoryDefineOptions,
   AuthorFactoryInterface,
@@ -272,7 +272,7 @@ type AuthorTransientFields = {
   bookCount: number;
 };
 function defineAuthorFactoryWithTransientFields<
-  _DefaultFieldsResolver extends DefaultFieldsResolver<Author & AuthorTransientFields>,
+  _DefaultFieldsResolver extends FieldsResolver<Author & AuthorTransientFields>,
   _Traits extends Traits<Author, AuthorTransientFields>,
 >(
   options: AuthorFactoryDefineOptions<AuthorTransientFields, _DefaultFieldsResolver, _Traits>,
