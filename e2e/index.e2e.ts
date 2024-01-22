@@ -359,6 +359,26 @@ describe('defineTypeFactory', () => {
         books: readonly [{ readonly id: 'Book-0'; readonly title: 'ゆゆ式'; readonly author: undefined }];
       }>();
     });
+    it('allow missing fields of nested field', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: 'Book-0',
+          title: 'ゆゆ式',
+          author: {
+            id: 'Author-0',
+            // missing fields: __typename, name
+          },
+        },
+      });
+      const book = await BookFactory.build();
+      expectTypeOf(book).toEqualTypeOf<{
+        id: string;
+        title: string;
+        author: {
+          id: string;
+        };
+      }>();
+    });
     it('creates fields with sequential id', async () => {
       const BookFactory = defineBookFactory({
         defaultFields: {
