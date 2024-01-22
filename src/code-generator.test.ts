@@ -10,8 +10,8 @@ describe('generateOptionalTypeDefinitionCode', () => {
     const typeInfo: TypeInfo = {
       name: 'Book',
       fields: [
-        { name: 'id', typeString: 'string' },
-        { name: 'title', typeString: 'string', comment: transformComment('The book title') },
+        { name: 'id', typeString: 'string | undefined' },
+        { name: 'title', typeString: 'string | undefined', comment: transformComment('The book title') },
       ],
       comment: transformComment('The book'),
     };
@@ -19,9 +19,9 @@ describe('generateOptionalTypeDefinitionCode', () => {
     expect(actual).toMatchInlineSnapshot(`
       "/** The book */
       export type OptionalBook = {
-        id: string;
+        id?: string | undefined;
         /** The book title */
-        title: string;
+        title?: string | undefined;
       };
       "
     `);
@@ -38,17 +38,17 @@ describe('generateCode', () => {
       {
         name: 'Book',
         fields: [
-          { name: 'id', typeString: 'string' },
-          { name: 'title', typeString: 'string' },
-          { name: 'author', typeString: 'OptionalAuthor' },
+          { name: 'id', typeString: 'string | undefined' },
+          { name: 'title', typeString: 'string | undefined' },
+          { name: 'author', typeString: 'OptionalAuthor | undefined' },
         ],
       },
       {
         name: 'Author',
         fields: [
-          { name: 'id', typeString: 'string' },
-          { name: 'name', typeString: 'string' },
-          { name: 'books', typeString: 'Book[]' },
+          { name: 'id', typeString: 'string | undefined' },
+          { name: 'name', typeString: 'string | undefined' },
+          { name: 'books', typeString: 'Book[] | undefined' },
         ],
       },
     ];

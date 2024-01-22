@@ -12,9 +12,9 @@ import type { Maybe, Book, Author } from './types';
 
 export * from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
 export type OptionalBook = {
-  id: string;
-  title: string;
-  author: OptionalAuthor;
+  id?: string | undefined;
+  title?: string | undefined;
+  author?: OptionalAuthor | undefined;
 };
 
 const BookFieldNames = ['id', 'title', 'author'] as const;
@@ -57,9 +57,9 @@ export function defineBookFactory<
 }
 
 export type OptionalAuthor = {
-  id: string;
-  name: string;
-  books: Book[];
+  id?: string | undefined;
+  name?: string | undefined;
+  books?: Book[] | undefined;
 };
 
 const AuthorFieldNames = ['id', 'name', 'books'] as const;
