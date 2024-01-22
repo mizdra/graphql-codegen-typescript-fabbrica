@@ -24,7 +24,7 @@ export function generateOptionalTypeDefinitionCode(typeInfo: TypeInfo): string {
   const joinedPropDefinitions = fields
     .map((field) => {
       const comment = field.comment ? `  ${field.comment}` : '';
-      return `${comment}  ${field.name}: ${field.typeString};`;
+      return `${comment}  ${field.name}?: ${field.typeString};`;
     })
     .join('\n');
   return `
