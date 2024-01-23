@@ -528,6 +528,25 @@ describe('defineTypeFactory', () => {
         height: number;
       }>();
     });
+    it('increments seq even with traits', async () => {
+      const ImageFactory = defineImageFactory({
+        defaultFields: {
+          id: dynamic(({ seq }) => `Image-${seq}`),
+          url: '#',
+        },
+        traits: {
+          avatar: {
+            defaultFields: {
+              url: 'https://example.com/avatar.png',
+            },
+          },
+        },
+      });
+      const image1 = await ImageFactory.build();
+      const image2 = await ImageFactory.use('avatar').build();
+      expect(image1.id).toBe('Image-0');
+      expect(image2.id).toBe('Image-1');
+    });
   });
   describe('transientFields', () => {
     it('basic', async () => {
