@@ -55,8 +55,8 @@ export function defineTypeFactoryInternal<
     defaultFields: defaultFieldsResolver,
     traits,
   }: TypeFactoryDefineOptions<Type, TransientFields, _DefaultFieldsResolver, _Traits>,
+  seqKey: object = {},
 ): TypeFactoryInterface<Type, TransientFields, _DefaultFieldsResolver, _Traits> {
-  const seqKey = {};
   const getSeq = () => getSequenceCounter(seqKey);
   return {
     async build<T extends FieldsResolver<Type & TransientFields>>(
@@ -98,10 +98,14 @@ export function defineTypeFactoryInternal<
 
       if (!trait) throw new Error(`Trait ("${String(traitName)}") is not defined.`);
       // @ts-expect-error -- Use @ts-expect-error as it is impossible to match types.
-      return defineTypeFactoryInternal(typeFieldNames, {
-        defaultFields: { ...defaultFieldsResolver, ...trait.defaultFields },
-        traits,
-      });
+      return defineTypeFactoryInternal(
+        typeFieldNames,
+        {
+          defaultFields: { ...defaultFieldsResolver, ...trait.defaultFields },
+          traits,
+        },
+        seqKey,
+      );
     },
     resetSequence() {
       resetSequence(seqKey);
