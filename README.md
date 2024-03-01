@@ -14,6 +14,12 @@ npm install --save-dev @mizdra/graphql-codegen-typescript-fabbrica
 - `typescript` >= 5.0.0
   - `--moduleResolution Bundler`, `--moduleResolution Node16` or `--moduleResolution NodeNext` is required
 
+## Playground
+
+You can try this library in the following playground.
+
+- https://codesandbox.io/p/devbox/playground-graphql-codegen-typescript-fabbrica-7hj5nx?file=%2Fsrc%2Findex.test.ts
+
 ## Usage
 
 First, you should configure the configuration file of GraphQL Code Generator as follows.
