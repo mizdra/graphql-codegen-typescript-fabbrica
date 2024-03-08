@@ -18,7 +18,7 @@ npm install --save-dev @mizdra/graphql-codegen-typescript-fabbrica
 
 You can try this library in the following playground.
 
-- https://codesandbox.io/p/devbox/playground-graphql-codegen-typescript-fabbrica-7hj5nx?file=%2Fsrc%2Findex.test.ts
+- https://stackblitz.com/edit/playground-graphql-codegen-typescript-fabbrica?file=src%2Findex.test.ts
 
 ## Usage
 
