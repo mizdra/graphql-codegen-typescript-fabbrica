@@ -1,7 +1,6 @@
-import { expect, it, expectTypeOf } from 'vitest';
-import fabbrica = require('./__generated__/1-basic/fabbrica.js'); // import from cjs entrypoint
-
-const { defineAuthorFactory, defineBookFactory, dynamic } = fabbrica;
+import { it } from 'node:test';
+import { defineAuthorFactory, defineBookFactory, dynamic } from './__generated__/1-basic/fabbrica.js';
+import assert from 'node:assert/strict';
 
 it('integration test', async () => {
   const BookFactory = defineBookFactory({
@@ -18,11 +17,11 @@ it('integration test', async () => {
       books: undefined,
     },
   });
-  const book = await BookFactory.build({
+  let book = await BookFactory.build({
     author: await AuthorFactory.build(),
   });
 
-  expect(book).toStrictEqual({
+  assert.deepEqual(book, {
     id: 'Book-0',
     title: 'ゆゆ式 0巻',
     author: {
@@ -31,7 +30,7 @@ it('integration test', async () => {
       books: undefined,
     },
   });
-  expectTypeOf(book).toEqualTypeOf<{
+  const _book: {
     id: string;
     title: string;
     author: {
@@ -39,5 +38,6 @@ it('integration test', async () => {
       name: string;
       books: undefined;
     };
-  }>();
+  } = book;
+  book = _book;
 });

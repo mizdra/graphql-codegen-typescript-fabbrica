@@ -6,7 +6,7 @@
     "gen": "graphql-codegen",
     "lint": "run-s -c lint:*",
     "lint:tsc": "tsc",
-    "test": "vitest --run"
+    "test": "node --import tsx --test index.e2e.ts"
   },
   "engines": {
     "node": ">=18.0.0"
