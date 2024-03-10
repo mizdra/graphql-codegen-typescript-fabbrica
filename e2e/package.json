@@ -1,5 +1,6 @@
 {
   "name": "e2e",
+  "type": "module",
   "scripts": {
     "start": "run-s gen lint test",
     "gen": "graphql-codegen",
