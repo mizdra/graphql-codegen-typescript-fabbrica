@@ -1,5 +1,5 @@
 {
-  "name": "e2e",
+  "name": "e2e-esm",
   "type": "module",
   "scripts": {
     "start": "run-s gen lint test",
