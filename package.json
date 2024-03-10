@@ -32,7 +32,8 @@
   },
   "workspaces": [
     "e2e/esm",
-    "e2e/cjs"
+    "e2e/cjs",
+    "e2e/browser"
   ],
   "scripts": {
     "build": "run-s -c build:*",
