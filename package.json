@@ -2,7 +2,7 @@
   "name": "@mizdra/graphql-codegen-typescript-fabbrica",
   "description": "GraphQL Code Generator Plugin to define mock data factory.",
   "version": "0.3.2",
-  "type": "commonjs",
+  "type": "module",
   "sideEffects": false,
   "repository": "https://github.com/mizdra/graphql-codegen-typescript-fabbrica.git",
   "author": "mizdra <pp.mizdra@gmail.com>",
@@ -10,12 +10,14 @@
   "private": false,
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
     },
     "./helper": {
-      "types": "./dist/helper/index.d.ts",
-      "default": "./dist/helper/index.js"
+      "import": {
+        "types": "./dist/helper/index.d.ts",
+        "default": "./dist/helper/index.js"
+      }
     }
   },
   "workspaces": [
@@ -45,7 +47,7 @@
     "graphql": "^16.8.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.0.2",
-    "typescript": "^5.1.6",
+    "typescript": "^5.4.2",
     "vitest": "^0.34.5",
     "vitest-github-actions-reporter": "^0.10.0"
   },

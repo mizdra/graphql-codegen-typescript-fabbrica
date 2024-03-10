@@ -7,7 +7,7 @@ const defaultTypeScriptPluginConfig = {
   skipTypename: true,
 };
 const defaultFabbricaPluginConfig = {
-  typesFile: './types',
+  typesFile: './types.js',
   skipTypename: true,
 };
 
@@ -23,7 +23,7 @@ const config: CodegenConfig = {
           CustomScalarTest_CustomScalar2: '{ field: string }',
         },
         namingConvention: {
-          typeNames: './my-naming-fn.js',
+          typeNames: './my-naming-fn.cjs',
         },
       },
     },
@@ -33,7 +33,7 @@ const config: CodegenConfig = {
       config: {
         ...defaultFabbricaPluginConfig,
         namingConvention: {
-          typeNames: './my-naming-fn.js',
+          typeNames: './my-naming-fn.cjs',
         },
       },
     },

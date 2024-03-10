@@ -2,8 +2,8 @@
   "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node18/tsconfig.json"],
   "exclude": ["node_modules", "dist", "e2e"],
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "node16",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "noEmit": true,
     /* Lint Options */
     "noUnusedLocals": false, // Delegate to @typescript-eslint/no-unused-vars in eslint
