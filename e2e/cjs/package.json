@@ -1,9 +1,9 @@
 {
-  "name": "e2e-esm",
-  "type": "module",
+  "name": "e2e-cjs",
+  "type": "commonjs",
   "scripts": {
     "start": "run-s gen lint test",
-    "gen": "graphql-codegen-esm",
+    "gen": "graphql-codegen",
     "lint": "run-s -c lint:*",
     "lint:tsc": "tsc",
     "test": "vitest --run"

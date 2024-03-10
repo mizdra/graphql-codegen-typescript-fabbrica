@@ -31,7 +31,8 @@
     }
   },
   "workspaces": [
-    "e2e/esm"
+    "e2e/esm",
+    "e2e/cjs"
   ],
   "scripts": {
     "build": "run-s -c build:*",
@@ -43,7 +44,7 @@
     "lint:prettier": "prettier --check .",
     "test": "vitest",
     "pree2e": "npm run build",
-    "e2e": "npm -w e2e/esm run start"
+    "e2e": "npm -w e2e/esm -w e2e/cjs run start"
   },
   "prettier": "@mizdra/prettier-config-mizdra",
   "devDependencies": {
