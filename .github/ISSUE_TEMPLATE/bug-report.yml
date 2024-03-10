@@ -9,10 +9,10 @@ body:
       description: |
         Please tell us about your environment.
       value: |
-        typescript version: 
-        @graphql-codegen/cli version: 
-        @graphql-codegen/typescript version: 
-        @mizdra/graphql-codegen-typescript-fabbrica version:
+        @mizdra/graphql-codegen-typescript-fabbrica version: 
+        typescript version (optional): 
+        @graphql-codegen/cli version (optional): 
+        @graphql-codegen/typescript version (optional):
     validations:
       required: true
   - type: textarea
@@ -41,12 +41,6 @@ body:
   - type: textarea
     attributes:
       label: What actually happened?
-    validations:
-      required: true
-  - type: input
-    attributes:
-      label: Link to Minimal Reproducible Example
-      placeholder: 'https://stackblitz.com/edit/playground-graphql-codegen-typescript-fabbrica?file=src%2Findex.test.ts&view=editor'
     validations:
       required: true
   - type: checkboxes
