@@ -1,0 +1,61 @@
+name: '🐞 Report a problem'
+description: 'Report a problem'
+labels:
+  - 'Type: Fix'
+body:
+  - type: textarea
+    attributes:
+      label: Environment
+      description: |
+        Please tell us about your environment.
+      value: |
+        typescript version: 
+        @graphql-codegen/cli version: 
+        @graphql-codegen/typescript version: 
+        @mizdra/graphql-codegen-typescript-fabbrica version:
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Summary
+      description: Please write a summary of the bug.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Step to reproduce
+      description: |
+        Please include a *minimal* reproduction case. It is convenient for you to fork and use the official [playground](https://stackblitz.com/edit/playground-graphql-codegen-typescript-fabbrica?file=src%2Findex.test.ts&view=editor).
+      value: |
+        ```ts
+        <!-- Paste your code here -->
+        ```
+        <!-- Or paste your playground/repository link here -->
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What actually happened?
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Link to Minimal Reproducible Example
+      placeholder: 'https://stackblitz.com/edit/playground-graphql-codegen-typescript-fabbrica?file=src%2Findex.test.ts&view=editor'
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Participation
+      options:
+        - label: I am willing to submit a pull request for this issue.
+          required: false
+  - type: textarea
+    attributes:
+      label: Additional comments
+      description: Is there anything else that's important for the team to know?
