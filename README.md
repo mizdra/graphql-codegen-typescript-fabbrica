@@ -42,12 +42,13 @@ const config: CodegenConfig = {
       plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         typesFile: './types', // required
+        // typesFile: './types.js' // If you use factories from Node.js and set `package.json#type` to `module`, you should add `.js` extension
       },
     },
   },
 };
 
-module.exports = config;
+export default config;
 ```
 
 ```graphql
@@ -372,6 +373,30 @@ type: `string`, required
 
 Defines the file path containing all GraphQL types. This file can be generated with the [typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript).
 
+If you use factories on Node.js and set `package.json#type` to `module`, you should add `.js` extension to the file path. If you use factories on other runtimes, you should not add `.js` extension.
+
+```ts
+import { CodegenConfig } from '@graphql-codegen/cli';
+const config: CodegenConfig = {
+  schema: './schema.graphql',
+  generates: {
+    '__generated__/types.ts': {
+      plugins: ['typescript'],
+      config: {
+        // ...
+      },
+    },
+    './__generated__/fabbrica.ts': {
+      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
+      config: {
+        typesFile: './types', // required
+        // typesFile: './types.js' // If you use factories from Node.js and set `package.json#type` to `module`, you should add `.js` extension
+      },
+    },
+  },
+};
+```
+
 ### `skipTypename`
 
 type: `boolean`, default: `false`
@@ -398,7 +423,7 @@ const config: CodegenConfig = {
     },
   },
 };
-module.exports = config;
+export default config;
 ```
 
 ### `skipIsAbstractType`
@@ -430,7 +455,7 @@ const config: CodegenConfig = {
     },
   },
 };
-module.exports = config;
+export default config;
 ```
 
 ### `nonOptionalDefaultFields`
@@ -459,7 +484,7 @@ const config: CodegenConfig = {
     },
   },
 };
-module.exports = config;
+export default config;
 ```
 
 ### `namingConvention`
@@ -488,7 +513,7 @@ const config: CodegenConfig = {
     },
   },
 };
-module.exports = config;
+export default config;
 ```
 
 ### `typesPrefix`
@@ -517,7 +542,7 @@ const config: CodegenConfig = {
     },
   },
 };
-module.exports = config;
+export default config;
 ```
 
 ### `typesSuffix`
