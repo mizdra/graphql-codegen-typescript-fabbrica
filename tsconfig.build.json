@@ -4,7 +4,7 @@
   "exclude": ["src/test", "src/**/*.test.ts", "src/**/__snapshots__"],
   "compilerOptions": {
     "noEmit": false,
-    "outDir": "./dist",
+    "outDir": "./dist/esm",
     "rootDir": "src", // To avoid inadvertently changing the directory structure under dist/.
     "sourceMap": true,
     "declaration": true,

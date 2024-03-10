@@ -1,0 +1,17 @@
+{
+  "name": "e2e-esm",
+  "type": "module",
+  "scripts": {
+    "start": "run-s gen lint test",
+    "gen": "graphql-codegen-esm",
+    "lint": "run-s -c lint:*",
+    "lint:tsc": "tsc",
+    "test": "vitest --run"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@mizdra/graphql-codegen-typescript-fabbrica": ".."
+  }
+}

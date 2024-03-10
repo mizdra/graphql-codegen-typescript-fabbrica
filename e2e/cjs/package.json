@@ -1,12 +1,12 @@
 {
-  "name": "e2e",
-  "type": "module",
+  "name": "e2e-cjs",
+  "type": "commonjs",
   "scripts": {
     "start": "run-s gen lint test",
     "gen": "graphql-codegen",
     "lint": "run-s -c lint:*",
     "lint:tsc": "tsc",
-    "test": "vitest"
+    "test": "node --import tsx --test index.e2e.ts"
   },
   "engines": {
     "node": ">=18.0.0"
