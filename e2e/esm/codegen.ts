@@ -87,4 +87,4 @@ const config: CodegenConfig = {
   },
 };
 
-module.exports = config;
+export default config;
