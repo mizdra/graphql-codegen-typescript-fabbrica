@@ -119,49 +119,67 @@ describe('GraphQL features test', () => {
       field4: ({ field: string } | null)[];
     }>();
   });
-  it('interface', async () => {
-    const TypeWithInterfaceField = defineInterfaceTest_TypeWithInterfaceFieldFactory({
-      defaultFields: {
-        interface: undefined,
-      },
+  describe('interface', () => {
+    it('basic', async () => {
+      const TypeWithInterfaceField = defineInterfaceTest_TypeWithInterfaceFieldFactory({
+        defaultFields: {
+          interface: undefined,
+        },
+      });
+      const ImplementingTypeFactory = defineInterfaceTest_ImplementingTypeFactory({
+        defaultFields: {
+          id: 'ImplementingType-0',
+          field: 'field',
+        },
+      });
+      const typeWithInterfaceField = await TypeWithInterfaceField.build({
+        interface: await ImplementingTypeFactory.build(),
+      });
+      expect(typeWithInterfaceField).toStrictEqual({
+        interface: {
+          id: 'ImplementingType-0',
+          field: 'field',
+        },
+      });
+      expectTypeOf(typeWithInterfaceField).toEqualTypeOf<{ interface: { id: string; field: string } }>();
     });
-    const ImplementingTypeFactory = defineInterfaceTest_ImplementingTypeFactory({
-      defaultFields: {
-        id: 'ImplementingType-0',
-        field: 'field',
-      },
+    it('the fields of a union field is optional', async () => {
+      defineInterfaceTest_TypeWithInterfaceFieldFactory({
+        defaultFields: {
+          interface: {},
+        },
+      });
     });
-    const typeWithInterfaceField = await TypeWithInterfaceField.build({
-      interface: await ImplementingTypeFactory.build(),
-    });
-    expect(typeWithInterfaceField).toStrictEqual({
-      interface: {
-        id: 'ImplementingType-0',
-        field: 'field',
-      },
-    });
-    expectTypeOf(typeWithInterfaceField).toEqualTypeOf<{ interface: { id: string; field: string } }>();
   });
-  it('union', async () => {
-    const TypeFactory = defineUnionTest_TypeFactory({
-      defaultFields: {
-        union: undefined,
-      },
+  describe('union', () => {
+    it('basic', async () => {
+      const TypeFactory = defineUnionTest_TypeFactory({
+        defaultFields: {
+          union: undefined,
+        },
+      });
+      const Member1Factory = defineUnionTest_Member1Factory({
+        defaultFields: {
+          field1: 'field1',
+        },
+      });
+      const type = await TypeFactory.build({
+        union: await Member1Factory.build(),
+      });
+      expect(type).toStrictEqual({
+        union: {
+          field1: 'field1',
+        },
+      });
+      expectTypeOf(type).toEqualTypeOf<{ union: { field1: string } }>();
     });
-    const Member1Factory = defineUnionTest_Member1Factory({
-      defaultFields: {
-        field1: 'field1',
-      },
+    it('the fields of a union field is optional', async () => {
+      defineUnionTest_TypeFactory({
+        defaultFields: {
+          union: {},
+        },
+      });
     });
-    const type = await TypeFactory.build({
-      union: await Member1Factory.build(),
-    });
-    expect(type).toStrictEqual({
-      union: {
-        field1: 'field1',
-      },
-    });
-    expectTypeOf(type).toEqualTypeOf<{ union: { field1: string } }>();
   });
   it('enum', async () => {
     const TypeFactory = defineEnumTest_TypeFactory({
