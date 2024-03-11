@@ -90,7 +90,19 @@ function parseObjectTypeOrInputObjectTypeDefinition(
 }
 
 type FieldInfo = { name: string; typeString: string; comment?: string | undefined };
-export type TypeInfo = { name: string; fields: FieldInfo[]; comment?: string | undefined };
+export type ObjectTypeInfo = {
+  type: 'object';
+  name: string;
+  fields: FieldInfo[];
+  comment?: string | undefined;
+};
+export type AbstractTypeInfo = {
+  type: 'abstract';
+  name: string;
+  possibleTypes: string[];
+  comment?: string | undefined;
+};
+export type TypeInfo = ObjectTypeInfo | AbstractTypeInfo;
 
 export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] {
   const types = Object.values(schema.getTypeMap());

@@ -1,5 +1,5 @@
 import { Config } from './config.js';
-import { TypeInfo } from './schema-scanner.js';
+import { ObjectTypeInfo, TypeInfo } from './schema-scanner.js';
 
 function generatePreludeCode(config: Config, typeInfos: TypeInfo[]): string {
   const joinedTypeNames = typeInfos.map(({ name }) => name).join(', ');
@@ -19,28 +19,32 @@ export * from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
 }
 
 export function generateOptionalTypeDefinitionCode(typeInfo: TypeInfo): string {
-  const { name, fields } = typeInfo;
-  const comment = typeInfo.comment ?? '';
-  const joinedPropDefinitions = fields
-    .map((field) => {
-      const comment = field.comment ? `  ${field.comment}` : '';
-      return `${comment}  ${field.name}?: ${field.typeString};`;
-    })
-    .join('\n');
-  return `
+  if (typeInfo.type === 'object') {
+    const { name, fields } = typeInfo;
+    const comment = typeInfo.comment ?? '';
+    const joinedPropDefinitions = fields
+      .map((field) => {
+        const comment = field.comment ? `  ${field.comment}` : '';
+        return `${comment}  ${field.name}?: ${field.typeString};`;
+      })
+      .join('\n');
+    return `
 ${comment}export type Optional${name} = {
 ${joinedPropDefinitions}
 };
 `.trimStart();
+  } else {
+    throw new Error('TODO: support interfaceOrUnionTypeInfo');
+  }
 }
 
-function generateFieldNamesDefinitionCode(typeInfo: TypeInfo): string {
+function generateFieldNamesDefinitionCode(typeInfo: ObjectTypeInfo): string {
   const { name, fields } = typeInfo;
   const joinedFieldNames = fields.map((field) => `'${field.name}'`).join(', ');
   return `const ${name}FieldNames = [${joinedFieldNames}] as const;\n`;
 }
 
-function generateTypeFactoryCode(config: Config, typeInfo: TypeInfo): string {
+function generateTypeFactoryCode(config: Config, typeInfo: ObjectTypeInfo): string {
   const { name } = typeInfo;
   function wrapRequired(str: string) {
     return config.nonOptionalDefaultFields ? `Required<${str}>` : str;
@@ -91,10 +95,12 @@ export function generateCode(config: Config, typeInfos: TypeInfo[]): string {
   for (const typeInfo of typeInfos) {
     code += generateOptionalTypeDefinitionCode(typeInfo);
     code += '\n';
-    code += generateFieldNamesDefinitionCode(typeInfo);
-    code += '\n';
-    code += generateTypeFactoryCode(config, typeInfo);
-    code += '\n';
+    if (typeInfo.type === 'object') {
+      code += generateFieldNamesDefinitionCode(typeInfo);
+      code += '\n';
+      code += generateTypeFactoryCode(config, typeInfo);
+      code += '\n';
+    }
   }
   return code;
 }
