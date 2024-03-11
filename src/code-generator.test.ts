@@ -7,6 +7,7 @@ import { fakeConfig, oneOf } from './test/util.js';
 describe('generateOptionalTypeDefinitionCode', () => {
   it('generates description comment', () => {
     const typeInfo: TypeInfo = {
+      type: 'object',
       name: 'Book',
       fields: [
         { name: 'id', typeString: 'string | undefined' },
@@ -35,6 +36,7 @@ describe('generateCode', () => {
     });
     const typeInfos: TypeInfo[] = [
       {
+        type: 'object',
         name: 'Book',
         fields: [
           { name: 'id', typeString: 'string | undefined' },
@@ -43,6 +45,7 @@ describe('generateCode', () => {
         ],
       },
       {
+        type: 'object',
         name: 'Author',
         fields: [
           { name: 'id', typeString: 'string | undefined' },
