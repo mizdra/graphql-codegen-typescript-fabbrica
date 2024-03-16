@@ -9,6 +9,7 @@ import {
   InputObjectTypeDefinitionNode,
   InputValueDefinitionNode,
   UnionTypeDefinitionNode,
+  InterfaceTypeDefinitionNode,
 } from 'graphql';
 import { Config } from './config.js';
 
@@ -68,12 +69,13 @@ function parseObjectTypeOrInputObjectTypeDefinition(
   config: Config,
   userDefinedTypeNames: string[],
   getAbstractTypeNames: (type: ObjectTypeDefinitionNode) => string[],
-): TypeInfo {
+): ObjectTypeInfo {
   const originalTypeName = node.name.value;
   const convertedTypeName = convertName(originalTypeName, config);
   const comment = node.description ? transformComment(node.description) : undefined;
   const abstractTypeNames = node.kind === Kind.OBJECT_TYPE_DEFINITION ? getAbstractTypeNames(node) : [];
   return {
+    type: 'object',
     name: convertedTypeName,
     fields: [
       ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${originalTypeName}'` }] : []),
@@ -90,17 +92,46 @@ function parseObjectTypeOrInputObjectTypeDefinition(
 }
 
 type FieldInfo = { name: string; typeString: string; comment?: string | undefined };
-export type TypeInfo = { name: string; fields: FieldInfo[]; comment?: string | undefined };
+export type ObjectTypeInfo = {
+  type: 'object';
+  name: string;
+  fields: FieldInfo[];
+  comment?: string | undefined;
+};
+export type AbstractTypeInfo = {
+  type: 'abstract';
+  name: string;
+  possibleTypes: string[];
+  comment?: string | undefined;
+};
+export type TypeInfo = ObjectTypeInfo | AbstractTypeInfo;
 
 export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] {
   const types = Object.values(schema.getTypeMap());
 
-  const objectTypeOrInputObjectTypeDefinitions = types
+  const userDefinedTypeDefinitions = types
     .map((type) => type.astNode)
-    .filter((node): node is ObjectTypeDefinitionNode | InputObjectTypeDefinitionNode => {
-      if (!node) return false;
-      return node.kind === Kind.OBJECT_TYPE_DEFINITION || node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION;
-    });
+    .filter(
+      (
+        node,
+      ): node is
+        | ObjectTypeDefinitionNode
+        | InputObjectTypeDefinitionNode
+        | InterfaceTypeDefinitionNode
+        | UnionTypeDefinitionNode => {
+        if (!node) return false;
+        return (
+          node.kind === Kind.OBJECT_TYPE_DEFINITION ||
+          node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION ||
+          node.kind === Kind.INTERFACE_TYPE_DEFINITION ||
+          node.kind === Kind.UNION_TYPE_DEFINITION
+        );
+      },
+    );
+  const objectTypeDefinitions = userDefinedTypeDefinitions.filter((node): node is ObjectTypeDefinitionNode => {
+    if (!node) return false;
+    return node.kind === Kind.OBJECT_TYPE_DEFINITION;
+  });
   const unionTypeDefinitions = types
     .map((type) => type.astNode)
     .filter((node): node is UnionTypeDefinitionNode => {
@@ -115,11 +146,48 @@ export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] 
     return [...interfaceNames, ...unionNames];
   }
 
-  const userDefinedTypeNames = objectTypeOrInputObjectTypeDefinitions.map((type) => type.name.value);
+  const userDefinedTypeNames = userDefinedTypeDefinitions.map((node) => node.name.value);
 
-  const typeInfos = objectTypeOrInputObjectTypeDefinitions.map((node) =>
-    parseObjectTypeOrInputObjectTypeDefinition(node, config, userDefinedTypeNames, getAbstractTypeNames),
-  );
-
-  return typeInfos;
+  return types
+    .map((type) => type.astNode)
+    .filter(
+      (
+        node,
+      ): node is
+        | ObjectTypeDefinitionNode
+        | InputObjectTypeDefinitionNode
+        | InterfaceTypeDefinitionNode
+        | UnionTypeDefinitionNode => {
+        if (!node) return false;
+        return (
+          node.kind === Kind.OBJECT_TYPE_DEFINITION ||
+          node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION ||
+          node.kind === Kind.INTERFACE_TYPE_DEFINITION ||
+          node.kind === Kind.UNION_TYPE_DEFINITION
+        );
+      },
+    )
+    .map((node) => {
+      if (node?.kind === Kind.OBJECT_TYPE_DEFINITION || node?.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION) {
+        return parseObjectTypeOrInputObjectTypeDefinition(node, config, userDefinedTypeNames, getAbstractTypeNames);
+      } else if (node?.kind === Kind.INTERFACE_TYPE_DEFINITION) {
+        return {
+          type: 'abstract',
+          name: convertName(node.name.value, config),
+          possibleTypes: objectTypeDefinitions
+            .filter((objectTypeDefinitionNode) =>
+              (objectTypeDefinitionNode.interfaces ?? []).some((i) => i.name.value === node.name.value),
+            )
+            .map((objectTypeDefinitionNode) => convertName(objectTypeDefinitionNode.name.value, config)),
+          comment: node.description ? transformComment(node.description) : undefined,
+        };
+      } else {
+        return {
+          type: 'abstract',
+          name: convertName(node.name.value, config),
+          possibleTypes: (node.types ?? []).map((type) => convertName(type.name.value, config)),
+          comment: node.description ? transformComment(node.description) : undefined,
+        };
+      }
+    });
 }
