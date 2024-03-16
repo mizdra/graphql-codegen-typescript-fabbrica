@@ -34,7 +34,12 @@ ${joinedPropDefinitions}
 };
 `.trimStart();
   } else {
-    throw new Error('TODO: support interfaceOrUnionTypeInfo');
+    const { name, possibleTypes } = typeInfo;
+    const comment = typeInfo.comment ?? '';
+    const joinedPossibleTypes = possibleTypes.map((type) => `Optional${type}`).join(' | ');
+    return `
+${comment}export type Optional${name} = ${joinedPossibleTypes};
+`.trimStart();
   }
 }
 
