@@ -613,6 +613,26 @@ describe('defineTypeFactory', () => {
         }[];
       }>();
     });
+    it('with traits', async () => {
+      const BookFactory = defineBookFactory.withTransientFields({
+        prefix: 'Foo-',
+      })({
+        defaultFields: {
+          id: dynamic(async ({ get }) => `${(await get('prefix')) ?? ''}Book`),
+        },
+        traits: {
+          trait: {
+            defaultFields: {
+              prefix: 'Bar-',
+            },
+          },
+        },
+      });
+      const book1 = await BookFactory.build();
+      const book2 = await BookFactory.use('trait').build();
+      expect(book1.id).toBe('Foo-Book');
+      expect(book2.id).toBe('Bar-Book');
+    });
   });
   describe('resetAllSequence', () => {
     it('resets all sequence', async () => {
