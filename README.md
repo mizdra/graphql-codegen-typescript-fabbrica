@@ -261,34 +261,13 @@ expect(await AuthorFactory.build()).toStrictEqual({
 
 Transient fields are only available within the factory definition and are not included in the data being built. This allows more complex logic to be used inside factories.
 
-However, you must prepare a custom `define<Type>Factory` to use Transient Fields.
-
 ```ts
-import {
-  defineAuthorFactoryInternal,
-  dynamic,
-  FieldsResolver,
-  Traits,
-  AuthorFactoryDefineOptions,
-  AuthorFactoryInterface,
-} from '../__generated__/fabbrica';
+import { defineAuthorFactory, dynamic } from '../__generated__/fabbrica';
 import { Author } from '../__generated__/types';
 
-// Prepare custom `defineAuthorFactory` with transient fields
-type AuthorTransientFields = {
-  bookCount: number;
-};
-function defineAuthorFactoryWithTransientFields<
-  _DefaultFieldsResolver extends FieldsResolver<Author & AuthorTransientFields>,
-  _Traits extends Traits<Author, AuthorTransientFields>,
->(
-  options: AuthorFactoryDefineOptions<AuthorTransientFields, _DefaultFieldsResolver, _Traits>,
-): AuthorFactoryInterface<AuthorTransientFields, _DefaultFieldsResolver, _Traits> {
-  return defineAuthorFactoryInternal(options);
-}
-
-// Use custom `defineAuthorFactory`
-const AuthorFactory = defineAuthorFactoryWithTransientFields({
+const AuthorFactory = defineAuthorFactory.withTransientFields({
+  bookCount: 0,
+})({
   defaultFields: {
     id: dynamic(({ seq }) => `Author-${seq}`),
     name: 'Komata Mikami',
@@ -296,7 +275,6 @@ const AuthorFactory = defineAuthorFactoryWithTransientFields({
       const bookCount = (await get('bookCount')) ?? 0;
       return BookFactory.buildList(bookCount);
     }),
-    bookCount: 0,
   },
 });
 expect(await AuthorFactory.build({ bookCount: 3 })).toStrictEqual({
