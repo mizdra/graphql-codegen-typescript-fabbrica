@@ -67,16 +67,6 @@ export type ${name}FactoryInterface<
   _Traits extends Traits<Optional${name}, TransientFields>,
 > = TypeFactoryInterface<Optional${name}, TransientFields, _DefaultFieldsResolver, _Traits>;
 
-export function define${name}FactoryInternal<
-  TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends ${wrapRequired(`FieldsResolver<Optional${name} & TransientFields>`)},
-  _Traits extends Traits<Optional${name}, TransientFields>,
->(
-  options: ${name}FactoryDefineOptions<TransientFields, _DefaultFieldsResolver, _Traits>,
-): ${name}FactoryInterface<TransientFields, _DefaultFieldsResolver, _Traits> {
-  return defineTypeFactoryInternal(${name}FieldNames, options);
-}
-
 /**
  * Define factory for {@link ${name}} model.
  *
@@ -89,8 +79,30 @@ export function define${name}Factory<
 >(
   options: ${name}FactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
 ): ${name}FactoryInterface<{}, _DefaultFieldsResolver, _Traits> {
-  return define${name}FactoryInternal(options);
+  return defineTypeFactoryInternal(${name}FieldNames, options);
 }
+
+/**
+ * Define factory for {@link ${name}} model with Transient Fields.
+ *
+ * @param defaultTransientFields
+ * @returns defineTypeFactory {@link define${name}Factory}
+ */
+define${name}Factory.withTransientFields = <TransientFields extends Record<string, unknown>>(
+  defaultTransientFields: TransientFields,
+) => {
+  return <
+    _DefaultFieldsResolver extends FieldsResolver<Optional${name} & TransientFields>,
+    _Traits extends Traits<Optional${name}, TransientFields>,
+  >(
+    options: ${name}FactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
+  ): ${name}FactoryInterface<TransientFields, _DefaultFieldsResolver, _Traits> => {
+    return defineTypeFactoryInternal(${name}FieldNames, {
+      ...options,
+      defaultFields: { ...(defaultTransientFields as FieldsResolver<TransientFields>), ...options.defaultFields },
+    });
+  };
+};
 `.trimStart();
 }
 
