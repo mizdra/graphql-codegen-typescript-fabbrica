@@ -2,7 +2,10 @@ import { Config } from './config.js';
 import { ObjectTypeInfo, TypeInfo } from './schema-scanner.js';
 
 function generatePreludeCode(config: Config, typeInfos: TypeInfo[]): string {
-  const joinedTypeNames = typeInfos.map(({ name }) => `  ${name}`).join(',\n');
+  const joinedTypeNames = typeInfos
+    .filter(({ type }) => type === 'object')
+    .map(({ name }) => `  ${name}`)
+    .join(',\n');
   const code = `
 import {
   type Traits,

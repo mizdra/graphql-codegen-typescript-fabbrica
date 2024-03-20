@@ -12,7 +12,6 @@ import type {
   Maybe,
   Book,
   Author,
-  Node,
 } from './types';
 
 export * from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
