@@ -12,7 +12,9 @@ import {
   type TypeFactoryDefineOptions,
   type TypeFactoryInterface,
   type FieldsResolver,
+  type DefineTypeFactoryInterface${config.nonOptionalDefaultFields ? 'Required' : ''},
   defineTypeFactoryInternal,
+  defineTypeFactory,
 } from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
 import type {
   Maybe,
@@ -49,60 +51,19 @@ ${comment}export type Optional${name} = ${joinedPossibleTypes};
   }
 }
 
-function generateTypeFactoryCode(config: Config, typeInfo: ObjectTypeInfo): string {
+function generateTypeFactoryCode({ nonOptionalDefaultFields }: Config, typeInfo: ObjectTypeInfo): string {
   const { name } = typeInfo;
-  function wrapRequired(str: string) {
-    return config.nonOptionalDefaultFields ? `Required<${str}>` : str;
-  }
   return `
-export type ${name}FactoryDefineOptions<
-  TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends FieldsResolver<Optional${name} & TransientFields>,
-  _Traits extends Traits<Optional${name}, TransientFields>,
-> = TypeFactoryDefineOptions<Optional${name}, TransientFields, _DefaultFieldsResolver, _Traits>;
-
-export type ${name}FactoryInterface<
-  TransientFields extends Record<string, unknown>,
-  _DefaultFieldsResolver extends FieldsResolver<Optional${name} & TransientFields>,
-  _Traits extends Traits<Optional${name}, TransientFields>,
-> = TypeFactoryInterface<Optional${name}, TransientFields, _DefaultFieldsResolver, _Traits>;
-
 /**
  * Define factory for {@link ${name}} model.
  *
  * @param options
  * @returns factory {@link ${name}FactoryInterface}
  */
-export function define${name}Factory<
-  _DefaultFieldsResolver extends ${wrapRequired(`FieldsResolver<Optional${name}>`)},
-  _Traits extends Traits<Optional${name}, {}>,
->(
-  options: ${name}FactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
-): ${name}FactoryInterface<{}, _DefaultFieldsResolver, _Traits> {
-  return defineTypeFactoryInternal([], options);
-}
-
-/**
- * Define factory for {@link ${name}} model with Transient Fields.
- *
- * @param defaultTransientFields
- * @returns defineTypeFactory {@link define${name}Factory}
- */
-define${name}Factory.withTransientFields = <TransientFields extends Record<string, unknown>>(
-  defaultTransientFields: TransientFields,
-) => {
-  return <
-    _DefaultFieldsResolver extends FieldsResolver<Optional${name} & TransientFields>,
-    _Traits extends Traits<Optional${name}, TransientFields>,
-  >(
-    options: ${name}FactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
-  ): ${name}FactoryInterface<TransientFields, _DefaultFieldsResolver, _Traits> => {
-    return defineTypeFactoryInternal(Object.keys(defaultTransientFields), {
-      ...options,
-      defaultFields: { ...(defaultTransientFields as FieldsResolver<TransientFields>), ...options.defaultFields },
-    });
-  };
-};
+export const define${name}Factory: DefineTypeFactoryInterface${nonOptionalDefaultFields ? 'Required' : ''}<
+  Optional${name},
+  {}
+> = defineTypeFactory;
 `.trimStart();
 }
 

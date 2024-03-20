@@ -613,6 +613,28 @@ describe('defineTypeFactory', () => {
         }[];
       }>();
     });
+    it('support chaining', async () => {
+      const AuthorFactory = defineAuthorFactory
+        .withTransientFields({
+          a: 0,
+          b: 'str',
+        })
+        .withTransientFields({
+          b: undefined,
+          c: true,
+        })({
+        defaultFields: {
+          id: dynamic(async ({ get }) => {
+            return `${await get('a')}-${await get('b')}-${await get('c')}`;
+          }),
+        },
+      });
+      const author1 = await AuthorFactory.build({ a: 0, b: undefined, c: true });
+      expect(author1).toStrictEqual({ id: '0-undefined-true' });
+      expectTypeOf(author1).toEqualTypeOf<{ id: string }>();
+      // @ts-expect-error -- b is overridden by undefined
+      await AuthorFactory.build({ a: 0, b: 'str', c: true });
+    });
     it('with traits', async () => {
       const BookFactory = defineBookFactory.withTransientFields({
         prefix: 'Foo-',

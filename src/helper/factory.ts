@@ -46,6 +46,33 @@ export interface TypeFactoryInterface<
   resetSequence(): void;
 }
 
+export interface DefineTypeFactoryInterfaceRequired<
+  Type extends Record<string, unknown>,
+  TransientFields extends Record<string, unknown>,
+> {
+  <
+    _DefaultFieldsResolver extends Required<FieldsResolver<Type & TransientFields>>,
+    _Traits extends Traits<Type, TransientFields>,
+  >(
+    options: TypeFactoryDefineOptions<Type, TransientFields, _DefaultFieldsResolver, _Traits>,
+  ): TypeFactoryInterface<Type, TransientFields, _DefaultFieldsResolver, _Traits>;
+  withTransientFields<NewTransientFields extends Record<string, unknown>>(
+    defaultTransientFields: NewTransientFields,
+  ): DefineTypeFactoryInterface<Type, Merge<TransientFields, NewTransientFields>>;
+}
+
+export interface DefineTypeFactoryInterface<
+  Type extends Record<string, unknown>,
+  TransientFields extends Record<string, unknown>,
+> extends DefineTypeFactoryInterfaceRequired<Type, TransientFields> {
+  <
+    _DefaultFieldsResolver extends FieldsResolver<Type & TransientFields>,
+    _Traits extends Traits<Type, TransientFields> = Traits<Type, TransientFields>,
+  >(
+    options: TypeFactoryDefineOptions<Type, TransientFields, _DefaultFieldsResolver, _Traits>,
+  ): TypeFactoryInterface<Type, TransientFields, _DefaultFieldsResolver, _Traits>;
+}
+
 export function defineTypeFactoryInternal<
   Type extends Record<string, unknown>,
   TransientFields extends Record<string, unknown>,
@@ -114,3 +141,44 @@ export function defineTypeFactoryInternal<
     },
   };
 }
+
+class DefineTypeFactory<
+  Type extends Record<string, unknown>,
+  TransientFields extends Record<string, unknown>,
+> extends Function {
+  _defaultTransientFields: TransientFields;
+  constructor(defaultTransientFields: TransientFields) {
+    super();
+    this._defaultTransientFields = defaultTransientFields;
+
+    // ref: https://gist.github.com/arccoza/50fe61c8430fc97a463bf6b8960776ce
+    // eslint-disable-next-line no-constructor-return
+    return new Proxy(this, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      apply: (target, _thisArg, [options]: [any]) => target._apply(options),
+    });
+  }
+
+  _apply<
+    _DefaultFieldsResolver extends FieldsResolver<Type & TransientFields>,
+    _Traits extends Traits<Type, TransientFields> = Traits<Type, TransientFields>,
+  >(
+    options: TypeFactoryDefineOptions<Type, TransientFields, _DefaultFieldsResolver, _Traits>,
+  ): TypeFactoryInterface<Type, TransientFields, _DefaultFieldsResolver, _Traits> {
+    return defineTypeFactoryInternal<Type, TransientFields, _DefaultFieldsResolver, _Traits>(
+      Object.keys(this._defaultTransientFields),
+      {
+        ...options,
+        defaultFields: { ...this._defaultTransientFields, ...options.defaultFields },
+      },
+    );
+  }
+
+  withTransientFields<NewTransientFields extends Record<string, unknown>>(
+    defaultTransientFields: NewTransientFields,
+  ): DefineTypeFactoryInterface<Type, Merge<TransientFields, NewTransientFields>> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return new DefineTypeFactory({ ...this._defaultTransientFields, ...defaultTransientFields }) as any;
+  }
+}
+export const defineTypeFactory = new DefineTypeFactory({}) as unknown as DefineTypeFactoryInterfaceRequired<{}, {}>;
