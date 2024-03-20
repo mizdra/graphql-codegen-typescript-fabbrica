@@ -27,6 +27,8 @@ export interface TypeFactoryInterface<
   _DefaultFieldsResolver extends Partial<Record<keyof Type, FieldResolver<Type & TransientFields, unknown>>>,
   _Traits extends Traits<Type, TransientFields>,
 > {
+  // NOTE: The separation of type definitions with and without arguments is intentional.
+  // If the type definitions are merged, code completion of field names will not work in the arguments passed to `build`/`buildList` function.
   build(): Promise<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof TransientFields>>;
   build<T extends FieldsResolver<Type & TransientFields>>(
     inputFieldsResolver: T,
