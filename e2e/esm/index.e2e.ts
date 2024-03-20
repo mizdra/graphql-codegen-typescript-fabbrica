@@ -1,11 +1,6 @@
 import { expect, it, describe, assertType, expectTypeOf, vi } from 'vitest';
 import {
-  AuthorFactoryDefineOptions,
-  AuthorFactoryInterface,
-  FieldsResolver,
-  Traits,
   defineAuthorFactory,
-  defineAuthorFactoryInternal,
   defineBookFactory,
   defineImageFactory,
   defineInterfaceTest_TypeWithInterfaceFieldFactory,
@@ -17,7 +12,6 @@ import {
   defineUnionTest_Member1Factory,
   defineEnumTest_TypeFactory,
   defineCustomScalarTest_TypeFactory,
-  OptionalAuthor,
   defineNamingConventionTest_RenamedTypeFactory,
   defineNullableTest_TypeFactory,
   defineInputTest_InputFactory,
@@ -568,19 +562,6 @@ describe('defineTypeFactory', () => {
   });
   describe('transientFields', () => {
     it('basic', async () => {
-      // Define factory with transient fields
-      type AuthorTransientFields = {
-        bookCount: number;
-      };
-      function defineAuthorFactoryWithTransientFields<
-        _DefaultFieldsResolver extends FieldsResolver<OptionalAuthor & AuthorTransientFields>,
-        _Traits extends Traits<OptionalAuthor, AuthorTransientFields>,
-      >(
-        options: AuthorFactoryDefineOptions<AuthorTransientFields, _DefaultFieldsResolver, _Traits>,
-      ): AuthorFactoryInterface<AuthorTransientFields, _DefaultFieldsResolver, _Traits> {
-        return defineAuthorFactoryInternal(options);
-      }
-
       const BookFactory = defineBookFactory({
         defaultFields: {
           id: dynamic(({ seq }) => `Book-${seq}`),
@@ -588,7 +569,9 @@ describe('defineTypeFactory', () => {
           author: undefined,
         },
       });
-      const AuthorFactory = defineAuthorFactoryWithTransientFields({
+      const AuthorFactory = defineAuthorFactory.withTransientFields({
+        bookCount: 0,
+      })({
         defaultFields: {
           id: dynamic(({ seq }) => `Author-${seq}`),
           name: '三上小又',
@@ -596,7 +579,6 @@ describe('defineTypeFactory', () => {
             const bookCount = (await get('bookCount')) ?? 0;
             return BookFactory.buildList(bookCount);
           }),
-          bookCount: 0,
         },
       });
       const author1 = await AuthorFactory.build();
@@ -630,6 +612,26 @@ describe('defineTypeFactory', () => {
           author: undefined;
         }[];
       }>();
+    });
+    it('with traits', async () => {
+      const BookFactory = defineBookFactory.withTransientFields({
+        prefix: 'Foo-',
+      })({
+        defaultFields: {
+          id: dynamic(async ({ get }) => `${(await get('prefix')) ?? ''}Book`),
+        },
+        traits: {
+          trait: {
+            defaultFields: {
+              prefix: 'Bar-',
+            },
+          },
+        },
+      });
+      const book1 = await BookFactory.build();
+      const book2 = await BookFactory.use('trait').build();
+      expect(book1.id).toBe('Foo-Book');
+      expect(book2.id).toBe('Bar-Book');
     });
   });
   describe('resetAllSequence', () => {
