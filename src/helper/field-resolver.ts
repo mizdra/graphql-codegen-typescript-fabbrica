@@ -1,4 +1,4 @@
-import { DeepReadonly, Merge, StrictlyPick } from './util.js';
+import { DeepReadonly, Merge } from './util.js';
 
 export type FieldResolverOptions<TypeWithTransientFields> = {
   seq: number;
@@ -47,12 +47,12 @@ export async function resolveFields<
   _DefaultFieldsResolver extends FieldsResolver<Type & TransientFields>,
   _InputFieldsResolver extends FieldsResolver<Type & TransientFields>,
 >(
-  fieldNames: readonly (keyof Type)[],
+  transientFieldNames: (keyof TransientFields)[],
   seq: number,
   defaultFieldsResolver: _DefaultFieldsResolver,
   inputFieldsResolver: _InputFieldsResolver,
 ): Promise<
-  StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<_InputFieldsResolver>>, keyof Type>
+  Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<_InputFieldsResolver>>, keyof TransientFields>
 > {
   type TypeWithTransientFields = Type & TransientFields;
 
@@ -94,11 +94,11 @@ export async function resolveFields<
     get: resolveFieldAndUpdateCache,
   };
 
-  for (const fieldName of fieldNames) {
+  for (const fieldName of [...Object.keys(defaultFieldsResolver), ...Object.keys(inputFieldsResolver)]) {
     // eslint-disable-next-line no-await-in-loop
     await resolveFieldAndUpdateCache(fieldName);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Use any type as it is impossible to match types.
-  return Object.fromEntries(Object.entries(fields).filter(([key]) => fieldNames.includes(key))) as any;
+  return Object.fromEntries(Object.entries(fields).filter(([key]) => !transientFieldNames.includes(key))) as any;
 }

@@ -2,7 +2,7 @@
 
 import { ResolvedFields, FieldsResolver, resolveFields, FieldResolver } from './field-resolver.js';
 import { getSequenceCounter, resetSequence } from './sequence.js';
-import { Merge, StrictlyPick } from './util.js';
+import { Merge } from './util.js';
 
 export type Traits<Type extends Record<string, unknown>, TransientFields extends Record<string, unknown>> = {
   [traitName: string]: {
@@ -27,17 +27,17 @@ export interface TypeFactoryInterface<
   _DefaultFieldsResolver extends Partial<Record<keyof Type, FieldResolver<Type & TransientFields, unknown>>>,
   _Traits extends Traits<Type, TransientFields>,
 > {
-  build(): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof Type>>;
+  build(): Promise<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof TransientFields>>;
   build<T extends FieldsResolver<Type & TransientFields>>(
     inputFieldsResolver: T,
-  ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof Type>>;
+  ): Promise<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof TransientFields>>;
   buildList(
     count: number,
-  ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof Type>[]>;
+  ): Promise<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof TransientFields>[]>;
   buildList<T extends FieldsResolver<Type & TransientFields>>(
     count: number,
     inputFieldsResolver: T,
-  ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof Type>[]>;
+  ): Promise<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof TransientFields>[]>;
   use<T extends keyof _Traits>(
     traitName: T,
   ): TypeFactoryInterface<Type, TransientFields, Merge<_DefaultFieldsResolver, _Traits[T]['defaultFields']>, _Traits>;
@@ -50,7 +50,7 @@ export function defineTypeFactoryInternal<
   _DefaultFieldsResolver extends FieldsResolver<Type & TransientFields>,
   _Traits extends Traits<Type, TransientFields>,
 >(
-  typeFieldNames: readonly (keyof Type)[],
+  transientFieldNames: (keyof TransientFields)[],
   {
     defaultFields: defaultFieldsResolver,
     traits,
@@ -61,10 +61,10 @@ export function defineTypeFactoryInternal<
   return {
     async build<T extends FieldsResolver<Type & TransientFields>>(
       inputFieldsResolver?: T,
-    ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof Type>> {
+    ): Promise<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof TransientFields>> {
       const seq = getSeq();
       return resolveFields<Type, TransientFields, _DefaultFieldsResolver, T>(
-        typeFieldNames,
+        transientFieldNames,
         seq,
         defaultFieldsResolver,
         inputFieldsResolver ?? ({} as T),
@@ -73,8 +73,8 @@ export function defineTypeFactoryInternal<
     async buildList<T extends FieldsResolver<Type & TransientFields>>(
       count: number,
       inputFieldsResolver?: T,
-    ): Promise<StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof Type>[]> {
-      const array: StrictlyPick<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof Type>[] = [];
+    ): Promise<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof TransientFields>[]> {
+      const array: Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof TransientFields>[] = [];
       for (let i = 0; i < count; i++) {
         if (inputFieldsResolver) {
           // eslint-disable-next-line no-await-in-loop, @typescript-eslint/no-explicit-any
@@ -99,7 +99,7 @@ export function defineTypeFactoryInternal<
       if (!trait) throw new Error(`Trait ("${String(traitName)}") is not defined.`);
       // @ts-expect-error -- Use @ts-expect-error as it is impossible to match types.
       return defineTypeFactoryInternal(
-        typeFieldNames,
+        transientFieldNames,
         {
           defaultFields: { ...defaultFieldsResolver, ...trait.defaultFields },
           traits,

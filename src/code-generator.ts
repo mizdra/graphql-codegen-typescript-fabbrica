@@ -43,12 +43,6 @@ ${comment}export type Optional${name} = ${joinedPossibleTypes};
   }
 }
 
-function generateFieldNamesDefinitionCode(typeInfo: ObjectTypeInfo): string {
-  const { name, fields } = typeInfo;
-  const joinedFieldNames = fields.map((field) => `'${field.name}'`).join(', ');
-  return `const ${name}FieldNames = [${joinedFieldNames}] as const;\n`;
-}
-
 function generateTypeFactoryCode(config: Config, typeInfo: ObjectTypeInfo): string {
   const { name } = typeInfo;
   function wrapRequired(str: string) {
@@ -79,7 +73,7 @@ export function define${name}Factory<
 >(
   options: ${name}FactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
 ): ${name}FactoryInterface<{}, _DefaultFieldsResolver, _Traits> {
-  return defineTypeFactoryInternal(${name}FieldNames, options);
+  return defineTypeFactoryInternal([], options);
 }
 
 /**
@@ -97,7 +91,7 @@ define${name}Factory.withTransientFields = <TransientFields extends Record<strin
   >(
     options: ${name}FactoryDefineOptions<{}, _DefaultFieldsResolver, _Traits>,
   ): ${name}FactoryInterface<TransientFields, _DefaultFieldsResolver, _Traits> => {
-    return defineTypeFactoryInternal(${name}FieldNames, {
+    return defineTypeFactoryInternal(Object.keys(defaultTransientFields), {
       ...options,
       defaultFields: { ...(defaultTransientFields as FieldsResolver<TransientFields>), ...options.defaultFields },
     });
@@ -113,8 +107,6 @@ export function generateCode(config: Config, typeInfos: TypeInfo[]): string {
     code += generateOptionalTypeDefinitionCode(typeInfo);
     code += '\n';
     if (typeInfo.type === 'object') {
-      code += generateFieldNamesDefinitionCode(typeInfo);
-      code += '\n';
       code += generateTypeFactoryCode(config, typeInfo);
       code += '\n';
     }
