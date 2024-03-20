@@ -8,9 +8,15 @@ exports[`generateCode > generates code 1`] = `
   type FieldsResolver,
   defineTypeFactoryInternal,
 } from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
-import type { Maybe, Book, Author, Node } from './types';
+import type {
+  Maybe,
+  Book,
+  Author,
+  Node,
+} from './types';
 
 export * from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
+
 export type OptionalBook = {
   id?: string | undefined;
   title?: string | undefined;
