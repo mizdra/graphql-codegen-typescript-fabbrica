@@ -2,7 +2,10 @@ import { Config } from './config.js';
 import { ObjectTypeInfo, TypeInfo } from './schema-scanner.js';
 
 function generatePreludeCode(config: Config, typeInfos: TypeInfo[]): string {
-  const joinedTypeNames = typeInfos.map(({ name }) => name).join(', ');
+  const joinedTypeNames = typeInfos
+    .filter(({ type }) => type === 'object')
+    .map(({ name }) => `  ${name}`)
+    .join(',\n');
   const code = `
 import {
   type Traits,
@@ -11,7 +14,10 @@ import {
   type FieldsResolver,
   defineTypeFactoryInternal,
 } from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
-import type { Maybe, ${joinedTypeNames} } from '${config.typesFile}';
+import type {
+  Maybe,
+${joinedTypeNames},
+} from '${config.typesFile}';
 
 export * from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
   `.trim();
@@ -103,6 +109,7 @@ define${name}Factory.withTransientFields = <TransientFields extends Record<strin
 export function generateCode(config: Config, typeInfos: TypeInfo[]): string {
   let code = '';
   code += generatePreludeCode(config, typeInfos);
+  code += '\n';
   for (const typeInfo of typeInfos) {
     code += generateOptionalTypeDefinitionCode(typeInfo);
     code += '\n';
