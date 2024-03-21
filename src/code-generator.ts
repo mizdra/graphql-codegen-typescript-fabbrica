@@ -8,12 +8,7 @@ function generatePreludeCode(config: Config, typeInfos: TypeInfo[]): string {
     .join(',\n');
   const code = `
 import {
-  type Traits,
-  type TypeFactoryDefineOptions,
-  type TypeFactoryInterface,
-  type FieldsResolver,
   type DefineTypeFactoryInterface${config.nonOptionalDefaultFields ? 'Required' : ''},
-  defineTypeFactoryInternal,
   defineTypeFactory,
 } from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
 import type {
