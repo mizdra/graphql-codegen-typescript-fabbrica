@@ -60,7 +60,7 @@ export interface DefineTypeFactoryInterfaceRequired<
     defaultTransientFields: NewTransientFields,
   ): DefineTypeFactoryInterface<Type, Merge<TransientFields, NewTransientFields>>;
   withAdditionalFields<AdditionalFields extends Record<string, unknown>>(): DefineTypeFactoryInterface<
-    Merge<Type, AdditionalFields>,
+    Type & AdditionalFields,
     TransientFields
   >;
 }
@@ -185,7 +185,7 @@ class DefineTypeFactory<
     return new DefineTypeFactory({ ...this._defaultTransientFields, ...defaultTransientFields }) as any;
   }
   withAdditionalFields<AdditionalFields extends Record<string, unknown>>(): DefineTypeFactoryInterface<
-    Merge<Type, AdditionalFields>,
+    Type & AdditionalFields,
     TransientFields
   > {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
