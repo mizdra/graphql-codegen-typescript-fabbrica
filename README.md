@@ -288,6 +288,51 @@ expect(await AuthorFactory.build({ bookCount: 3 })).toStrictEqual({
 });
 ```
 
+### Additional Fields
+
+You can add additional fields to the data being built. This is useful when you want to build a fake data for a query that contains [aliases](https://graphql.org/learn/queries/#aliases), such as:
+
+```graphql
+query GetAuthorInfo {
+  author(id: '1') {
+    id
+    name
+    books {
+      id
+      title
+    }
+    popularBooks: books(popularOnly: true) {
+      id
+      title
+    }
+  }
+}
+```
+
+```ts
+import { defineAuthorFactory, type OptionalAuthor, dynamic } from '../__generated__/fabbrica';
+const AuthorFactory = defineAuthorFactory.withAdditionalFields<{ popularBooks: OptionalAuthor['books'] }>()({
+  defaultFields: {
+    id: dynamic(({ seq }) => `Author-${seq}`),
+    name: 'Komata Mikami',
+    // Generate a fake data for the `Author.books()` field
+    books: dynamic(() => BookFactory.buildList(3)),
+    // Generate a fake data for the `Author.books(popularOnly: true)` field
+    popularBooks: dynamic(() => BookFactory.buildList(1)),
+  },
+});
+expect(await AuthorFactory.build()).toStrictEqual({
+  id: 'Author-0',
+  name: 'Komata Mikami',
+  books: [
+    { id: 'Book-0', title: 'Yuyushiki Vol.0' },
+    { id: 'Book-1', title: 'Yuyushiki Vol.1' },
+    { id: 'Book-2', title: 'Yuyushiki Vol.2' },
+  ],
+  popularBooks: [{ id: 'Book-3', title: 'Yuyushiki Vol.3' }],
+});
+```
+
 ### Traits
 
 Traits allow you to group the default values of fields and apply them to factories.

@@ -1,4 +1,4 @@
-import { expect, it, describe, assertType, expectTypeOf, vi } from 'vitest';
+import { expect, it, describe, expectTypeOf, vi } from 'vitest';
 import {
   defineAuthorFactory,
   defineBookFactory,
@@ -16,6 +16,7 @@ import {
   defineNullableTest_TypeFactory,
   defineInputTest_InputFactory,
   defineNonOptionalDefaultFields_OptionalDefaultFieldsTypeFactory,
+  OptionalAuthor,
 } from './__generated__/1-basic/fabbrica.js';
 import { oneOf } from './test/util.js';
 import { definePrefixTypeFactory } from './__generated__/2-typesPrefix/fabbrica.js';
@@ -655,6 +656,39 @@ describe('defineTypeFactory', () => {
       expect(book1.id).toBe('Foo-Book');
       expect(book2.id).toBe('Bar-Book');
     });
+  });
+  it('additionalFields', async () => {
+    const AuthorFactory = defineAuthorFactory.withAdditionalFields<{ popularBooks: OptionalAuthor['books'] }>()({
+      defaultFields: {
+        id: dynamic(({ seq }) => `Author-${seq}`),
+        name: 'Komata Mikami',
+        books: dynamic(() => BookFactory.buildList(3)),
+        popularBooks: dynamic(() => BookFactory.buildList(1)),
+      },
+    });
+    const BookFactory = defineBookFactory({
+      defaultFields: {
+        id: dynamic(({ seq }) => `Book-${seq}`),
+        title: dynamic(({ seq }) => `Yuyushiki Vol.${seq}`),
+      },
+    });
+    const author = await AuthorFactory.build();
+    expect(author).toStrictEqual({
+      id: 'Author-0',
+      name: 'Komata Mikami',
+      books: [
+        { id: 'Book-0', title: 'Yuyushiki Vol.0' },
+        { id: 'Book-1', title: 'Yuyushiki Vol.1' },
+        { id: 'Book-2', title: 'Yuyushiki Vol.2' },
+      ],
+      popularBooks: [{ id: 'Book-3', title: 'Yuyushiki Vol.3' }],
+    });
+    expectTypeOf(author).toEqualTypeOf<{
+      id: string;
+      name: string;
+      books: { id: string; title: string }[];
+      popularBooks: { id: string; title: string }[];
+    }>();
   });
   describe('resetAllSequence', () => {
     it('resets all sequence', async () => {
