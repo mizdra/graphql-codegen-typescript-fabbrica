@@ -37,13 +37,14 @@ const config: CodegenConfig = {
       config: {
         enumsAsTypes: true, // required
         avoidOptionals: true, // required
+        // skipIsAbstractType: false, // If you use Relay, you should set this option to `false`
       },
     },
     './__generated__/fabbrica.ts': {
       plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         typesFile: './types', // required
-        // typesFile: './types.js' // If you use factories from Node.js and set `package.json#type` to `module`, you should add `.js` extension
+        // typesFile: './types.js' // If you use factories from Node.js and set `--moduleResolution` of `tsconfig.json` to `Node16` or `NodeNext`, you should add `.js` extension
       },
     },
   },
@@ -397,7 +398,7 @@ type: `string`, required
 
 Defines the file path containing all GraphQL types. This file can be generated with the [typescript plugin](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript).
 
-If you use factories on Node.js and set `package.json#type` to `module`, you should add `.js` extension to the file path. If you use factories on other runtimes, you should not add `.js` extension.
+If you use factories on Node.js and set `--moduleResolution` of `tsconfig.json` to `Node16` or `NodeNext`, you should add `.js` extension to the file path. If you use factories on other runtimes, you should not add `.js` extension.
 
 ```ts
 import { CodegenConfig } from '@graphql-codegen/cli';
@@ -414,7 +415,7 @@ const config: CodegenConfig = {
       plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         typesFile: './types', // required
-        // typesFile: './types.js' // If you use factories from Node.js and set `package.json#type` to `module`, you should add `.js` extension
+        // typesFile: './types.js' // If you use factories from Node.js and set `--moduleResolution` of `tsconfig.json` to `Node16` or `NodeNext`, you should add `.js` extension
       },
     },
   },
