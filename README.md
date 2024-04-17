@@ -5,7 +5,8 @@ GraphQL Code Generator Plugin to define mock data factory.
 ## Installation
 
 ```sh
-npm install --save-dev @mizdra/graphql-codegen-typescript-fabbrica
+npm install -D @mizdra/graphql-codegen-typescript-fabbrica @graphql-codegen/cli @graphql-codegen/typescript
+npm install -S graphql
 ```
 
 ## Requirements
