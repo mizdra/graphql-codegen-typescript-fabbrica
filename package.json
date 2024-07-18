@@ -97,6 +97,7 @@
   },
   "dependencies": {
     "@graphql-codegen/plugin-helpers": "^5.0.1",
-    "@graphql-codegen/visitor-plugin-common": "^4.0.1"
+    "@graphql-codegen/visitor-plugin-common": "^4.0.1",
+    "graphql-relay": "^0.10.2"
   }
 }

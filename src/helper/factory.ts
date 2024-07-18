@@ -1,5 +1,6 @@
 // MEMO: The tests for this module are covered by `e2e/*.e2e.ts`.
 
+import { Connection, ConnectionArguments, connectionFromArray } from 'graphql-relay';
 import { ResolvedFields, FieldsResolver, resolveFields, FieldResolver } from './field-resolver.js';
 import { getSequenceCounter, resetSequence } from './sequence.js';
 import { Merge } from './util.js';
@@ -40,6 +41,17 @@ export interface TypeFactoryInterface<
     count: number,
     inputFieldsResolver: T,
   ): Promise<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof TransientFields>[]>;
+  buildConnection(
+    count: number,
+    connectionArgs: ConnectionArguments,
+  ): Promise<
+    Connection<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<{}>>, keyof TransientFields>>
+  >;
+  buildConnection<T extends FieldsResolver<Type & TransientFields>>(
+    count: number,
+    connectionArgs: ConnectionArguments,
+    inputFieldsResolver: T,
+  ): Promise<Connection<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof TransientFields>>>;
   use<T extends keyof _Traits>(
     traitName: T,
   ): TypeFactoryInterface<Type, TransientFields, Merge<_DefaultFieldsResolver, _Traits[T]['defaultFields']>, _Traits>;
@@ -118,6 +130,22 @@ export function defineTypeFactoryInternal<
         }
       }
       return array;
+    },
+    async buildConnection<T extends FieldsResolver<Type & TransientFields>>(
+      count: number,
+      connectionArgs: ConnectionArguments,
+      inputFieldsResolver?: T,
+    ): Promise<
+      Connection<Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof TransientFields>>
+    > {
+      const list = inputFieldsResolver ? await this.buildList(count, inputFieldsResolver) : await this.buildList(count);
+      return connectionFromArray(
+        list as readonly Omit<
+          Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>,
+          keyof TransientFields
+        >[],
+        connectionArgs,
+      );
     },
     use<T extends keyof _Traits>(
       traitName: T,

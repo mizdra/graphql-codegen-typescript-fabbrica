@@ -233,6 +233,30 @@ expect(await BookFactory.buildList(3)).toStrictEqual([
 ]);
 ```
 
+### Building connection
+
+You can build a [connection](https://relay.dev/graphql/connections.htm) of mock data with the `buildConnection` method.
+
+```ts
+const BookFactory = defineBookFactory({
+  defaultFields: {
+    id: dynamic(({ seq }) => `Book-${seq}`),
+  },
+});
+expect(await BookFactory.buildConnection(3, { first: 2 })).toStrictEqual([
+  edges: [
+    { cursor: "YXJyYXljb25uZWN0aW9uOjA=", node: { id: 'Book-0' } },
+    { cursor: "YXJyYXljb25uZWN0aW9uOjE=", node: { id: 'Book-1' } },
+  ],
+  pageInfo: {
+    startCursor: "YXJyYXljb25uZWN0aW9uOjA=",
+    endCursor: "YXJyYXljb25uZWN0aW9uOjE=",
+    hasPreviousPage: false,
+    hasNextPage: true,
+  },
+]);
+```
+
 ### Build mock data of related types (a.k.a. Associations)
 
 You can build mock data of the relevant type in one shot.
