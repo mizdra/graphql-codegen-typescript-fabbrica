@@ -22,6 +22,7 @@ import { oneOf } from './test/util.js';
 import { definePrefixTypeFactory } from './__generated__/2-typesPrefix/fabbrica.js';
 import { defineTypeSuffixFactory } from './__generated__/3-typesSuffix/fabbrica.js';
 import { defineNonOptionalDefaultFields_NonOptionalDefaultFieldsTypeFactory } from './__generated__/4-non-optional-fields/fabbrica.js';
+import { offsetToCursor } from 'graphql-relay';
 
 describe('integration test', () => {
   it('circular dependent type', async () => {
@@ -1015,6 +1016,37 @@ describe('TypeFactoryInterface', () => {
           author: undefined;
         }[]
       >();
+    });
+  });
+  describe('buildConnection', () => {
+    it('build connection', async () => {
+      const BookFactory = defineBookFactory({
+        defaultFields: {
+          id: dynamic(({ seq }) => `Book-${seq}`),
+        },
+      });
+      const books1 = await BookFactory.buildConnection(3, { first: 2 });
+      expect(books1).toStrictEqual({
+        edges: [
+          { cursor: offsetToCursor(0), node: { id: 'Book-0' } },
+          { cursor: offsetToCursor(1), node: { id: 'Book-1' } },
+        ],
+        pageInfo: {
+          startCursor: offsetToCursor(0),
+          endCursor: offsetToCursor(1),
+          hasPreviousPage: false,
+          hasNextPage: true,
+        },
+      });
+      expectTypeOf(books1).toEqualTypeOf<{
+        edges: { cursor: string; node: { id: string } }[];
+        pageInfo: {
+          startCursor: string | null;
+          endCursor: string | null;
+          hasPreviousPage: boolean;
+          hasNextPage: boolean;
+        };
+      }>();
     });
   });
   describe('resetSequence', () => {
