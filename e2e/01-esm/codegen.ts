@@ -8,7 +8,6 @@ const config: CodegenConfig = {
       plugins: ['typescript'],
       config: {
         ...defaultTypeScriptPluginConfig,
-        nonOptionalTypename: true,
         skipTypename: true,
         scalars: {
           CustomScalarTest_CustomScalar1: 'Date',
