@@ -1,0 +1,17 @@
+{
+  "name": "e2e-composite",
+  "type": "module",
+  "scripts": {
+    "start": "run-s clean _install gen build",
+    "clean": "node -e \"require('fs').rmSync('node_modules', { recursive: true, force: true })\"",
+    "_install": "npm install",
+    "gen": "graphql-codegen-esm",
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@mizdra/graphql-codegen-typescript-fabbrica": "../.."
+  }
+}

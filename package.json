@@ -45,7 +45,10 @@
     "lint:prettier": "prettier --check .",
     "test": "vitest",
     "pree2e": "npm run build",
-    "e2e": "npm -w e2e/esm -w e2e/cjs run start"
+    "e2e": "run-s -c e2e:*",
+    "e2e:esm": "npm -w e2e/esm run start",
+    "e2e:cjs": "npm -w e2e/cjs run start",
+    "e2e:composite": "npm --prefix e2e/composite run start"
   },
   "prettier": "@mizdra/prettier-config-mizdra",
   "devDependencies": {
