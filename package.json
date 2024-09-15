@@ -48,6 +48,7 @@
     "e2e": "run-s -c e2e:*",
     "e2e:esm": "npm -w e2e/esm run start",
     "e2e:cjs": "npm -w e2e/cjs run start",
+    "e2e:browser": "npm -w e2e/browser run start",
     "e2e:composite": "npm --prefix e2e/composite run start"
   },
   "prettier": "@mizdra/prettier-config-mizdra",
