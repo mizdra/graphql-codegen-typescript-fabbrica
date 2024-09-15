@@ -1,4 +1,5 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
+import { defaultFabbricaPluginConfig, defaultTypeScriptPluginConfig } from '../util/config.cjs';
 
 const config: CodegenConfig = {
   schema: './schema.graphql',
@@ -7,16 +8,11 @@ const config: CodegenConfig = {
     // Therefore, fabbrica artifacts are also output under `src/`.
     'src/__generated__/types.ts': {
       plugins: ['typescript'],
-      config: {
-        enumsAsTypes: true, // required
-        avoidOptionals: true, // required
-      },
+      config: defaultTypeScriptPluginConfig,
     },
     'src/__generated__/fabbrica.ts': {
       plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
-      config: {
-        typesFile: './types.js', // required
-      },
+      config: defaultFabbricaPluginConfig,
     },
   },
 };

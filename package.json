@@ -31,9 +31,9 @@
     }
   },
   "workspaces": [
-    "e2e/esm",
-    "e2e/cjs",
-    "e2e/browser"
+    "e2e/01-esm",
+    "e2e/02-cjs",
+    "e2e/03-browser"
   ],
   "scripts": {
     "build": "run-s -c build:*",
@@ -46,10 +46,10 @@
     "test": "vitest",
     "pree2e": "npm run build",
     "e2e": "run-s -c e2e:*",
-    "e2e:esm": "npm -w e2e/esm run start",
-    "e2e:cjs": "npm -w e2e/cjs run start",
-    "e2e:browser": "npm -w e2e/browser run start",
-    "e2e:composite": "npm --prefix e2e/composite run start"
+    "e2e:esm": "npm -w e2e/01-esm run start",
+    "e2e:cjs": "npm -w e2e/02-cjs run start",
+    "e2e:browser": "npm -w e2e/03-browser run start",
+    "e2e:composite": "npm --prefix e2e/04-composite run start"
   },
   "prettier": "@mizdra/prettier-config-mizdra",
   "devDependencies": {

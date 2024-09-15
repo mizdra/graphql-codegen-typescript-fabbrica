@@ -1,15 +1,5 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
-
-const defaultTypeScriptPluginConfig = {
-  nonOptionalTypename: true,
-  enumsAsTypes: true,
-  avoidOptionals: true,
-  skipTypename: true,
-};
-const defaultFabbricaPluginConfig = {
-  typesFile: './types.js',
-  skipTypename: true,
-};
+import { defaultFabbricaPluginConfig, defaultTypeScriptPluginConfig } from '../util/config.cjs';
 
 const config: CodegenConfig = {
   generates: {
@@ -18,6 +8,7 @@ const config: CodegenConfig = {
       plugins: ['typescript'],
       config: {
         ...defaultTypeScriptPluginConfig,
+        skipTypename: true,
       },
     },
     './__generated__/1-basic/fabbrica.ts': {
@@ -25,9 +16,10 @@ const config: CodegenConfig = {
       plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
       config: {
         ...defaultFabbricaPluginConfig,
+        skipTypename: true,
       },
     },
   },
 };
 
-export default config;
+module.exports = config;
