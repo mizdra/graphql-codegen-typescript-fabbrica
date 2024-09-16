@@ -1,6 +1,6 @@
 import { expectTypeOf, it } from 'vitest';
 
-import type { DeepReadonly} from './util.js';
+import type { DeepReadonly } from './util.js';
 import { type DeepOptional, type Merge } from './util.js';
 
 it('DeepOptional', () => {

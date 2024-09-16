@@ -32,9 +32,8 @@ export type FieldsResolver<TypeWithTransientFields> = {
   >;
 };
 
-export type ResolvedField<T extends FieldResolver<unknown, unknown>> = T extends FieldResolver<infer _, infer R>
-  ? R
-  : never;
+export type ResolvedField<T extends FieldResolver<unknown, unknown>> =
+  T extends FieldResolver<infer _, infer R> ? R : never;
 /** Convert `{ a: number, b: () => number, c: () => Promise<number> }` into `{ a: number, b: number, c: number }`. */
 export type ResolvedFields<FieldsResolver extends Record<string, FieldResolver<unknown, unknown>>> = {
   [FieldName in keyof FieldsResolver]: ResolvedField<FieldsResolver[FieldName]>;

@@ -1,9 +1,9 @@
 // MEMO: The tests for this module are covered by `e2e/*.e2e.ts`.
 
-import type { Connection, ConnectionArguments} from 'graphql-relay';
+import type { Connection, ConnectionArguments } from 'graphql-relay';
 import { connectionFromArray } from 'graphql-relay';
 
-import type { FieldResolver,FieldsResolver, ResolvedFields} from './field-resolver.js';
+import type { FieldResolver, FieldsResolver, ResolvedFields } from './field-resolver.js';
 import { resolveFields } from './field-resolver.js';
 import { getSequenceCounter, resetSequence } from './sequence.js';
 import type { Merge } from './util.js';

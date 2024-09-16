@@ -482,6 +482,7 @@ type: `boolean`, default: `true`
 Does not add `__is<AbstractType>` to the fields that can be passed to factory. `__is<AbstractType>` is a field that relay-compiler automatically adds to the query[^1][^2]. It is recommended for Relay users to set this option to `false`.
 
 [^1]: https://github.com/facebook/relay/issues/3129#issuecomment-659439154
+
 [^2]: https://github.com/search?q=repo%3Afacebook%2Frelay%20%2F__is%3CAbstractType%3E%2F&type=code
 
 ```ts

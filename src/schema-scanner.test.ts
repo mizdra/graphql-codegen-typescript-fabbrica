@@ -5,7 +5,7 @@ import { buildSchema } from 'graphql/index.js';
 import { describe, expect, it } from 'vitest';
 
 import type { Config } from './config.js';
-import type {ObjectTypeInfo, TypeInfo } from './schema-scanner.js';
+import type { ObjectTypeInfo, TypeInfo } from './schema-scanner.js';
 import { getTypeInfos } from './schema-scanner.js';
 import { fakeConfig } from './test/util.js';
 

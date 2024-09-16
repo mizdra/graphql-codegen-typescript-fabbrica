@@ -8,10 +8,9 @@ import type {
   InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
   TypeNode,
-  UnionTypeDefinitionNode} from 'graphql';
-import {
-  Kind
+  UnionTypeDefinitionNode,
 } from 'graphql';
+import { Kind } from 'graphql';
 
 import type { Config } from './config.js';
 
@@ -81,9 +80,9 @@ function parseObjectTypeOrInputObjectTypeDefinition(
     name: convertedTypeName,
     fields: [
       ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${originalTypeName}'` }] : []),
-      ...(!config.skipIsAbstractType
-        ? abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${originalTypeName}'` }))
-        : []),
+      ...(!config.skipIsAbstractType ?
+        abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${originalTypeName}'` }))
+      : []),
       ...(node.fields ?? []).map((field) => ({
         name: field.name.value,
         ...parseFieldOrInputValueDefinition(field, convertedTypeName, config, userDefinedTypeNames),

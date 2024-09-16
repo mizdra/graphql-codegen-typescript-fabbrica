@@ -1,14 +1,7 @@
 import { expect, expectTypeOf, it } from 'vitest';
 
-import type {
-  FieldsResolver} from './field-resolver.js';
-import {
-  Dynamic,
-  dynamic,
-  type FieldResolver,
-  type ResolvedField,
-  type ResolvedFields,
-} from './field-resolver.js';
+import type { FieldsResolver } from './field-resolver.js';
+import { Dynamic, dynamic, type FieldResolver, type ResolvedField, type ResolvedFields } from './field-resolver.js';
 import type { DeepOptional, DeepReadonly } from './util.js';
 
 it('Dynamic', async () => {
