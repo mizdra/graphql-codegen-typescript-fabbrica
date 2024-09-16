@@ -4,6 +4,9 @@
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "noEmit": true
+    "noEmit": true,
+    /* Lint Options */
+    "noUnusedLocals": false, // Delegate to @typescript-eslint/no-unused-vars in eslint
+    "noUnusedParameters": false // Delegate to @typescript-eslint/no-unused-vars in eslint
   }
 }

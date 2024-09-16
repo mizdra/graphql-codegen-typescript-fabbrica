@@ -17,8 +17,6 @@ export default [
     files: ['**/*.{ts,tsx,cts,mts}'],
     rules: {
       '@typescript-eslint/no-empty-object-type': 'off',
-      '@typescript-eslint/consistent-type-exports': 'error',
-      '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
   mizdra.prettierConfig,
