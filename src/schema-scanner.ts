@@ -1,17 +1,18 @@
 import { transformComment } from '@graphql-codegen/visitor-plugin-common';
-import {
-  GraphQLSchema,
+import type {
   ASTNode,
   FieldDefinitionNode,
-  Kind,
-  ObjectTypeDefinitionNode,
-  TypeNode,
+  GraphQLSchema,
   InputObjectTypeDefinitionNode,
   InputValueDefinitionNode,
-  UnionTypeDefinitionNode,
   InterfaceTypeDefinitionNode,
+  ObjectTypeDefinitionNode,
+  TypeNode,
+  UnionTypeDefinitionNode,
 } from 'graphql';
-import { Config } from './config.js';
+import { Kind } from 'graphql';
+
+import type { Config } from './config.js';
 
 // The fork of https://github.com/dotansimha/graphql-code-generator/blob/e1dc75f3c598bf7f83138ca533619716fc73f823/packages/plugins/typescript/resolvers/src/visitor.ts#L85-L91
 function clearOptional(str: string): string {
@@ -79,9 +80,9 @@ function parseObjectTypeOrInputObjectTypeDefinition(
     name: convertedTypeName,
     fields: [
       ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${originalTypeName}'` }] : []),
-      ...(!config.skipIsAbstractType
-        ? abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${originalTypeName}'` }))
-        : []),
+      ...(!config.skipIsAbstractType ?
+        abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${originalTypeName}'` }))
+      : []),
       ...(node.fields ?? []).map((field) => ({
         name: field.name.value,
         ...parseFieldOrInputValueDefinition(field, convertedTypeName, config, userDefinedTypeNames),

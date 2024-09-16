@@ -1,4 +1,5 @@
-import { ConvertFn, RawTypesConfig, convertFactory } from '@graphql-codegen/visitor-plugin-common';
+import type { ConvertFn, RawTypesConfig } from '@graphql-codegen/visitor-plugin-common';
+import { convertFactory } from '@graphql-codegen/visitor-plugin-common';
 
 export type RawConfig = {
   typesFile: string;
@@ -57,8 +58,9 @@ export function normalizeConfig(rawConfig: RawConfig): Config {
     nonOptionalDefaultFields: rawConfig.nonOptionalDefaultFields ?? false,
     typesPrefix: rawConfig.typesPrefix ?? '',
     typesSuffix: rawConfig.typesSuffix ?? '',
-    convert: rawConfig.namingConvention
-      ? convertFactory({ namingConvention: rawConfig.namingConvention })
+    convert:
+      rawConfig.namingConvention ?
+        convertFactory({ namingConvention: rawConfig.namingConvention })
       : convertFactory({}),
   };
 }

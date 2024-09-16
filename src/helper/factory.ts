@@ -1,9 +1,12 @@
 // MEMO: The tests for this module are covered by `e2e/*.e2e.ts`.
 
-import { Connection, ConnectionArguments, connectionFromArray } from 'graphql-relay';
-import { ResolvedFields, FieldsResolver, resolveFields, FieldResolver } from './field-resolver.js';
+import type { Connection, ConnectionArguments } from 'graphql-relay';
+import { connectionFromArray } from 'graphql-relay';
+
+import type { FieldResolver, FieldsResolver, ResolvedFields } from './field-resolver.js';
+import { resolveFields } from './field-resolver.js';
 import { getSequenceCounter, resetSequence } from './sequence.js';
-import { Merge } from './util.js';
+import type { Merge } from './util.js';
 
 export type Traits<Type extends Record<string, unknown>, TransientFields extends Record<string, unknown>> = {
   [traitName: string]: {

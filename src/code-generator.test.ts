@@ -1,7 +1,8 @@
 import { transformComment } from '@graphql-codegen/visitor-plugin-common';
 import { describe, expect, it } from 'vitest';
+
 import { generateCode, generateOptionalTypeDefinitionCode } from './code-generator.js';
-import { TypeInfo } from './schema-scanner.js';
+import type { TypeInfo } from './schema-scanner.js';
 import { fakeConfig, oneOf } from './test/util.js';
 
 describe('generateOptionalTypeDefinitionCode', () => {

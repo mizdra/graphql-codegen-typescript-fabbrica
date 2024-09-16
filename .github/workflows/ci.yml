@@ -54,4 +54,12 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'npm'
       - run: npm install
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "version=$(cat node_modules/playwright/package.json | jq -r .version)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+          restore-keys: ${{ runner.os }}-playwright-
       - run: npm run e2e
