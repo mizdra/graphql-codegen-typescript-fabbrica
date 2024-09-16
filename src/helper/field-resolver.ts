@@ -1,4 +1,4 @@
-import { DeepReadonly, Merge } from './util.js';
+import type { DeepReadonly, Merge } from './util.js';
 
 export type FieldResolverOptions<TypeWithTransientFields> = {
   seq: number;

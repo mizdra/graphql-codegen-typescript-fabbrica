@@ -1,9 +1,9 @@
 export { dynamic, Dynamic } from './field-resolver.js';
 export { resetAllSequence, resetSequence } from './sequence.js';
 export {
-  DefineTypeFactoryInterface,
-  DefineTypeFactoryInterfaceRequired,
+  type DefineTypeFactoryInterface,
+  type DefineTypeFactoryInterfaceRequired,
   defineTypeFactory,
-  Traits,
-  TypeFactoryInterface,
+  type Traits,
+  type TypeFactoryInterface,
 } from './factory.js';

@@ -2,7 +2,7 @@ import { randomInt } from 'node:crypto';
 
 import { convertFactory } from '@graphql-codegen/visitor-plugin-common';
 
-import { Config } from '../config.js';
+import type { Config } from '../config.js';
 
 export function oneOf<const T>(items: T[]): T {
   return items[randomInt(items.length)]!;

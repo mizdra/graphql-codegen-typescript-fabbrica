@@ -1,14 +1,15 @@
 import { expect, expectTypeOf, it } from 'vitest';
 
+import type {
+  FieldsResolver} from './field-resolver.js';
 import {
   Dynamic,
   dynamic,
   type FieldResolver,
-  FieldsResolver,
   type ResolvedField,
   type ResolvedFields,
 } from './field-resolver.js';
-import { DeepOptional, DeepReadonly } from './util.js';
+import type { DeepOptional, DeepReadonly } from './util.js';
 
 it('Dynamic', async () => {
   type TypeWithTransientFields = { id: string | undefined; a: number | undefined };

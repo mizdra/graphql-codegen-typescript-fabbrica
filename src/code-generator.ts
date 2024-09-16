@@ -1,5 +1,5 @@
-import { Config } from './config.js';
-import { ObjectTypeInfo, TypeInfo } from './schema-scanner.js';
+import type { Config } from './config.js';
+import type { ObjectTypeInfo, TypeInfo } from './schema-scanner.js';
 
 function generatePreludeCode(config: Config, typeInfos: TypeInfo[]): string {
   const joinedTypeNames = typeInfos
