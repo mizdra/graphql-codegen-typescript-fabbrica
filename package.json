@@ -44,12 +44,12 @@
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier --check .",
     "test": "vitest",
-    "pree2e": "npm run build",
-    "e2e": "run-s -c e2e:*",
+    "e2e": "run-s -c setup-playwright build e2e:*",
     "e2e:esm": "npm -w e2e/01-esm run start",
     "e2e:cjs": "npm -w e2e/02-cjs run start",
     "e2e:browser": "npm -w e2e/03-browser run start",
-    "e2e:composite": "npm --prefix e2e/04-composite run start"
+    "e2e:composite": "npm --prefix e2e/04-composite run start",
+    "setup-playwright": "npx playwright install --with-deps chromium"
   },
   "prettier": "@mizdra/prettier-config-mizdra",
   "devDependencies": {
@@ -64,12 +64,12 @@
     "eslint": "^9.10.0",
     "graphql": "^16.9.0",
     "npm-run-all": "^4.1.5",
+    "playwright": "^1.47.1",
     "prettier": "^3.3.3",
     "tsup": "^8.2.4",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",
-    "vitest": "^2.1.1",
-    "webdriverio": "^9.0.9"
+    "vitest": "^2.1.1"
   },
   "engines": {
     "node": ">=18.0.0"

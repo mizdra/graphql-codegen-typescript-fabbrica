@@ -6,7 +6,8 @@ export default defineConfig({
     reporters: process.env['GITHUB_ACTIONS'] ? ['default', 'github-actions'] : 'default',
     browser: {
       enabled: true,
-      name: 'chrome',
+      provider: 'playwright',
+      name: 'chromium',
       headless: true,
     },
   },
