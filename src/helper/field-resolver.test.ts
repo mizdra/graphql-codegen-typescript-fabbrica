@@ -1,11 +1,12 @@
 import { expect, expectTypeOf, it } from 'vitest';
+
 import {
-  type FieldResolver,
-  type ResolvedFields,
-  type ResolvedField,
   Dynamic,
   dynamic,
+  type FieldResolver,
   FieldsResolver,
+  type ResolvedField,
+  type ResolvedFields,
 } from './field-resolver.js';
 import { DeepOptional, DeepReadonly } from './util.js';
 

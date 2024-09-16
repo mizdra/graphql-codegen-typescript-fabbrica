@@ -3,8 +3,9 @@
 import { convertFactory } from '@graphql-codegen/visitor-plugin-common';
 import { buildSchema } from 'graphql/index.js';
 import { describe, expect, it } from 'vitest';
+
 import { Config } from './config.js';
-import { ObjectTypeInfo, TypeInfo, getTypeInfos } from './schema-scanner.js';
+import { getTypeInfos,ObjectTypeInfo, TypeInfo } from './schema-scanner.js';
 import { fakeConfig } from './test/util.js';
 
 function isObjectTypeInfo(x: TypeInfo): x is ObjectTypeInfo {

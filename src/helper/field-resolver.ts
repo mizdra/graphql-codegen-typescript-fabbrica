@@ -32,7 +32,6 @@ export type FieldsResolver<TypeWithTransientFields> = {
   >;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type ResolvedField<T extends FieldResolver<unknown, unknown>> = T extends FieldResolver<infer _, infer R>
   ? R
   : never;

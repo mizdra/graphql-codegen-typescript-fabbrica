@@ -1,4 +1,4 @@
-import { ConvertFn, RawTypesConfig, convertFactory } from '@graphql-codegen/visitor-plugin-common';
+import { convertFactory,ConvertFn, RawTypesConfig } from '@graphql-codegen/visitor-plugin-common';
 
 export type RawConfig = {
   typesFile: string;

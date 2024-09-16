@@ -1,16 +1,17 @@
 import { transformComment } from '@graphql-codegen/visitor-plugin-common';
 import {
-  GraphQLSchema,
   ASTNode,
   FieldDefinitionNode,
+  GraphQLSchema,
+  InputObjectTypeDefinitionNode,
+  InputValueDefinitionNode,
+  InterfaceTypeDefinitionNode,
   Kind,
   ObjectTypeDefinitionNode,
   TypeNode,
-  InputObjectTypeDefinitionNode,
-  InputValueDefinitionNode,
   UnionTypeDefinitionNode,
-  InterfaceTypeDefinitionNode,
 } from 'graphql';
+
 import { Config } from './config.js';
 
 // The fork of https://github.com/dotansimha/graphql-code-generator/blob/e1dc75f3c598bf7f83138ca533619716fc73f823/packages/plugins/typescript/resolvers/src/visitor.ts#L85-L91
