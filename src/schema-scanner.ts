@@ -126,7 +126,7 @@ export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] 
     .filter((type) => isObjectType(type) || isInputObjectType(type) || isInterfaceType(type) || isUnionType(type));
 
   const objectTypes = userDefinedTypes.filter(isObjectType);
-  const unionTypes = types.filter(isUnionType);
+  const unionTypes = userDefinedTypes.filter(isUnionType);
   function getAbstractTypeNames(type: GraphQLObjectType): string[] {
     const interfaceNames = type.getInterfaces().map((i) => i.name);
     const unionNames = unionTypes
