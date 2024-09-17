@@ -1,16 +1,25 @@
 import { transformComment } from '@graphql-codegen/visitor-plugin-common';
 import type {
   ASTNode,
-  FieldDefinitionNode,
+  GraphQLField,
+  GraphQLInputField,
+  GraphQLInputObjectType,
+  GraphQLObjectType,
   GraphQLSchema,
-  InputObjectTypeDefinitionNode,
-  InputValueDefinitionNode,
-  InterfaceTypeDefinitionNode,
-  ObjectTypeDefinitionNode,
-  TypeNode,
-  UnionTypeDefinitionNode,
+  GraphQLType,
 } from 'graphql';
-import { Kind } from 'graphql';
+// NOTE: To avoid `Cannot use GraphQLSchema xxx from another module or realm.`, import from 'graphql/index.js' instead of 'graphql'.
+// ref: https://github.com/graphql/graphql-js/issues/1479
+import {
+  isInputObjectType,
+  isInterfaceType,
+  isIntrospectionType,
+  isListType,
+  isNonNullType,
+  isObjectType,
+  isSpecifiedScalarType,
+  isUnionType,
+} from 'graphql/index.js';
 
 import type { Config } from './config.js';
 
@@ -31,50 +40,52 @@ function convertName(node: ASTNode | string, config: Config): string {
   return convertedName;
 }
 
-function isTypeBasedOnUserDefinedType(node: TypeNode, userDefinedTypeNames: string[]): boolean {
-  if (node.kind === Kind.NON_NULL_TYPE) {
-    return isTypeBasedOnUserDefinedType(node.type, userDefinedTypeNames);
-  } else if (node.kind === Kind.LIST_TYPE) {
-    return isTypeBasedOnUserDefinedType(node.type, userDefinedTypeNames);
+function isTypeBasedOnUserDefinedType(type: GraphQLType, userDefinedTypeNames: string[]): boolean {
+  if (isNonNullType(type)) {
+    return isTypeBasedOnUserDefinedType(type.ofType, userDefinedTypeNames);
+  } else if (isListType(type)) {
+    return isTypeBasedOnUserDefinedType(type.ofType, userDefinedTypeNames);
   } else {
-    return userDefinedTypeNames.includes(node.name.value);
+    return userDefinedTypeNames.includes(type.name);
   }
 }
 
-function parseTypeNode(node: TypeNode, config: Config): string {
-  if (node.kind === Kind.NON_NULL_TYPE) {
-    return clearOptional(parseTypeNode(node.type, config));
-  } else if (node.kind === Kind.LIST_TYPE) {
-    return `Maybe<${parseTypeNode(node.type, config)}[]>`;
+function parseTypeNode(type: GraphQLType, config: Config): string {
+  if (isNonNullType(type)) {
+    return clearOptional(parseTypeNode(type.ofType, config));
+  } else if (isListType(type)) {
+    return `Maybe<${parseTypeNode(type.ofType, config)}[]>`;
   } else {
-    return `Maybe<Optional${convertName(node.name.value, config)}>`;
+    return `Maybe<Optional${convertName(type.name, config)}>`;
   }
 }
 
-function parseFieldOrInputValueDefinition(
-  node: FieldDefinitionNode | InputValueDefinitionNode,
+function parseFieldOrInputField(
+  field: GraphQLField<unknown, unknown> | GraphQLInputField,
   convertedTypeName: string,
   config: Config,
   userDefinedTypeNames: string[],
 ): { typeString: string; comment: string | undefined } {
-  const comment = node.description ? transformComment(node.description) : undefined;
-  if (isTypeBasedOnUserDefinedType(node.type, userDefinedTypeNames)) {
-    return { typeString: `${parseTypeNode(node.type, config)} | undefined`, comment };
+  const comment = field.description ? transformComment(field.description) : undefined;
+  if (isTypeBasedOnUserDefinedType(field.type, userDefinedTypeNames)) {
+    return { typeString: `${parseTypeNode(field.type, config)} | undefined`, comment };
   } else {
-    return { typeString: `${convertedTypeName}['${node.name.value}'] | undefined`, comment };
+    return { typeString: `${convertedTypeName}['${field.name}'] | undefined`, comment };
   }
 }
 
-function parseObjectTypeOrInputObjectTypeDefinition(
-  node: ObjectTypeDefinitionNode | InputObjectTypeDefinitionNode,
+function parseObjectTypeOrInputObjectType(
+  type: GraphQLObjectType | GraphQLInputObjectType,
   config: Config,
   userDefinedTypeNames: string[],
-  getAbstractTypeNames: (type: ObjectTypeDefinitionNode) => string[],
+  getAbstractTypeNames: (type: GraphQLObjectType) => string[],
 ): ObjectTypeInfo {
-  const originalTypeName = node.name.value;
+  const originalTypeName = type.name;
   const convertedTypeName = convertName(originalTypeName, config);
-  const comment = node.description ? transformComment(node.description) : undefined;
-  const abstractTypeNames = node.kind === Kind.OBJECT_TYPE_DEFINITION ? getAbstractTypeNames(node) : [];
+  const comment = type.description ? transformComment(type.description) : undefined;
+  const abstractTypeNames = isObjectType(type) ? getAbstractTypeNames(type) : [];
+  const fields = Object.values<GraphQLField<unknown, unknown> | GraphQLInputField>(type.getFields());
+
   return {
     type: 'object',
     name: convertedTypeName,
@@ -83,9 +94,9 @@ function parseObjectTypeOrInputObjectTypeDefinition(
       ...(!config.skipIsAbstractType ?
         abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${originalTypeName}'` }))
       : []),
-      ...(node.fields ?? []).map((field) => ({
-        name: field.name.value,
-        ...parseFieldOrInputValueDefinition(field, convertedTypeName, config, userDefinedTypeNames),
+      ...fields.map((field) => ({
+        name: field.name,
+        ...parseFieldOrInputField(field, convertedTypeName, config, userDefinedTypeNames),
       })),
     ],
     comment,
@@ -110,85 +121,41 @@ export type TypeInfo = ObjectTypeInfo | AbstractTypeInfo;
 export function getTypeInfos(config: Config, schema: GraphQLSchema): TypeInfo[] {
   const types = Object.values(schema.getTypeMap());
 
-  const userDefinedTypeDefinitions = types
-    .map((type) => type.astNode)
-    .filter(
-      (
-        node,
-      ): node is
-        | ObjectTypeDefinitionNode
-        | InputObjectTypeDefinitionNode
-        | InterfaceTypeDefinitionNode
-        | UnionTypeDefinitionNode => {
-        if (!node) return false;
-        return (
-          node.kind === Kind.OBJECT_TYPE_DEFINITION ||
-          node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION ||
-          node.kind === Kind.INTERFACE_TYPE_DEFINITION ||
-          node.kind === Kind.UNION_TYPE_DEFINITION
-        );
-      },
-    );
-  const objectTypeDefinitions = userDefinedTypeDefinitions.filter((node): node is ObjectTypeDefinitionNode => {
-    if (!node) return false;
-    return node.kind === Kind.OBJECT_TYPE_DEFINITION;
-  });
-  const unionTypeDefinitions = types
-    .map((type) => type.astNode)
-    .filter((node): node is UnionTypeDefinitionNode => {
-      if (!node) return false;
-      return node.kind === Kind.UNION_TYPE_DEFINITION;
-    });
-  function getAbstractTypeNames(type: ObjectTypeDefinitionNode): string[] {
-    const interfaceNames = (type.interfaces ?? []).map((i) => i.name.value);
-    const unionNames = unionTypeDefinitions
-      .filter((union) => (union.types ?? []).some((member) => member.name.value === type.name.value))
-      .map((union) => union.name.value);
+  const userDefinedTypes = types
+    .filter((type) => !isIntrospectionType(type) && !isSpecifiedScalarType(type))
+    .filter((type) => isObjectType(type) || isInputObjectType(type) || isInterfaceType(type) || isUnionType(type));
+
+  const objectTypes = userDefinedTypes.filter(isObjectType);
+  const unionTypes = userDefinedTypes.filter(isUnionType);
+  function getAbstractTypeNames(type: GraphQLObjectType): string[] {
+    const interfaceNames = type.getInterfaces().map((i) => i.name);
+    const unionNames = unionTypes
+      .filter((union) => union.getTypes().some((member) => member.name === type.name))
+      .map((union) => union.name);
     return [...interfaceNames, ...unionNames];
   }
 
-  const userDefinedTypeNames = userDefinedTypeDefinitions.map((node) => node.name.value);
+  const userDefinedTypeNames = userDefinedTypes.map((type) => type.name);
 
-  return types
-    .map((type) => type.astNode)
-    .filter(
-      (
-        node,
-      ): node is
-        | ObjectTypeDefinitionNode
-        | InputObjectTypeDefinitionNode
-        | InterfaceTypeDefinitionNode
-        | UnionTypeDefinitionNode => {
-        if (!node) return false;
-        return (
-          node.kind === Kind.OBJECT_TYPE_DEFINITION ||
-          node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION ||
-          node.kind === Kind.INTERFACE_TYPE_DEFINITION ||
-          node.kind === Kind.UNION_TYPE_DEFINITION
-        );
-      },
-    )
-    .map((node) => {
-      if (node?.kind === Kind.OBJECT_TYPE_DEFINITION || node?.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION) {
-        return parseObjectTypeOrInputObjectTypeDefinition(node, config, userDefinedTypeNames, getAbstractTypeNames);
-      } else if (node?.kind === Kind.INTERFACE_TYPE_DEFINITION) {
-        return {
-          type: 'abstract',
-          name: convertName(node.name.value, config),
-          possibleTypes: objectTypeDefinitions
-            .filter((objectTypeDefinitionNode) =>
-              (objectTypeDefinitionNode.interfaces ?? []).some((i) => i.name.value === node.name.value),
-            )
-            .map((objectTypeDefinitionNode) => convertName(objectTypeDefinitionNode.name.value, config)),
-          comment: node.description ? transformComment(node.description) : undefined,
-        };
-      } else {
-        return {
-          type: 'abstract',
-          name: convertName(node.name.value, config),
-          possibleTypes: (node.types ?? []).map((type) => convertName(type.name.value, config)),
-          comment: node.description ? transformComment(node.description) : undefined,
-        };
-      }
-    });
+  return userDefinedTypes.map((type) => {
+    if (isObjectType(type) || isInputObjectType(type)) {
+      return parseObjectTypeOrInputObjectType(type, config, userDefinedTypeNames, getAbstractTypeNames);
+    } else if (isInterfaceType(type)) {
+      return {
+        type: 'abstract',
+        name: convertName(type.name, config),
+        possibleTypes: objectTypes
+          .filter((objectType) => objectType.getInterfaces().some((i) => i.name === type.name))
+          .map((objectType) => convertName(objectType.name, config)),
+        comment: type.description ? transformComment(type.description) : undefined,
+      };
+    } else {
+      return {
+        type: 'abstract',
+        name: convertName(type.name, config),
+        possibleTypes: type.getTypes().map((member) => convertName(member.name, config)),
+        comment: type.description ? transformComment(type.description) : undefined,
+      };
+    }
+  });
 }
