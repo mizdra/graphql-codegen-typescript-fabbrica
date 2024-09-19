@@ -39,3 +39,4 @@ This is a guide for contributors.
 - ```bash
   git push --follow-tags
   ```
+- Update the version of the package in a [playground](https://stackblitz.com/edit/playground-graphql-codegen-typescript-fabbrica?file=src%2Findex.test.ts&view=editor)
