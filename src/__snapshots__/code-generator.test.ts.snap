@@ -51,3 +51,18 @@ export type OptionalNode = OptionalBook | OptionalAuthor;
 
 "
 `;
+
+exports[`generateCode > generates code when empty typeInfos is passed 1`] = `
+"import {
+  type DefineTypeFactoryInterface,
+  defineTypeFactory,
+} from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
+import type {
+  Maybe,
+,
+} from './types';
+
+export * from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
+
+"
+`;

@@ -73,4 +73,13 @@ describe('generateCode', () => {
     const actual = generateCode(config, typeInfos);
     expect(actual).toMatchSnapshot();
   });
+  it('generates code when empty typeInfos is passed', () => {
+    const config = fakeConfig({
+      typesFile: './types',
+      skipTypename: oneOf([true, false]),
+    });
+    const typeInfos: TypeInfo[] = [];
+    const actual = generateCode(config, typeInfos);
+    expect(actual).toMatchSnapshot();
+  });
 });
