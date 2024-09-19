@@ -77,6 +77,13 @@ describe('getTypeInfos', () => {
       ]
     `);
   });
+  it('returns empty array when schema without type is passed', () => {
+    const schema = buildSchema(`
+    scalar Date
+    `);
+    const config: Config = fakeConfig();
+    expect(getTypeInfos(config, schema)).toMatchInlineSnapshot(`[]`);
+  });
   it('includes description comment', () => {
     const schema = buildSchema(`
       "The book"
