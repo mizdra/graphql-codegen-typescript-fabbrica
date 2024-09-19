@@ -4,8 +4,8 @@ import type { ObjectTypeInfo, TypeInfo } from './schema-scanner.js';
 function generatePreludeCode(config: Config, typeInfos: TypeInfo[]): string {
   const joinedTypeNames = typeInfos
     .filter(({ type }) => type === 'object')
-    .map(({ name }) => `  ${name}`)
-    .join(',\n');
+    .map(({ name }) => `  ${name},\n`)
+    .join('');
   const code = `
 import {
   type DefineTypeFactoryInterface${config.nonOptionalDefaultFields ? 'Required' : ''},
@@ -13,8 +13,7 @@ import {
 } from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
 import type {
   Maybe,
-${joinedTypeNames},
-} from '${config.typesFile}';
+${joinedTypeNames}} from '${config.typesFile}';
 
 export * from '@mizdra/graphql-codegen-typescript-fabbrica/helper';
   `.trim();
