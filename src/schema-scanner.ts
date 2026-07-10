@@ -20,7 +20,6 @@ import {
   isSpecifiedScalarType,
   isUnionType,
 } from 'graphql/index.js';
-
 import type { Config } from './config.js';
 
 // The fork of https://github.com/dotansimha/graphql-code-generator/blob/e1dc75f3c598bf7f83138ca533619716fc73f823/packages/plugins/typescript/resolvers/src/visitor.ts#L85-L91
@@ -91,9 +90,9 @@ function parseObjectTypeOrInputObjectType(
     name: convertedTypeName,
     fields: [
       ...(!config.skipTypename ? [{ name: '__typename', typeString: `'${originalTypeName}'` }] : []),
-      ...(!config.skipIsAbstractType ?
-        abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${originalTypeName}'` }))
-      : []),
+      ...(!config.skipIsAbstractType
+        ? abstractTypeNames.map((name) => ({ name: `__is${name}`, typeString: `'${originalTypeName}'` }))
+        : []),
       ...fields.map((field) => ({
         name: field.name,
         ...parseFieldOrInputField(field, convertedTypeName, config, userDefinedTypeNames),

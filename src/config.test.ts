@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { validateConfig } from './config.js';
 import { oneOf } from './test/util.js';
 

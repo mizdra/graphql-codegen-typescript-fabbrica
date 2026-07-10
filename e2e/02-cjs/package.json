@@ -8,10 +8,10 @@
     "lint:tsc": "tsc",
     "test": "node --import tsx --test index.e2e.ts"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "dependencies": {
     "@mizdra/graphql-codegen-typescript-fabbrica": "../.."
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

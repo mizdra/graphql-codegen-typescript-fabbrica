@@ -1,5 +1,4 @@
 import { expect, it } from 'vitest';
-
 import { getSequenceCounter, resetAllSequence, resetSequence } from './sequence.js';
 
 it('getSequenceCounter', () => {

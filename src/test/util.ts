@@ -1,7 +1,5 @@
 import { randomInt } from 'node:crypto';
-
 import { convertFactory } from '@graphql-codegen/visitor-plugin-common';
-
 import type { Config } from '../config.js';
 
 export function oneOf<const T>(items: T[]): T {
