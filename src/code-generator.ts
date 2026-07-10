@@ -38,7 +38,10 @@ ${joinedPropDefinitions}
   } else {
     const { name, possibleTypes } = typeInfo;
     const comment = typeInfo.comment ?? '';
-    const joinedPossibleTypes = possibleTypes.map((type) => `Optional${type}`).join(' | ');
+    // Fall back to `never` for abstract types with no possible types (e.g. an
+    // interface that no object type implements, or a union with no members).
+    // Without this the joined string is empty, producing invalid `export type X = ;`.
+    const joinedPossibleTypes = possibleTypes.map((type) => `Optional${type}`).join(' | ') || 'never';
     return `
 ${comment}export type Optional${name} = ${joinedPossibleTypes};
 `.trimStart();

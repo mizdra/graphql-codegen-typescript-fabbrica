@@ -37,6 +37,18 @@ describe('generateOptionalTypeDefinitionCode', () => {
       "
     `);
   });
+  it('generates `never` for abstract types with no possible types', () => {
+    // e.g. an interface that no object type implements, or a union with no members
+    const typeInfo: TypeInfo = {
+      type: 'abstract',
+      name: 'EmptyInterface',
+      possibleTypes: [],
+    };
+    expect(generateOptionalTypeDefinitionCode(typeInfo)).toMatchInlineSnapshot(`
+      "export type OptionalEmptyInterface = never;
+      "
+    `);
+  });
 });
 
 describe('generateCode', () => {
