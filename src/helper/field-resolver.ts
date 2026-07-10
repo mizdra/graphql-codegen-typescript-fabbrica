@@ -82,7 +82,6 @@ export async function resolveFields<
       return undefined;
     }
 
-    // eslint-disable-next-line require-atomic-updates
     fields[fieldName] = await resolveField(options, fieldResolver);
     return fields[fieldName];
   }

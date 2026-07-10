@@ -124,8 +124,8 @@ export function defineTypeFactoryInternal<
       const array: Omit<Merge<ResolvedFields<_DefaultFieldsResolver>, ResolvedFields<T>>, keyof TransientFields>[] = [];
       for (let i = 0; i < count; i++) {
         if (inputFieldsResolver) {
-          // eslint-disable-next-line no-await-in-loop, @typescript-eslint/no-explicit-any
-          array.push((await this.build(inputFieldsResolver)) as any);
+          // eslint-disable-next-line no-await-in-loop
+          array.push(await this.build(inputFieldsResolver));
         } else {
           // eslint-disable-next-line no-await-in-loop, @typescript-eslint/no-explicit-any
           array.push((await this.build()) as any);
