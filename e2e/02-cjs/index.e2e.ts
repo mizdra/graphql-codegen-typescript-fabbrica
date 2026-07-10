@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import { it } from 'node:test';
 import { defineAuthorFactory, defineBookFactory, dynamic } from './__generated__/1-basic/fabbrica.js';
-import assert from 'node:assert/strict';
 
 it('integration test', async () => {
   const BookFactory = defineBookFactory({

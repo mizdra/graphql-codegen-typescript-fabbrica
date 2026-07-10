@@ -8,10 +8,10 @@
     "gen": "graphql-codegen-esm",
     "build": "tsc"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "dependencies": {
     "@mizdra/graphql-codegen-typescript-fabbrica": "../.."
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

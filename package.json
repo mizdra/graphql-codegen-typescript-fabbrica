@@ -1,13 +1,31 @@
 {
   "name": "@mizdra/graphql-codegen-typescript-fabbrica",
-  "description": "GraphQL Code Generator Plugin to define mock data factory.",
   "version": "0.6.1",
+  "private": false,
+  "description": "GraphQL Code Generator Plugin to define mock data factory.",
+  "keywords": [
+    "graphql",
+    "graphql-code-generator",
+    "mock",
+    "testing"
+  ],
+  "license": "MIT",
+  "author": "mizdra <pp.mizdra@gmail.com>",
+  "repository": "https://github.com/mizdra/graphql-codegen-typescript-fabbrica.git",
+  "workspaces": [
+    "e2e/01-esm",
+    "e2e/02-cjs",
+    "e2e/03-browser"
+  ],
+  "files": [
+    "src",
+    "!src/test",
+    "!src/**/*.test.ts",
+    "!src/**/__snapshots__",
+    "dist"
+  ],
   "type": "module",
   "sideEffects": false,
-  "repository": "https://github.com/mizdra/graphql-codegen-typescript-fabbrica.git",
-  "author": "mizdra <pp.mizdra@gmail.com>",
-  "license": "MIT",
-  "private": false,
   "exports": {
     ".": {
       "import": {
@@ -30,19 +48,21 @@
       }
     }
   },
-  "workspaces": [
-    "e2e/01-esm",
-    "e2e/02-cjs",
-    "e2e/03-browser"
-  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "build": "run-s -c build:*",
     "build:esm": "tsc -p tsconfig.build.json",
     "build:cjs": "tsup",
     "lint": "run-s -c lint:*",
     "lint:tsc": "tsc",
-    "lint:eslint": "eslint .",
-    "lint:prettier": "prettier --check .",
+    "lint:oxlint": "oxlint",
+    "lint:oxfmt": "oxfmt --check",
+    "lint-fix": "run-s -c lint-fix:*",
+    "lint-fix:oxlint": "oxlint --fix",
+    "lint-fix:oxfmt": "oxfmt --write .",
     "test": "vitest",
     "e2e": "run-s -c setup-playwright build e2e:*",
     "e2e:esm": "npm -w e2e/01-esm run start",
@@ -51,52 +71,42 @@
     "e2e:composite": "npm --prefix e2e/04-composite run start",
     "setup-playwright": "npx playwright install --with-deps chromium"
   },
-  "prettier": "@mizdra/prettier-config-mizdra",
+  "dependencies": {
+    "@graphql-codegen/plugin-helpers": "^5.0.1",
+    "@graphql-codegen/visitor-plugin-common": "^4.0.1",
+    "graphql-relay": "^0.10.2"
+  },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/typescript": "^4.0.9",
-    "@mizdra/eslint-config-mizdra": "^6.0.0",
-    "@mizdra/prettier-config-mizdra": "^2.0.0",
+    "@mizdra/oxfmt-config": "^0.2.0",
+    "@mizdra/oxlint-config": "^0.5.0",
     "@tsconfig/node18": "^18.2.4",
     "@tsconfig/strictest": "^2.0.5",
     "@types/node": "^22.5.5",
     "@vitest/browser": "^2.1.1",
-    "eslint": "^9.10.0",
     "graphql": "^16.9.0",
-    "npm-run-all": "^4.1.5",
+    "npm-run-all2": "^7.0.2",
+    "oxfmt": "^0.58.0",
+    "oxlint": "^1.73.0",
+    "oxlint-tsgolint": "^0.24.0",
     "playwright": "^1.47.1",
-    "prettier": "^3.3.3",
     "tsup": "^8.2.4",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",
     "vitest": "^2.1.1"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "keywords": [
-    "testing",
-    "mock",
-    "graphql",
-    "graphql-code-generator"
-  ],
-  "files": [
-    "src",
-    "!src/test",
-    "!src/**/*.test.ts",
-    "!src/**/__snapshots__",
-    "dist"
-  ],
   "peerDependencies": {
     "graphql": "^16.0.0"
   },
-  "dependencies": {
-    "@graphql-codegen/plugin-helpers": "^5.0.1",
-    "@graphql-codegen/visitor-plugin-common": "^4.0.1",
-    "graphql-relay": "^0.10.2"
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "12.0.0",
+      "onFail": "warn"
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

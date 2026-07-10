@@ -6,7 +6,7 @@
     "moduleResolution": "NodeNext",
     "noEmit": true,
     /* Lint Options */
-    "noUnusedLocals": false, // Delegate to @typescript-eslint/no-unused-vars in eslint
-    "noUnusedParameters": false // Delegate to @typescript-eslint/no-unused-vars in eslint
+    "noUnusedLocals": false, // Delegate to no-unused-vars in oxlint
+    "noUnusedParameters": false // Delegate to no-unused-vars in oxlint
   }
 }

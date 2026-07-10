@@ -1,3 +1,4 @@
+import { offsetToCursor } from 'graphql-relay';
 import { expect, it, describe, expectTypeOf, vi } from 'vitest';
 import {
   defineAuthorFactory,
@@ -18,11 +19,10 @@ import {
   defineNonOptionalDefaultFields_OptionalDefaultFieldsTypeFactory,
   OptionalAuthor,
 } from './__generated__/1-basic/fabbrica.js';
-import { oneOf } from './test/util.js';
 import { definePrefixTypeFactory } from './__generated__/2-typesPrefix/fabbrica.js';
 import { defineTypeSuffixFactory } from './__generated__/3-typesSuffix/fabbrica.js';
 import { defineNonOptionalDefaultFields_NonOptionalDefaultFieldsTypeFactory } from './__generated__/4-non-optional-fields/fabbrica.js';
-import { offsetToCursor } from 'graphql-relay';
+import { oneOf } from './test/util.js';
 
 describe('integration test', () => {
   it('circular dependent type', async () => {
