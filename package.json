@@ -100,7 +100,7 @@
     "packageManager": {
       "name": "npm",
       "version": "12.0.0",
-      "onFail": "download"
+      "onFail": "warn"
     }
   },
   "engines": {
