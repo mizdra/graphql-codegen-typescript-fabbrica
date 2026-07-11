@@ -14,8 +14,7 @@
   "repository": "https://github.com/mizdra/graphql-codegen-typescript-fabbrica.git",
   "workspaces": [
     "e2e/01-esm",
-    "e2e/02-cjs",
-    "e2e/03-browser"
+    "e2e/02-browser"
   ],
   "files": [
     "src",
@@ -28,24 +27,12 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
-      }
+      "types": "./dist/esm/index.d.ts",
+      "default": "./dist/esm/index.js"
     },
     "./helper": {
-      "import": {
-        "types": "./dist/esm/helper/index.d.ts",
-        "default": "./dist/esm/helper/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/helper/index.d.cts",
-        "default": "./dist/cjs/helper/index.cjs"
-      }
+      "types": "./dist/esm/helper/index.d.ts",
+      "default": "./dist/esm/helper/index.js"
     }
   },
   "publishConfig": {
@@ -55,7 +42,6 @@
   "scripts": {
     "build": "run-s -c build:*",
     "build:esm": "tsc -p tsconfig.build.json",
-    "build:cjs": "tsup",
     "lint": "run-s -c lint:*",
     "lint:tsc": "tsc",
     "lint:oxlint": "oxlint",
@@ -66,9 +52,8 @@
     "test": "vitest",
     "e2e": "run-s -c setup-playwright build e2e:*",
     "e2e:esm": "npm -w e2e/01-esm run start",
-    "e2e:cjs": "npm -w e2e/02-cjs run start",
-    "e2e:browser": "npm -w e2e/03-browser run start",
-    "e2e:composite": "npm --prefix e2e/04-composite run start",
+    "e2e:browser": "npm -w e2e/02-browser run start",
+    "e2e:composite": "npm --prefix e2e/03-composite run start",
     "setup-playwright": "npx playwright install --with-deps chromium"
   },
   "dependencies": {
@@ -91,7 +76,6 @@
     "oxlint": "^1.73.0",
     "oxlint-tsgolint": "^0.24.0",
     "playwright": "^1.47.1",
-    "tsup": "^8.2.4",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",
     "vitest": "^2.1.1"
