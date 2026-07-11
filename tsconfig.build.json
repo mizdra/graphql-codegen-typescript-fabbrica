@@ -5,7 +5,7 @@
   "compilerOptions": {
     "noEmit": false,
     "outDir": "./dist/esm",
-    "rootDir": "src", // To avoid inadvertently changing the directory structure under dist/.
+    "rootDir": "src",
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true
