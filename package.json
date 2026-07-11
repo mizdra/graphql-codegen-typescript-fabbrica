@@ -14,8 +14,7 @@
   "repository": "https://github.com/mizdra/graphql-codegen-typescript-fabbrica.git",
   "workspaces": [
     "e2e/01-esm",
-    "e2e/02-cjs",
-    "e2e/03-browser"
+    "e2e/02-browser"
   ],
   "files": [
     "src",
@@ -53,9 +52,8 @@
     "test": "vitest",
     "e2e": "run-s -c setup-playwright build e2e:*",
     "e2e:esm": "npm -w e2e/01-esm run start",
-    "e2e:cjs": "npm -w e2e/02-cjs run start",
-    "e2e:browser": "npm -w e2e/03-browser run start",
-    "e2e:composite": "npm --prefix e2e/04-composite run start",
+    "e2e:browser": "npm -w e2e/02-browser run start",
+    "e2e:composite": "npm --prefix e2e/03-composite run start",
     "setup-playwright": "npx playwright install --with-deps chromium"
   },
   "dependencies": {
