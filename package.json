@@ -28,24 +28,12 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
-      }
+      "types": "./dist/esm/index.d.ts",
+      "default": "./dist/esm/index.js"
     },
     "./helper": {
-      "import": {
-        "types": "./dist/esm/helper/index.d.ts",
-        "default": "./dist/esm/helper/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/helper/index.d.cts",
-        "default": "./dist/cjs/helper/index.cjs"
-      }
+      "types": "./dist/esm/helper/index.d.ts",
+      "default": "./dist/esm/helper/index.js"
     }
   },
   "publishConfig": {
@@ -55,7 +43,6 @@
   "scripts": {
     "build": "run-s -c build:*",
     "build:esm": "tsc -p tsconfig.build.json",
-    "build:cjs": "tsup",
     "lint": "run-s -c lint:*",
     "lint:tsc": "tsc",
     "lint:oxlint": "oxlint",
@@ -91,7 +78,6 @@
     "oxlint": "^1.73.0",
     "oxlint-tsgolint": "^0.24.0",
     "playwright": "^1.47.1",
-    "tsup": "^8.2.4",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",
     "vitest": "^2.1.1"
