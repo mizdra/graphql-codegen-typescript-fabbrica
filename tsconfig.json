@@ -1,12 +1,25 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node22/tsconfig.json"],
   "exclude": ["node_modules", "dist", "e2e"],
   "compilerOptions": {
+    /* Environment Settings */
+    "target": "ES2023",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "noEmit": true,
-    /* Lint Options */
-    "noUnusedLocals": false, // Delegate to no-unused-vars in oxlint
-    "noUnusedParameters": false // Delegate to no-unused-vars in oxlint
+
+    /* Stricter Typechecking Options */
+    "noUncheckedIndexedAccess": true,
+    "checkJs": true,
+
+    /* Style Options */
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+
+    /* Recommended Options */
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true
   }
 }

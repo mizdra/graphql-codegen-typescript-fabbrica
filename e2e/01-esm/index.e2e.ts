@@ -17,7 +17,7 @@ import {
   defineNullableTest_TypeFactory,
   defineInputTest_InputFactory,
   defineNonOptionalDefaultFields_OptionalDefaultFieldsTypeFactory,
-  OptionalAuthor,
+  type OptionalAuthor,
 } from './__generated__/1-basic/fabbrica.js';
 import { definePrefixTypeFactory } from './__generated__/2-typesPrefix/fabbrica.js';
 import { defineTypeSuffixFactory } from './__generated__/3-typesSuffix/fabbrica.js';

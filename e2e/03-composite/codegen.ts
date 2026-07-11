@@ -1,5 +1,5 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
-import { defaultFabbricaPluginConfig, defaultTypeScriptPluginConfig } from '../util/config.cjs';
+import { defaultFabbricaPluginConfig, defaultTypeScriptPluginConfig } from '../util/config.js';
 
 const config: CodegenConfig = {
   schema: './schema.graphql',
