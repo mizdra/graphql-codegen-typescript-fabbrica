@@ -1,4 +1,10 @@
 {
   "extends": "../../tsconfig.json",
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    // Since this directory no longer has its own package.json, TypeScript does not
+    // automatically include the `@types/*` packages installed in the repository root.
+    // So include them explicitly.
+    "types": ["node"]
+  }
 }
