@@ -33,6 +33,16 @@ export default defineConfig({
           },
         },
       },
+      {
+        extends: true,
+        test: {
+          name: 'e2e-composite',
+          include: ['e2e/composite.e2e.ts'],
+          globalSetup: ['./e2e/vitest-setup/composite.ts'],
+          // The test runs `npm install`, which can take a while.
+          testTimeout: 120_000,
+        },
+      },
     ],
   },
 });
