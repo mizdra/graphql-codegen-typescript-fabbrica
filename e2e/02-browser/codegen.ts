@@ -1,5 +1,5 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
-import { defaultFabbricaPluginConfig, defaultTypeScriptPluginConfig } from '../util/config.js';
+import { defaultFabbricaPluginConfig, defaultTypeScriptPluginConfig, fabbricaPlugin } from '../util/config.js';
 
 const config: CodegenConfig = {
   generates: {
@@ -13,7 +13,7 @@ const config: CodegenConfig = {
     },
     './__generated__/1-basic/fabbrica.ts': {
       schema: './1-basic-schema.graphql',
-      plugins: ['@mizdra/graphql-codegen-typescript-fabbrica'],
+      plugins: [fabbricaPlugin],
       config: {
         ...defaultFabbricaPluginConfig,
         skipTypename: true,

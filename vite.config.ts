@@ -10,6 +10,14 @@ export default defineConfig({
           include: ['src/**/*.test.ts'],
         },
       },
+      {
+        extends: true,
+        test: {
+          name: 'e2e-esm',
+          include: ['e2e/01-esm/**/*.e2e.ts'],
+          globalSetup: ['./e2e/vitest-setup/esm.ts'],
+        },
+      },
     ],
   },
 });
