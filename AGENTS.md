@@ -11,7 +11,7 @@ npm run build
 npm run dev
 npm run test
 npm run test -- [<file...>]
-npm run e2e
+npm run test -- --project <unit|e2e-esm|e2e-browser|e2e-composite>
 npm run lint
 npm run lint:oxfmt -- [<file...>]
 npm run lint:oxlint -- [<file...>]
