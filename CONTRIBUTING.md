@@ -9,7 +9,8 @@ This is a guide for contributors.
 - `npm run test`: Run unit tests
 - `npm run e2e`: Run E2E tests
   - The E2E tests build the package automatically, so no manual build step is required.
-  - To run only some of the E2E tests, use the `--project` option (e.g. `npm run e2e -- --project e2e-esm`).
+  - To run only some of the E2E tests, run vitest directly with the `--project` option (e.g. `npx vitest --project e2e-esm`).
+    Note that `npm run e2e -- --project e2e-esm` does not work; the `--project` options are merged, so all E2E projects run.
     The available projects are `e2e-esm`, `e2e-browser`, and `e2e-composite`.
 - Tests run once and exit by default. Pass `--watch` to enable watch mode (e.g. `npm run test -- --watch`).
 

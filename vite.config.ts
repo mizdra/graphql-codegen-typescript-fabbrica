@@ -3,7 +3,6 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    // Do not watch by default. Pass `--watch` to opt in.
     watch: false,
     projects: [
       {
@@ -19,6 +18,12 @@ export default defineConfig({
           name: 'e2e-esm',
           include: ['e2e/01-esm/**/*.e2e.ts'],
           globalSetup: ['./e2e/vitest-setup/esm.ts'],
+          // Check type-level assertions (`expectTypeOf`, `@ts-expect-error`) in the test files.
+          typecheck: {
+            enabled: true,
+            include: ['e2e/01-esm/**/*.e2e.ts'],
+            tsconfig: './e2e/01-esm/tsconfig.json',
+          },
         },
       },
       {
@@ -27,6 +32,12 @@ export default defineConfig({
           name: 'e2e-browser',
           include: ['e2e/02-browser/**/*.e2e.ts'],
           globalSetup: ['./e2e/vitest-setup/browser.ts'],
+          // Check type-level assertions (`expectTypeOf`, `@ts-expect-error`) in the test files.
+          typecheck: {
+            enabled: true,
+            include: ['e2e/02-browser/**/*.e2e.ts'],
+            tsconfig: './e2e/02-browser/tsconfig.json',
+          },
           browser: {
             enabled: true,
             provider: playwright(),
