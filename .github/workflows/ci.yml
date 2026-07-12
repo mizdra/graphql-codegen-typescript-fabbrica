@@ -50,3 +50,4 @@ jobs:
           restore-keys: ${{ runner.os }}-playwright-
       - run: npm run setup-playwright
       - run: npm run test
+      - run: npm run e2e

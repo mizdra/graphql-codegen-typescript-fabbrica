@@ -3,6 +3,8 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    // Do not watch by default. Pass `--watch` to opt in.
+    watch: false,
     projects: [
       {
         extends: true,
