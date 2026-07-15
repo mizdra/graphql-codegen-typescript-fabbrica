@@ -53,7 +53,7 @@
     "e2e": "run-s -c setup-playwright build e2e:*",
     "e2e:esm": "npm -w e2e/01-esm run start",
     "e2e:browser": "npm -w e2e/02-browser run start",
-    "e2e:composite": "npm --prefix e2e/03-composite run start",
+    "e2e:portable": "npm --prefix e2e/03-portable run start",
     "setup-playwright": "npx playwright install --with-deps chromium"
   },
   "dependencies": {

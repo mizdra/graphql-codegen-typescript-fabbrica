@@ -1,5 +1,5 @@
 {
-  "name": "e2e-composite",
+  "name": "e2e-portable",
   "type": "module",
   "scripts": {
     "start": "run-s clean _install gen build",

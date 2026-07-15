@@ -3,7 +3,6 @@
   "include": ["./src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "composite": true,
     "declaration": true,
     "noEmit": false,
     "outDir": "dist",
