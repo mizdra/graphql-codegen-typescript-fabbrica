@@ -8,9 +8,6 @@
     "lint:tsc": "tsc",
     "test": "vitest --run"
   },
-  "dependencies": {
-    "@mizdra/graphql-codegen-typescript-fabbrica": "../.."
-  },
   "engines": {
     "node": ">=18.0.0"
   }
