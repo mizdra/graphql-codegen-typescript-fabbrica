@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 26
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm ci
       - run: pnpm run lint
   build:
     runs-on: ubuntu-latest
@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 26
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm ci
       - run: pnpm run build
   test:
     strategy:
@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm ci
       - run: pnpm run test
   e2e:
     strategy:
@@ -57,7 +57,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm ci
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "version=$(cat node_modules/playwright/package.json | jq -r .version)" >> "$GITHUB_OUTPUT"
