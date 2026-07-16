@@ -1,5 +1,5 @@
 {
-  "name": "e2e-esm",
+  "name": "e2e-basic",
   "type": "module",
   "scripts": {
     "start": "run-s gen lint test",
@@ -7,9 +7,6 @@
     "lint": "run-s -c lint:*",
     "lint:tsc": "tsc",
     "test": "vitest --run"
-  },
-  "dependencies": {
-    "@mizdra/graphql-codegen-typescript-fabbrica": "../.."
   },
   "engines": {
     "node": ">=18.0.0"
