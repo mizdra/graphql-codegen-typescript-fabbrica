@@ -1,0 +1,4 @@
+packages:
+  # NOTE: e2e/03-portable is intentionally excluded. It simulates a standalone npm consumer.
+  - e2e/01-basic
+  - e2e/02-browser
