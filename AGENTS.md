@@ -7,17 +7,17 @@
 ## Commands
 
 ```bash
-npm run build
-npm run dev
-npm run test
-npm run test -- [<file...>]
-npm run e2e
-npm run lint
-npm run lint:oxfmt -- [<file...>]
-npm run lint:oxlint -- [<file...>]
-npm run lint-fix
-npm run lint-fix:oxfmt -- [<file...>]
-npm run lint-fix:oxlint -- [<file...>]
+pnpm run build
+pnpm run dev
+pnpm run test
+pnpm run test [<file...>]
+pnpm run e2e
+pnpm run lint
+pnpm run lint:oxfmt [<file...>]
+pnpm run lint:oxlint [<file...>]
+pnpm run lint-fix
+pnpm run lint-fix:oxfmt [<file...>]
+pnpm run lint-fix:oxlint [<file...>]
 ```
 
 ## Entry Points

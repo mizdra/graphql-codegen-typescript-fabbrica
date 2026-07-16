@@ -47,10 +47,10 @@
     "lint-fix:oxfmt": "oxfmt --write .",
     "test": "vitest",
     "e2e": "run-s -c setup-playwright build e2e:*",
-    "e2e:basic": "npm --prefix e2e/01-basic run start",
-    "e2e:browser": "npm --prefix e2e/02-browser run start",
+    "e2e:basic": "pnpm --filter e2e-basic run start",
+    "e2e:browser": "pnpm --filter e2e-browser run start",
     "e2e:portable": "npm --prefix e2e/03-portable run start",
-    "setup-playwright": "npx playwright install --with-deps chromium"
+    "setup-playwright": "pnpm exec playwright install --with-deps chromium"
   },
   "dependencies": {
     "@graphql-codegen/plugin-helpers": "^7.1.0",
@@ -60,7 +60,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^7.2.0",
     "@graphql-codegen/typescript": "^6.1.0",
-    "@mizdra/graphql-codegen-typescript-fabbrica": "file:.",
+    "@mizdra/graphql-codegen-typescript-fabbrica": "link:.",
     "@mizdra/oxfmt-config": "^0.2.0",
     "@mizdra/oxlint-config": "^0.5.0",
     "@types/node": "^26.1.1",
@@ -79,8 +79,8 @@
   },
   "devEngines": {
     "packageManager": {
-      "name": "npm",
-      "version": "12.0.0",
+      "name": "pnpm",
+      "version": "11.8.0",
       "onFail": "warn"
     }
   },
